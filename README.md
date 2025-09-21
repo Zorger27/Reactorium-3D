@@ -2,6 +2,8 @@
 ### You can view my CV here: [Curriculum VITAE](https://zorger27.github.io)❗️ ###
 ### You can view my Portfolio here: [My Portfolio](https://Zorin.Expert)❗️ ###
 
+<img width="1670" height="824" alt="about" src="https://github.com/user-attachments/assets/d6be97cf-422e-4d65-9dd6-dfe48c43342a" />
+
 #### 🔮 Reactorium 3D is a “React laboratory in the space of three dimensions”, where <i>React</i>, <i>Three.js</i> and <i>React Three Fiber</i> merge to create interactive worlds filled with shapes, motion and light. ####
 
 🧪 Each application here is a small experiment in a three-dimensional environment, ranging from abstract scenes and dynamic objects to interactive tools and games. 
