@@ -32,24 +32,24 @@
     "disc": "This is the Project's Main Page"
   },
   "project1": {
-    "name": "Project № 1",
-    "disc": "Brief description of the first project"
+    "name": "ChromaCube",
+    "disc": "A rotating kaleidoscope of forms and shades, where every face of the cube unveils a new palette"
   },
   "project2": {
-    "name": "Project № 2",
-    "disc": "Brief description of the second project"
+    "name": "TexoCube",
+    "disc": "A transforming cube that comes alive with textures and shimmers with tactile illusions"
   },
   "project3": {
-    "name": "Project № 3",
-    "disc": "Brief description of the third project"
+    "name": "PictoCube",
+    "disc": "A gallery-cube, where images awaken on its faces in perfect harmony of perspective"
   },
   "project4": {
-    "name": "Project № 4",
-    "disc": "Brief description of the fourth project"
+    "name": "CubeForge",
+    "disc": "A digital workshop where you can forge and reshape your own cubes in real time"
   },
   "project5": {
-    "name": "Project № 5",
-    "disc": "Brief description of the fifth project"
+    "name": "Orbitron",
+    "disc": "A space of light and motion, where cubes shine, transform, and give birth to new visions"
   },
   "about": {
     "title": "Reactorium 3D",
@@ -62,7 +62,7 @@
     "name-prg": "Name",
     "version": "Version",
     "name": "About",
-    "disc": "Detailed project information"
+    "disc": "Detailed information about Reactorium 3D"
   },
   "page404": {
     "name": "Page Not Found",

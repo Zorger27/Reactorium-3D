@@ -32,24 +32,24 @@
     "disc": "Esta es la página principal del proyecto"
   },
   "project1": {
-    "name": "Proyecto № 1",
-    "disc": "Breve descripción del primer proyecto"
+    "name": "ChromaCube",
+    "disc": "Un caleidoscopio giratorio de formas y matices, donde cada cara del cubo revela una nueva paleta"
   },
   "project2": {
-    "name": "Proyecto № 2",
-    "disc": "Breve descripción del segundo proyecto"
+    "name": "TexoCube",
+    "disc": "Un cubo transformador que cobra vida con texturas y resplandece con ilusiones táctiles"
   },
   "project3": {
-    "name": "Proyecto № 3",
-    "disc": "Breve descripción del tercer proyecto"
+    "name": "PictoCube",
+    "disc": "Un cubo-galería, en cuyas caras las imágenes cobran vida en perfecta armonía de perspectiva"
   },
   "project4": {
-    "name": "Proyecto № 4",
-    "disc": "Breve descripción del cuarto proyecto"
+    "name": "CubeForge",
+    "disc": "Un taller digital donde puedes forjar y modificar tus propios cubos en tiempo real"
   },
   "project5": {
-    "name": "Proyecto № 5",
-    "disc": "Breve descripción del quinto proyecto"
+    "name": "Orbitron",
+    "disc": "Un espacio de luz y movimiento, donde los cubos brillan, se transforman y dan origen a nuevas formas"
   },
   "about": {
     "title": "Reactorium 3D",
@@ -62,7 +62,7 @@
     "name-prg": "Nombre",
     "version": "Versión",
     "name": "Sobre",
-    "disc": "Información detallada del proyecto"
+    "disc": "Información detallada sobre Reactorium 3D"
   },
   "page404": {
     "name": "Página No Encontrada",

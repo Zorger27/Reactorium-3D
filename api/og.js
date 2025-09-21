@@ -41,34 +41,34 @@ export default function handler(req, res) {
         es: { title: "Reactorium 3D", desc: "Laboratorio React donde Three.js y React Three Fiber dan vida a mundos 3D interactivos (creado por Anatolii Zorin)" }
       },
       project1: {
-        en: { title: "Project № 1", desc: "Brief description of the first project (created by Anatolii Zorin)" },
-        uk: { title: "Проект № 1", desc: "Короткий опис першого проекту (створено Анатолієм Зоріним)" },
-        es: { title: "Proyecto Nº 1", desc: "Breve descripción del primer proyecto (creado por Anatolii Zorin)" }
+        en: { title: "ChromaCube", desc: "A rotating kaleidoscope of forms and shades, where every face of the cube unveils a new palette (created by Anatolii Zorin)" },
+        uk: { title: "ChromaCube", desc: "Обертовий калейдоскоп форм і відтінків, де кожна грань куба відкриває нову палітру (створено Анатолієм Зоріним)" },
+        es: { title: "ChromaCube", desc: "Un caleidoscopio giratorio de formas y matices, donde cada cara del cubo revela una nueva paleta (creado por Anatolii Zorin)" }
       },
       project2: {
-        en: { title: "Project № 2", desc: "Brief description of the second project (created by Anatolii Zorin)" },
-        uk: { title: "Проект № 2", desc: "Короткий опис другого проекту (створено Анатолієм Зоріним)" },
-        es: { title: "Proyecto Nº 2", desc: "Breve descripción del segundo proyecto (creado por Anatolii Zorin)" }
+        en: { title: "TexoCube", desc: "A transforming cube that comes alive with textures and shimmers with tactile illusions (created by Anatolii Zorin)" },
+        uk: { title: "TexoCube", desc: "Куб-трансформер, що оживає текстурами й переливається тактильними ілюзіями (створено Анатолієм Зоріним)" },
+        es: { title: "TexoCube", desc: "Un cubo transformador que cobra vida con texturas y resplandece con ilusiones táctiles (creado por Anatolii Zorin)" }
       },
       project3: {
-        en: { title: "Project № 3", desc: "Brief description of the third project (created by Anatolii Zorin)" },
-        uk: { title: "Проект № 3", desc: "Короткий опис третього проекту (створено Анатолієм Зоріним)" },
-        es: { title: "Proyecto Nº 3", desc: "Breve descripción del tercer proyecto (creado por Anatolii Zorin)" }
+        en: { title: "PictoCube", desc: "A gallery-cube, where images awaken on its faces in perfect harmony of perspective (created by Anatolii Zorin)" },
+        uk: { title: "PictoCube", desc: "Куб-галерея, на гранях якого оживають зображення в ідеальній гармонії перспективи (створено Анатолієм Зоріним)" },
+        es: { title: "PictoCube", desc: "Un cubo-galería, en cuyas caras las imágenes cobran vida en perfecta armonía de perspectiva (creado por Anatolii Zorin)" }
       },
       project4: {
-        en: { title: "Project № 4", desc: "Brief description of the fourth project (created by Anatolii Zorin)" },
-        uk: { title: "Проект № 4", desc: "Короткий опис четвертого проекту (створено Анатолієм Зоріним)" },
-        es: { title: "Proyecto Nº 4", desc: "Breve descripción del cuarto proyecto (creado por Anatolii Zorin)" }
+        en: { title: "CubeForge", desc: "A digital workshop where you can forge and reshape your own cubes in real time (created by Anatolii Zorin)" },
+        uk: { title: "CubeForge", desc: "Цифрова майстерня, де можна кувати й змінювати власні куби в реальному часі (створено Анатолієм Зоріним)" },
+        es: { title: "CubeForge", desc: "Un taller digital donde puedes forjar y modificar tus propios cubos en tiempo real (creado por Anatolii Zorin)" }
       },
       project5: {
-        en: { title: "Project № 5", desc: "Brief description of the fifth project (created by Anatolii Zorin)" },
-        uk: { title: "Проект № 5", desc: "Короткий опис п’ятого проекту (створено Анатолієм Зоріним)" },
-        es: { title: "Proyecto Nº 5", desc: "Breve descripción del quinto proyecto (creado por Anatolii Zorin)" }
+        en: { title: "Orbitron", desc: "A space of light and motion, where cubes shine, transform, and give birth to new visions (created by Anatolii Zorin)" },
+        uk: { title: "Orbitron", desc: "Простір світла й руху, де куби сяють, змінюються і народжують нові образи (створено Анатолієм Зоріним)" },
+        es: { title: "Orbitron", desc: "Un espacio de luz y movimiento, donde los cubos brillan, se transforman y dan origen a nuevas formas (creado por Anatolii Zorin)" }
       },
       about: {
-        en: { title: "About", desc: "Detailed project information (created by Anatolii Zorin)" },
-        uk: { title: "Про проект", desc: "Детальна інформація про проект (створено Анатолієм Зоріним)" },
-        es: { title: "Sobre", desc: "Información detallada del proyecto (creado por Anatolii Zorin)" }
+        en: { title: "About", desc: "Detailed information about Reactorium 3D (created by Anatolii Zorin)" },
+        uk: { title: "Про проект", desc: "Детальна інформація про Reactorium 3D (створено Анатолієм Зоріним)" },
+        es: { title: "Sobre", desc: "Información detallada sobre Reactorium 3D (creado por Anatolii Zorin)" }
       },
       page404: {
         en: { title: "Page Not Found", desc: "Page 404 - page not found (created by Anatolii Zorin)" },
