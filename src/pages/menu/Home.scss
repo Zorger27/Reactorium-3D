@@ -19,8 +19,8 @@
     .projects-grid {
       display: inline-flex;
       flex-wrap: wrap;
-      gap: 2rem;
-      margin: 1.5rem 1rem;
+      gap: 1.7rem;
+      margin: 1.5rem;
       justify-content: center;
       align-items: center;
 
@@ -32,7 +32,7 @@
         margin: 0;
 
         .project-card-link {
-          max-width: 27rem;
+          max-width: 29rem;
           text-decoration: none;
           color: inherit;
           display: block;
@@ -78,7 +78,7 @@
             .project-text {
               h3 {
                 color: seagreen;
-                margin-bottom: 1rem;
+                margin-bottom: 0.6rem;
                 font-size: 1.8rem;
                 text-align: left;
               }
@@ -111,7 +111,7 @@
 
       .projects-grid {
         gap: 1.2rem;
-        margin: 2rem 1.5rem;
+        margin: 1rem 1.2rem 1.5rem;
 
         .inner {
           .project-card-link {
@@ -128,10 +128,10 @@
 
               .project-text {
                 h3 {
-                  margin-bottom: 0.5rem;
+                  margin-bottom: 0.2rem;
                   font-size: 1.5rem;
                 }
-                p {font-size: 1.1rem;}
+                p {font-size: 0.95rem;}
               }
             }
           }
@@ -148,7 +148,7 @@
 
       .projects-grid {
         gap: 1.1rem;
-        margin: 1rem;
+        margin: 0.7rem 0.7rem 1rem;
 
         .inner {
           .project-card-link {
@@ -168,7 +168,7 @@
                   margin-bottom: 0.4rem;
                   font-size: 1.4rem;
                 }
-                p {font-size: 1rem;}
+                p {font-size: 0.9rem;}
               }
             }
           }
