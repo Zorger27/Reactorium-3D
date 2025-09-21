@@ -33,15 +33,24 @@
   },
   "project1": {
     "name": "ChromaCube",
-    "disc": "Un caleidoscopio giratorio de formas y matices, donde cada cara del cubo revela una nueva paleta"
+    "disc": "Un caleidoscopio giratorio de formas y matices, donde cada cara del cubo revela una nueva paleta",
+    "chroma-cube-1x": "1x",
+    "chroma-cube-2x": "2x",
+    "chroma-cube-3x": "3x"
   },
   "project2": {
     "name": "TexoCube",
-    "disc": "Un cubo transformador que cobra vida con texturas y resplandece con ilusiones táctiles"
+    "disc": "Un cubo transformador que cobra vida con texturas y resplandece con ilusiones táctiles",
+    "texo-cube-1x": "1x",
+    "texo-cube-2x": "2x",
+    "texo-cube-3x": "3x"
   },
   "project3": {
     "name": "PictoCube",
-    "disc": "Un cubo-galería, en cuyas caras las imágenes cobran vida en perfecta armonía de perspectiva"
+    "disc": "Un cubo-galería, en cuyas caras las imágenes cobran vida en perfecta armonía de perspectiva",
+    "picto-cube-1x": "1x",
+    "picto-cube-2x": "2x",
+    "picto-cube-3x": "3x"
   },
   "project4": {
     "name": "CubeForge",

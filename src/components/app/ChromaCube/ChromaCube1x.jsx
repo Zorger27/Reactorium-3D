@@ -68,8 +68,8 @@ export default function ChromaCube1x() {
         {/* 3D сцена */}
         <Canvas style={{ height: '600px', width: '100%' }} camera={{ fov: 75 }} >
         <perspectiveCamera makeDefault position={[3, 3, 3]} />
-        <ambientLight intensity={0.5} />
-        <pointLight position={[10, 10, 10]} intensity={1.2} />
+        <ambientLight intensity={1.0} />
+        <pointLight position={[10, 10, 10]} intensity={1.9} />
         <Box />
         {/*<Grid />*/}
         <CameraControls />
