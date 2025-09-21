@@ -1,0 +1,89 @@
+{
+  "language": {
+    "en": "Inglés",
+    "uk": "Ukraniano",
+    "es": "Español"
+  },
+  "header": {
+    "headerImage": "¡Menú principal! \uD83D\uDE0D",
+    "headerAbout": "Ir a la página Sobre"
+  },
+  "footer": {
+    "develop": "Desarrollado por ",
+    "zorger": "Zorger",
+    "point": ".",
+    "rights": "Todos los derechos reservados",
+    "linkCV": "Mi currículum (resumen breve)",
+    "portfolio": "¡Enlace a mi portafolio! \uD83D\uDE09",
+    "footerLogo": "¡Aquí tengo una pequeña broma! \uD83D\uDE09",
+    "socialSharing": {
+      "shareOnFacebook": "Compartir en Facebook",
+      "tweetOnExTwitter": "Compartir en X (antes Twitter)",
+      "shareOnLinkedIn": "Compartir en LinkedIn",
+      "shareLink": "Compartir esta página",
+      "tweetText": "¡Echa un vistazo a esta increíble página!\uD83D\uDE09\uD83D\uDC4D"
+    }
+  },
+  "home": {
+    "title": "¡Bienvenido!",
+    "main": "Principal",
+    "projects": "Proyectos",
+    "name": "Reactorium 3D",
+    "disc": "Esta es la página principal del proyecto"
+  },
+  "project1": {
+    "name": "Proyecto № 1",
+    "disc": "Breve descripción del primer proyecto"
+  },
+  "project2": {
+    "name": "Proyecto № 2",
+    "disc": "Breve descripción del segundo proyecto"
+  },
+  "project3": {
+    "name": "Proyecto № 3",
+    "disc": "Breve descripción del tercer proyecto"
+  },
+  "project4": {
+    "name": "Proyecto № 4",
+    "disc": "Breve descripción del cuarto proyecto"
+  },
+  "project5": {
+    "name": "Proyecto № 5",
+    "disc": "Breve descripción del quinto proyecto"
+  },
+  "about": {
+    "title": "Reactorium 3D",
+    "more01": "Más información...",
+    "more02": "\uD83D\uDD2E Reactorium 3D es un «laboratorio de React en el espacio de tres dimensiones», donde React, Three.js y React Three Fiber se unen para crear mundos interactivos llenos de formas, movimiento y luz.",
+    "more03": "\uD83E\uDDEA Cada aplicación aquí es un pequeño experimento en un entorno tridimensional: desde escenas abstractas y objetos dinámicos hasta herramientas e incluso juegos interactivos. \uD83C\uDFAD Aquí la geometría cobra vida directamente en el navegador, la luz y las sombras generan profundidad y atmósfera, y la magia de la interacción transforma el mundo tridimensional en un espacio que responde a cada una de tus acciones.",
+    "more04": "\uD83D\uDE80 Reactorium 3D es un territorio de experimentos y descubrimientos, donde el código se convierte en material para la creatividad y la tridimensionalidad transforma cada idea en una experiencia sorprendente. \uD83C\uDF1F",
+    "more05": "¡Bienvenido! \uD83E\uDD29\uD83D\uDE0E",
+    "technologies": "Las tecnologías utilizadas",
+    "name-prg": "Nombre",
+    "version": "Versión",
+    "name": "Sobre",
+    "disc": "Información detallada del proyecto"
+  },
+  "page404": {
+    "name": "Página No Encontrada",
+    "disc": "Página 404 - página no encontrada",
+    "info404": "Página no encontrada, volver a la página principal",
+    "btn404": "Volver a la página PRINCIPAL"
+  },
+  "extra": {
+    "loading": "Cargando...",
+    "detail": "Para más detalles ver aquí ⇢",
+    "back": "Volver a la página principal",
+    "tableView": "Vista de tabla",
+    "listView": "Vista de lista",
+    "openSearch": "Mostrar ventana de BÚSQUEDA",
+    "closeSearch": "Cerrar la ventana de BÚSQUEDA",
+    "ascOrder": "Ordenar por orden ascendente",
+    "desOrder": "Ordenar por orden descendente",
+    "closeFooter": "Ocultar pie de página",
+    "openFooter": "Mostrar pie de página",
+    "fullScreenView": "Lienzo en pantalla completa",
+    "toggleFullScreen": "Documento en pantalla completa",
+    "closeFullScreen": "Cerrar el modo de documento de pantalla completa"
+  }
+}
