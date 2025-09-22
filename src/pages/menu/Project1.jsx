@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState, useRef, useCallback} from 'react';
 import { useTranslation } from 'react-i18next';
 import '@/pages/menu/Project1.scss';
 import {Link} from "react-router-dom";
@@ -17,9 +17,16 @@ export const Project1 = () => {
 
   const [mode, setMode] = useState("chroma-cube-1x"); // "chroma-cube-1x" | "chroma-cube-2x" | "chroma-cube-3x"
   const canvasRef = useRef(null);
+  const [canvasContainer, setCanvasContainer] = useState(null);
 
   // Массив режимов для циклического переключения
   const modes = ["chroma-cube-1x", "chroma-cube-2x", "chroma-cube-3x"];
+
+  // Callback для установки контейнера
+  const setCanvasRef = useCallback((element) => {
+    canvasRef.current = element;
+    setCanvasContainer(element);
+  }, []);
 
   // Загружаем сохранённый режим при первом рендере
   useEffect(() => {
@@ -94,14 +101,14 @@ export const Project1 = () => {
             </button>
           </div>
 
-          <CanvasFullScreen canvasContainer={canvasRef.current} />
+          <CanvasFullScreen canvasContainer={canvasContainer} />
           <ToggleFooterButton />
         </h1>
         <hr className="custom-line" />
 
-        {mode === "chroma-cube-1x" && <ChromaCube1x ref={canvasRef} />}
-        {mode === "chroma-cube-2x" && <ChromaCube2x ref={canvasRef} />}
-        {mode === "chroma-cube-3x" && <ChromaCube3x ref={canvasRef} />}
+        {mode === "chroma-cube-1x" && <ChromaCube1x ref={setCanvasRef} />}
+        {mode === "chroma-cube-2x" && <ChromaCube2x ref={setCanvasRef} />}
+        {mode === "chroma-cube-3x" && <ChromaCube3x ref={setCanvasRef} />}
 
       </div>
     </div>

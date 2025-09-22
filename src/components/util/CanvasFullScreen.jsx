@@ -22,6 +22,11 @@ const CanvasFullScreen = ({ canvasContainer }) => {
   const fullScreenView = () => {
     const canvasContainerElement = canvasContainer;
 
+    // Проверяем, не мобильное ли это устройство
+    if (window.innerWidth <= 768) {
+      return; // Блокируем fullscreen на мобильных
+    }
+
     if (document.fullscreenElement) {
       document.exitFullscreen();
     } else {
