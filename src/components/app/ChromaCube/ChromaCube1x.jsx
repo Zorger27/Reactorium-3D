@@ -1,7 +1,7 @@
-import React, { forwardRef } from "react";
+import React, { forwardRef, useEffect } from "react";
 import '@/components/app/ChromaCube/ChromaCube1x.scss'
 // R3F
-import {BoxGeometry, EdgesGeometry, MeshStandardMaterial} from 'three';
+import {BoxGeometry, EdgesGeometry, MeshBasicMaterial, Euler} from 'three';
 // import { GridHelper, EdgesGeometry, BoxGeometry, MeshStandardMaterial } from 'three';
 import { Canvas, useFrame, useThree, extend } from '@react-three/fiber';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
@@ -22,20 +22,30 @@ const Box = () => {
   const meshRef = React.useRef(null);
   const edgesRef = React.useRef(null);
 
-  // Цвета для 6 сторон с прозрачностью
+  // Цвета для 6 сторон с прозрачностью - используем MeshBasicMaterial для ярких цветов
   const materials = [
-    new MeshStandardMaterial({ color: 'red', transparent: true, opacity: 0.7 }),
-    new MeshStandardMaterial({ color: 'green', transparent: true, opacity: 0.7 }),
-    new MeshStandardMaterial({ color: 'blue', transparent: true, opacity: 0.7 }),
-    new MeshStandardMaterial({ color: 'yellow', transparent: true, opacity: 0.7 }),
-    new MeshStandardMaterial({ color: 'purple', transparent: true, opacity: 0.7 }),
-    new MeshStandardMaterial({ color: 'cyan', transparent: true, opacity: 0.7 }),
+    new MeshBasicMaterial({ color: 'red', transparent: true, opacity: 0.7 }),
+    new MeshBasicMaterial({ color: 'green', transparent: true, opacity: 0.7 }),
+    new MeshBasicMaterial({ color: 'blue', transparent: true, opacity: 0.7 }),
+    new MeshBasicMaterial({ color: 'yellow', transparent: true, opacity: 0.7 }),
+    new MeshBasicMaterial({ color: 'purple', transparent: true, opacity: 0.7 }),
+    new MeshBasicMaterial({ color: 'cyan', transparent: true, opacity: 0.7 }),
   ];
+
+  // Устанавливаем начальный наклон куба
+  useEffect(() => {
+    if (meshRef.current && edgesRef.current) {
+      const euler = new Euler(Math.PI / 2, 0.25, 0);
+      meshRef.current.setRotationFromEuler(euler);
+      edgesRef.current.setRotationFromEuler(euler);
+    }
+  }, []);
 
   useFrame(() => {
     if (meshRef.current) {
-      meshRef.current.rotation.x += 0.01;
-      meshRef.current.rotation.y += 0.01;
+      // meshRef.current.rotation.x += 0.01;
+      // meshRef.current.rotation.y += 0.01;
+      meshRef.current.rotation.z += 0.01;
     }
     if (edgesRef.current) {
       edgesRef.current.rotation.copy(meshRef.current.rotation);
@@ -44,8 +54,8 @@ const Box = () => {
 
   return (
     <>
-      <mesh ref={meshRef} geometry={new BoxGeometry(2, 2, 2)} material={materials} />
-      <lineSegments ref={edgesRef} geometry={new EdgesGeometry(new BoxGeometry(2,2,2))}>
+      <mesh ref={meshRef} geometry={new BoxGeometry(2.5, 2.5, 2.5)} material={materials} />
+      <lineSegments ref={edgesRef} geometry={new EdgesGeometry(new BoxGeometry(2.5,2.5,2.5))}>
         <lineBasicMaterial attach="material" color="white" transparent opacity={0.8} depthTest={false} />
       </lineSegments>
     </>
@@ -69,8 +79,8 @@ const ChromaCube1x = forwardRef((props, ref) => {
       {/* 3D сцена */}
       <Canvas style={{ height: '100%', width: '100%' }} camera={{ fov: 75 }} >
         <perspectiveCamera makeDefault position={[3, 3, 3]} />
-        <ambientLight intensity={1.0} />
-        <pointLight position={[10, 10, 10]} intensity={1.9} />
+        {/* Убираем яркий свет, так как MeshBasicMaterial не зависит от освещения */}
+        <ambientLight intensity={0.6} />
         <Box />
         {/*<Grid />*/}
         <CameraControls />
