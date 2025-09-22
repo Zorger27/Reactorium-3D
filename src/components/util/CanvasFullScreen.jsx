@@ -1,5 +1,6 @@
 import React, { useEffect, useCallback } from 'react';
 import './CanvasFullScreen.scss';
+import { useTranslation } from 'react-i18next';
 
 const CanvasFullScreen = ({ canvasContainer }) => {
   const handleKeyDown = useCallback((event) => {
@@ -36,9 +37,10 @@ const CanvasFullScreen = ({ canvasContainer }) => {
     }
   };
 
+  const { t } = useTranslation();
   return (
-    <i onClick={fullScreenView} title="Canvas Full Screen">
-      <span className="fa fa-expand"></span>
+    <i onClick={fullScreenView}>
+      <span title={t('extra.canvasFullScreen')} className="fa fa-expand"></span>
     </i>
   );
 };

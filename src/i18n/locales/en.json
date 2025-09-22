@@ -93,6 +93,7 @@
     "openFooter": "Show footer",
     "fullScreenView": "Canvas Full Screen",
     "toggleFullScreen": "Document Full Screen",
-    "closeFullScreen": "Close full-screen document mode"
+    "closeFullScreen": "Close full-screen document mode",
+    "canvasFullScreen": "Canvas Full Screen"
   }
 }

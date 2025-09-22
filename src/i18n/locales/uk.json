@@ -93,6 +93,7 @@
     "openFooter": "Показати футер",
     "fullScreenView": "Полотно на весь екран",
     "toggleFullScreen": "Повноекранний режим документа",
-    "closeFullScreen": "Закрити повноекранний режим документа"
+    "closeFullScreen": "Закрити повноекранний режим документа",
+    "canvasFullScreen": "Полотно на весь екран"
   }
 }
