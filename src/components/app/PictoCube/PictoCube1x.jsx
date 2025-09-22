@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect } from "react";
-import '@/components/app/ChromaCube/ChromaCube1x.scss'
+import '@/components/app/PictoCube/PictoCube1x.scss'
 import { Euler } from 'three';
 import { Canvas, useFrame, useThree, extend } from '@react-three/fiber';
 import * as THREE from "three";
