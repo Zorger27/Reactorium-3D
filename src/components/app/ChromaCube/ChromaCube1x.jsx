@@ -14,7 +14,17 @@ const CameraControls = () => {
   const { camera, gl } = useThree();
   const controls = React.useRef(null);
   useFrame(() => controls.current && controls.current.update());
-  return <orbitControls ref={controls} args={[camera, gl.domElement]} />;
+  return (
+    <orbitControls
+      ref={controls}
+      args={[camera, gl.domElement]}
+      enableDamping
+      enablePan={false}
+      enableZoom={true}
+      autoRotate={true}
+      autoRotateSpeed={5}
+    />
+  );
 };
 
 // Куб с прозрачными гранями и свечением по контуру
@@ -32,25 +42,24 @@ const Box = () => {
     new MeshBasicMaterial({ color: 'cyan', transparent: true, opacity: 0.7 }),
   ];
 
-  // Устанавливаем начальный наклон куба
   useEffect(() => {
     if (meshRef.current && edgesRef.current) {
-      const euler = new Euler(Math.PI / 2, 0.25, 0);
+      const euler = new Euler(Math.PI / 2, 0.35, 0);
       meshRef.current.setRotationFromEuler(euler);
       edgesRef.current.setRotationFromEuler(euler);
     }
   }, []);
 
-  useFrame(() => {
-    if (meshRef.current) {
-      // meshRef.current.rotation.x += 0.01;
-      // meshRef.current.rotation.y += 0.01;
-      meshRef.current.rotation.z -= 0.01;
-    }
-    if (edgesRef.current) {
-      edgesRef.current.rotation.copy(meshRef.current.rotation);
-    }
-  });
+  //  // Крутим именно куб! Другой вариант: камера вращается вокруг наклонённого куба (через OrbitControls)!
+  // useFrame(() => {
+  //   if (meshRef.current) {
+  //     meshRef.current.rotation.x += 0.003;
+  //     meshRef.current.rotation.y += 0.005;
+  //   }
+  //   if (edgesRef.current) {
+  //     edgesRef.current.rotation.copy(meshRef.current.rotation);
+  //   }
+  // });
 
   return (
     <>
@@ -78,8 +87,7 @@ const ChromaCube1x = forwardRef((props, ref) => {
     <div ref={ref} className="chroma-cube-container">
       {/* 3D сцена */}
       <Canvas style={{ height: '100%', width: '100%' }} camera={{ fov: 75 }} >
-        <perspectiveCamera makeDefault position={[3, 3, 3]} />
-        {/* Убираем яркий свет, так как MeshBasicMaterial не зависит от освещения */}
+        <perspectiveCamera makeDefault position={[0, 0, 2.5]} />
         <ambientLight intensity={0.6} />
         <Box />
         {/*<Grid />*/}
