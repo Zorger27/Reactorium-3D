@@ -22,16 +22,15 @@ const CanvasFullScreen = ({ canvasContainer }) => {
   const fullScreenView = () => {
     const canvasContainerElement = canvasContainer;
 
-    // Проверяем, не мобильное ли это устройство
-    if (window.innerWidth <= 768) {
-      return; // Блокируем fullscreen на мобильных
-    }
-
     if (document.fullscreenElement) {
-      document.exitFullscreen();
+      document.exitFullscreen().catch((error) => {
+        console.error('Exit fullscreen error:', error.message);
+      });
     } else {
       if (canvasContainerElement?.requestFullscreen) {
-        canvasContainerElement.requestFullscreen();
+        canvasContainerElement.requestFullscreen().catch((error) => {
+          console.error('Enter fullscreen error:', error.message);
+        });
       } else if (canvasContainerElement?.mozRequestFullScreen) { // Firefox
         canvasContainerElement.mozRequestFullScreen();
       } else if (canvasContainerElement?.webkitRequestFullscreen) { // Chrome, Safari and Opera
