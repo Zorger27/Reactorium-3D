@@ -1,4 +1,5 @@
 import React, { forwardRef } from "react";
+import '@/components/app/ChromaCube/ChromaCube1x.scss'
 // R3F
 import {BoxGeometry, EdgesGeometry, MeshStandardMaterial} from 'three';
 // import { GridHelper, EdgesGeometry, BoxGeometry, MeshStandardMaterial } from 'three';
@@ -64,7 +65,7 @@ const Box = () => {
 
 const ChromaCube1x = forwardRef((props, ref) => {
   return (
-    <div ref={ref} style={{ height: '628px', width: '100%' }}>
+    <div ref={ref} className="chroma-cube-container">
       {/* 3D сцена */}
       <Canvas style={{ height: '100%', width: '100%' }} camera={{ fov: 75 }} >
         <perspectiveCamera makeDefault position={[3, 3, 3]} />
