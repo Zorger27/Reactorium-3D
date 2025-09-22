@@ -31,12 +31,12 @@ const CanvasFullScreen = ({ canvasContainer }) => {
         canvasContainerElement.requestFullscreen().catch((error) => {
           console.error('Enter fullscreen error:', error.message);
         });
-      } else if (canvasContainerElement?.mozRequestFullScreen) { // Firefox
-        canvasContainerElement.mozRequestFullScreen();
-      } else if (canvasContainerElement?.webkitRequestFullscreen) { // Chrome, Safari and Opera
-        canvasContainerElement.webkitRequestFullscreen();
-      } else if (canvasContainerElement?.msRequestFullscreen) { // IE/Edge
-        canvasContainerElement.msRequestFullscreen();
+      } else if (canvasContainerElement?.['mozRequestFullScreen']) { // Firefox
+        canvasContainerElement['mozRequestFullScreen']();
+      } else if (canvasContainerElement?.['webkitRequestFullscreen']) { // Chrome, Safari and Opera
+        canvasContainerElement['webkitRequestFullscreen']();
+      } else if (canvasContainerElement?.['msRequestFullscreen']) { // IE/Edge
+        canvasContainerElement['msRequestFullscreen']();
       }
     }
   };
