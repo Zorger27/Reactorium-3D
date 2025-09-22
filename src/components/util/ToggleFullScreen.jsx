@@ -11,9 +11,9 @@ export default function ToggleFullScreen({ className = "", style }) {
     setIsFullScreen(
       !!(
         document.fullscreenElement ||
-        document.mozFullScreenElement ||
-        document.webkitFullscreenElement ||
-        document.msFullscreenElement
+        document['mozFullScreenElement'] ||
+        document['webkitFullscreenElement'] ||
+        document['msFullscreenElement']
       )
     );
   }, []);
@@ -24,18 +24,20 @@ export default function ToggleFullScreen({ className = "", style }) {
 
     if (
       !document.fullscreenElement &&
-      !document.mozFullScreenElement &&
-      !document.webkitFullscreenElement &&
-      !document.msFullscreenElement
+      !document['mozFullScreenElement'] &&
+      !document['webkitFullscreenElement'] &&
+      !document['msFullscreenElement']
     ) {
       if (element.requestFullscreen) {
-        element.requestFullscreen();
-      } else if (element.mozRequestFullScreen) {
-        element.mozRequestFullScreen();
-      } else if (element.webkitRequestFullscreen) {
-        element.webkitRequestFullscreen();
-      } else if (element.msRequestFullscreen) {
-        element.msRequestFullscreen();
+        element.requestFullscreen().catch((error) => {
+          console.error('Enter fullscreen error:', error.message);
+        });
+      } else if (element['mozRequestFullScreen']) {
+        element['mozRequestFullScreen']();
+      } else if (element['webkitRequestFullscreen']) {
+        element['webkitRequestFullscreen']();
+      } else if (element['msRequestFullscreen']) {
+        element['msRequestFullscreen']();
       }
     }
   }, []);
@@ -44,18 +46,20 @@ export default function ToggleFullScreen({ className = "", style }) {
   const exitFullScreen = useCallback(() => {
     if (
       document.fullscreenElement ||
-      document.mozFullScreenElement ||
-      document.webkitFullscreenElement ||
-      document.msFullscreenElement
+      document['mozFullScreenElement'] ||
+      document['webkitFullscreenElement'] ||
+      document['msFullscreenElement']
     ) {
       if (document.exitFullscreen) {
-        document.exitFullscreen();
-      } else if (document.mozCancelFullScreen) {
-        document.mozCancelFullScreen();
-      } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen();
-      } else if (document.msExitFullscreen) {
-        document.msExitFullscreen();
+        document.exitFullscreen().catch((error) => {
+          console.error('Exit fullscreen error:', error.message);
+        });
+      } else if (document['mozCancelFullScreen']) {
+        document['mozCancelFullScreen']();
+      } else if (document['webkitExitFullscreen']) {
+        document['webkitExitFullscreen']();
+      } else if (document['msExitFullscreen']) {
+        document['msExitFullscreen']();
       }
     }
   }, []);
