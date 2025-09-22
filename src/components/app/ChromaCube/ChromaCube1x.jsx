@@ -45,7 +45,7 @@ const Box = () => {
     if (meshRef.current) {
       // meshRef.current.rotation.x += 0.01;
       // meshRef.current.rotation.y += 0.01;
-      meshRef.current.rotation.z += 0.01;
+      meshRef.current.rotation.z -= 0.01;
     }
     if (edgesRef.current) {
       edgesRef.current.rotation.copy(meshRef.current.rotation);
