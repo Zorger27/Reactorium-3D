@@ -64,9 +64,9 @@ const Box = () => {
 
 const ChromaCube1x = forwardRef((props, ref) => {
   return (
-    <div ref={ref}>
+    <div ref={ref} style={{ height: '628px', width: '100%' }}>
       {/* 3D сцена */}
-      <Canvas style={{ height: '600px', width: '100%' }} camera={{ fov: 75 }} >
+      <Canvas style={{ height: '100%', width: '100%' }} camera={{ fov: 75 }} >
         <perspectiveCamera makeDefault position={[3, 3, 3]} />
         <ambientLight intensity={1.0} />
         <pointLight position={[10, 10, 10]} intensity={1.9} />
