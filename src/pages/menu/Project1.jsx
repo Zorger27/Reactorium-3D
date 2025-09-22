@@ -7,18 +7,22 @@ import ToggleFooterButton from "@/components/util/ToggleFooterButton.jsx";
 import MetaTags from "@/components/seo/MetaTags.jsx";
 import ChromaCube1x from "@/components/app/ChromaCube/ChromaCube1x.jsx";
 import ChromaCube2x from "@/components/app/ChromaCube/ChromaCube2x.jsx";
+import ChromaCube3x from "@/components/app/ChromaCube/ChromaCube3x.jsx";
 
 export const Project1 = () => {
   const { t } = useTranslation();
   const siteUrl = import.meta.env.VITE_SITE_URL;
   useSpaCleanup();
 
-  const [mode, setMode] = useState("ChromaCube2x"); // "ChromaCube2x" | "cChromaCube1x"
+  const [mode, setMode] = useState("chroma-cube-1x"); // "chroma-cube-1x" | "chroma-cube-2x" | "chroma-cube-3x"
+
+  // Массив режимов для циклического переключения
+  const modes = ["chroma-cube-1x", "chroma-cube-2x", "chroma-cube-3x"];
 
   // Загружаем сохранённый режим при первом рендере
   useEffect(() => {
     const savedMode = localStorage.getItem("chromaCubeMode");
-    if (savedMode === "chroma-cube-2x" || savedMode === "chroma-cube-1x") {
+    if (savedMode && modes.includes(savedMode)) {
       setMode(savedMode);
     }
   }, []);
@@ -27,6 +31,31 @@ export const Project1 = () => {
   useEffect(() => {
     localStorage.setItem("chromaCubeMode", mode);
   }, [mode]);
+
+  // Функция для переключения на следующий режим
+  const switchToNextMode = () => {
+    const currentIndex = modes.indexOf(mode);
+    const nextIndex = (currentIndex + 1) % modes.length;
+    setMode(modes[nextIndex]);
+  };
+
+  // Функция для получения текста кнопки (следующий режим)
+  const getButtonText = () => {
+    const currentIndex = modes.indexOf(mode);
+    const nextIndex = (currentIndex + 1) % modes.length;
+    const nextMode = modes[nextIndex];
+
+    switch (nextMode) {
+      case "chroma-cube-1x":
+        return t("project1.chroma-cube-1x");
+      case "chroma-cube-2x":
+        return t("project1.chroma-cube-2x");
+      case "chroma-cube-3x":
+        return t("project1.chroma-cube-3x");
+      default:
+        return t("project1.chroma-cube-1x");
+    }
+  };
 
   return (
     <div className="project1">
@@ -58,8 +87,8 @@ export const Project1 = () => {
           {t('project1.name')}
 
           <div className="mode-switch">
-            <button className={mode} onClick={() => setMode(mode === "chroma-cube-2x" ? "chroma-cube-1x" : "chroma-cube-2x")}>
-              {mode === "chroma-cube-2x" ? t("project1.chroma-cube-1x") : t("project1.chroma-cube-2x")}
+            <button className={mode} onClick={switchToNextMode}>
+              {getButtonText()}
             </button>
           </div>
 
@@ -67,8 +96,9 @@ export const Project1 = () => {
         </h1>
         <hr className="custom-line" />
 
-        {mode === "chroma-cube-2x" && <ChromaCube2x />}
         {mode === "chroma-cube-1x" && <ChromaCube1x />}
+        {mode === "chroma-cube-2x" && <ChromaCube2x />}
+        {mode === "chroma-cube-3x" && <ChromaCube3x />}
 
       </div>
     </div>

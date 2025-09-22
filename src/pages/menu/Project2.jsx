@@ -40,6 +40,7 @@ export const Project2 = () => {
         <h1><Link to="/" className="back-to-menu" title={t('extra.back')}>
           <i className="fa fa-arrow-circle-left"></i></Link>
           {t('project2.name')}
+
           <ToggleFooterButton />
         </h1>
         <hr className="custom-line" />
