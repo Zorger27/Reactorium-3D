@@ -39,9 +39,13 @@ const CanvasFullScreen = ({ canvasContainer }) => {
 
   const { t } = useTranslation();
   return (
-    <i onClick={fullScreenView}>
-      <span title={t('extra.canvasFullScreen')} className="fa fa-expand"></span>
-    </i>
+    <button
+      onClick={fullScreenView}
+      className="canvas-full-screen"
+      title={t('extra.canvasFullScreen')}
+    >
+      <i className="fa fa-expand"></i>
+    </button>
   );
 };
 
