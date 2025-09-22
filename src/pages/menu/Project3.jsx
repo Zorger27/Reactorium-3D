@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState, useRef} from 'react';
 import '@/pages/menu/Project3.scss';
 import { useTranslation } from 'react-i18next';
 import {Link} from "react-router-dom";
@@ -8,6 +8,7 @@ import MetaTags from "@/components/seo/MetaTags.jsx";
 import PictoCube1x from "@/components/app/PictoCube/PictoCube1x.jsx";
 import PictoCube2x from "@/components/app/PictoCube/PictoCube2x.jsx";
 import PictoCube3x from "@/components/app/PictoCube/PictoCube3x.jsx";
+import CanvasFullScreen from "@/components/util/CanvasFullScreen.jsx";
 
 export const Project3 = () => {
   const { t } = useTranslation();
@@ -15,9 +16,17 @@ export const Project3 = () => {
   useSpaCleanup();
 
   const [mode, setMode] = useState("picto-cube-1x"); // "picto-cube-1x" | "picto-cube-2x" | "picto-cube-3x"
+  const canvasRef = useRef(null);
+  const [canvasContainer, setCanvasContainer] = useState(null);
 
   // Массив режимов для циклического переключения
   const modes = ["picto-cube-1x", "picto-cube-2x", "picto-cube-3x"];
+
+  // Callback для установки контейнера
+  const setCanvasRef = useCallback((element) => {
+    canvasRef.current = element;
+    setCanvasContainer(element);
+  }, []);
 
   // Загружаем сохранённый режим при первом рендере
   useEffect(() => {
@@ -92,13 +101,14 @@ export const Project3 = () => {
             </button>
           </div>
 
+          <CanvasFullScreen canvasContainer={canvasContainer} />
           <ToggleFooterButton />
         </h1>
         <hr className="custom-line" />
 
-        {mode === "picto-cube-1x" && <PictoCube1x />}
-        {mode === "picto-cube-2x" && <PictoCube2x />}
-        {mode === "picto-cube-3x" && <PictoCube3x />}
+        {mode === "picto-cube-1x" && <PictoCube1x ref={setCanvasRef} />}
+        {mode === "picto-cube-2x" && <PictoCube2x ref={setCanvasRef} />}
+        {mode === "picto-cube-3x" && <PictoCube3x ref={setCanvasRef} />}
 
       </div>
     </div>
