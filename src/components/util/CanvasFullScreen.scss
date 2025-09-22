@@ -1,0 +1,22 @@
+.fa.fa-expand {
+  color: mediumvioletred;
+  cursor: pointer;
+  font-size: 2.5rem;
+  margin-left: 0.5rem;
+  transition: text-shadow .3s ease-in-out;
+
+  &:hover {text-shadow: 2px 2px 4px black;}
+}
+
+@media(max-width: 1020px) {
+  .fa.fa-expand {
+    font-size: 2.3rem;
+    margin-left: 0.4rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .fa.fa-expand {
+    display: none;
+  }
+}

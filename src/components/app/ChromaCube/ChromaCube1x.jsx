@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef } from "react";
 // R3F
 import {BoxGeometry, EdgesGeometry, MeshStandardMaterial} from 'three';
 // import { GridHelper, EdgesGeometry, BoxGeometry, MeshStandardMaterial } from 'three';
@@ -62,18 +62,22 @@ const Box = () => {
 //   return null;
 // };
 
-export default function ChromaCube1x() {
+const ChromaCube1x = forwardRef((props, ref) => {
   return (
-    <div>
-        {/* 3D сцена */}
-        <Canvas style={{ height: '600px', width: '100%' }} camera={{ fov: 75 }} >
+    <div ref={ref}>
+      {/* 3D сцена */}
+      <Canvas style={{ height: '600px', width: '100%' }} camera={{ fov: 75 }} >
         <perspectiveCamera makeDefault position={[3, 3, 3]} />
         <ambientLight intensity={1.0} />
         <pointLight position={[10, 10, 10]} intensity={1.9} />
         <Box />
         {/*<Grid />*/}
         <CameraControls />
-        </Canvas>
+      </Canvas>
     </div>
   )
-}
+});
+
+ChromaCube1x.displayName = 'ChromaCube1x';
+
+export default ChromaCube1x;

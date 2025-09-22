@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import { useTranslation } from 'react-i18next';
 import '@/pages/menu/Project1.scss';
 import {Link} from "react-router-dom";
@@ -8,6 +8,7 @@ import MetaTags from "@/components/seo/MetaTags.jsx";
 import ChromaCube1x from "@/components/app/ChromaCube/ChromaCube1x.jsx";
 import ChromaCube2x from "@/components/app/ChromaCube/ChromaCube2x.jsx";
 import ChromaCube3x from "@/components/app/ChromaCube/ChromaCube3x.jsx";
+import CanvasFullScreen from "@/components/util/CanvasFullScreen.jsx";
 
 export const Project1 = () => {
   const { t } = useTranslation();
@@ -15,6 +16,7 @@ export const Project1 = () => {
   useSpaCleanup();
 
   const [mode, setMode] = useState("chroma-cube-1x"); // "chroma-cube-1x" | "chroma-cube-2x" | "chroma-cube-3x"
+  const canvasRef = useRef(null);
 
   // Массив режимов для циклического переключения
   const modes = ["chroma-cube-1x", "chroma-cube-2x", "chroma-cube-3x"];
@@ -92,13 +94,14 @@ export const Project1 = () => {
             </button>
           </div>
 
+          <CanvasFullScreen canvasContainer={canvasRef.current} />
           <ToggleFooterButton />
         </h1>
         <hr className="custom-line" />
 
-        {mode === "chroma-cube-1x" && <ChromaCube1x />}
-        {mode === "chroma-cube-2x" && <ChromaCube2x />}
-        {mode === "chroma-cube-3x" && <ChromaCube3x />}
+        {mode === "chroma-cube-1x" && <ChromaCube1x ref={canvasRef} />}
+        {mode === "chroma-cube-2x" && <ChromaCube2x ref={canvasRef} />}
+        {mode === "chroma-cube-3x" && <ChromaCube3x ref={canvasRef} />}
 
       </div>
     </div>

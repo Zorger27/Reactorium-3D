@@ -1,0 +1,46 @@
+import React, { useEffect, useCallback } from 'react';
+import './CanvasFullScreen.scss';
+
+const CanvasFullScreen = ({ canvasContainer }) => {
+  const handleKeyDown = useCallback((event) => {
+    if ((event.key === 'Backspace' || event.key === ' ') && document.fullscreenElement) {
+      document.exitFullscreen().catch((error) => {
+        console.error('Exit fullscreen error:', error.message);
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleKeyDown]);
+
+  const fullScreenView = () => {
+    const canvasContainerElement = canvasContainer;
+
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    } else {
+      if (canvasContainerElement?.requestFullscreen) {
+        canvasContainerElement.requestFullscreen();
+      } else if (canvasContainerElement?.mozRequestFullScreen) { // Firefox
+        canvasContainerElement.mozRequestFullScreen();
+      } else if (canvasContainerElement?.webkitRequestFullscreen) { // Chrome, Safari and Opera
+        canvasContainerElement.webkitRequestFullscreen();
+      } else if (canvasContainerElement?.msRequestFullscreen) { // IE/Edge
+        canvasContainerElement.msRequestFullscreen();
+      }
+    }
+  };
+
+  return (
+    <i onClick={fullScreenView} title="Canvas Full Screen">
+      <span className="fa fa-expand"></span>
+    </i>
+  );
+};
+
+export default CanvasFullScreen;
