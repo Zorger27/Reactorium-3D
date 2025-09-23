@@ -4,6 +4,7 @@ import {BoxGeometry, EdgesGeometry, MeshBasicMaterial, Euler} from 'three';
 // import { GridHelper, EdgesGeometry, BoxGeometry, MeshStandardMaterial } from 'three';
 import { Canvas, useFrame, useThree, extend } from '@react-three/fiber';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import * as THREE from "three";
 
 // Подключаем OrbitControls
 extend({ OrbitControls });
@@ -11,7 +12,7 @@ extend({ OrbitControls });
 // Компонент управления камерой
 const CameraControls = () => {
   const { camera, gl } = useThree();
-  const controls = React.useRef(null);
+  const controls = useRef(null);
   useFrame(() => controls.current && controls.current.update());
   return (
     <orbitControls
@@ -29,7 +30,6 @@ const CameraControls = () => {
 // Куб с прозрачными гранями и свечением по контуру
 const Box = () => {
   const meshRef = useRef(null);
-  const edgesRef = useRef(null);
 
   // Цвета для 6 сторон с прозрачностью - используем MeshBasicMaterial для ярких цветов
   const materials = [
@@ -42,10 +42,9 @@ const Box = () => {
   ];
 
   useEffect(() => {
-    if (meshRef.current && edgesRef.current) {
+    if (meshRef.current) {
       const euler = new Euler(Math.PI / 2, 0.35, 0);
       meshRef.current.setRotationFromEuler(euler);
-      edgesRef.current.setRotationFromEuler(euler);
     }
   }, []);
 
@@ -61,12 +60,12 @@ const Box = () => {
   // });
 
   return (
-    <>
-      <mesh ref={meshRef} geometry={new BoxGeometry(2.5, 2.5, 2.5)} material={materials} />
-      <lineSegments ref={edgesRef} geometry={new EdgesGeometry(new BoxGeometry(2.5,2.5,2.5))}>
-        <lineBasicMaterial attach="material" color="white" transparent opacity={0.8} depthTest={false} />
+    <group ref={meshRef}>
+      <mesh geometry={new BoxGeometry(2.5, 2.5, 2.5)} material={materials} />
+      <lineSegments geometry={new EdgesGeometry(new BoxGeometry(2.5,2.5,2.5))}>
+        <lineBasicMaterial color="white" transparent opacity={0.8} depthTest={false} />
       </lineSegments>
-    </>
+    </group>
   );
 };
 
@@ -85,7 +84,14 @@ const ChromaCube1x = forwardRef((props, ref) => {
   return (
     <div ref={ref} className="chroma-cube-container">
       {/* 3D сцена */}
-      <Canvas style={{ height: '100%', width: '100%' }} camera={{ fov: 75 }} >
+      <Canvas
+        style={{ height: '100%', width: '100%' }}
+        camera={{ fov: 75 }}
+        gl={{
+          antialias: true,
+          toneMapping: THREE.NoToneMapping // Убираем tone mapping для ярких цветов
+        }}
+      >
         <perspectiveCamera makeDefault position={[0, 0, 2.5]} />
         <ambientLight intensity={0.6} />
         <Box />
