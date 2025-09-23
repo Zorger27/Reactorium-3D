@@ -1,6 +1,5 @@
 import React, { forwardRef, useEffect } from "react";
 import '@/components/app/ChromaCube/ChromaCube1x.scss'
-// R3F
 import {BoxGeometry, EdgesGeometry, MeshBasicMaterial, Euler} from 'three';
 // import { GridHelper, EdgesGeometry, BoxGeometry, MeshStandardMaterial } from 'three';
 import { Canvas, useFrame, useThree, extend } from '@react-three/fiber';
