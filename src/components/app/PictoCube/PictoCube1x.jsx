@@ -46,6 +46,8 @@ const PictoBox = () => {
     String(topImg)      // 5
   ]);
 
+  const degreesToRadians = (degrees) => degrees * (Math.PI / 180); // Перевод градусов в радианы
+
   // Мемоизируем материалы с правильной ориентацией текстур
   const materials = useMemo(() => {
     const textures = [textureRight, textureLeft, textureTop, textureBottom, textureFront, textureBack];
@@ -56,17 +58,17 @@ const PictoBox = () => {
       texture.flipY = true;
 
       // Исправляем ориентацию для конкретных сторон
-      if (index === 3) { // backImg
+      if (index === 1) { // leftImg
         texture.center = new THREE.Vector2(0.5, 0.5);
-        texture.rotation = Math.PI;
+        texture.rotation = degreesToRadians(90);
       }
       if (index === 0) { // rightImg
         texture.center = new THREE.Vector2(0.5, 0.5);
-        texture.rotation = -Math.PI / 2;
+        texture.rotation = degreesToRadians(-90);
       }
-      if (index === 1) { // leftImg
+      if (index === 3) { // backImg
         texture.center = new THREE.Vector2(0.5, 0.5);
-        texture.rotation = Math.PI / 2;
+        texture.rotation = degreesToRadians(180);
       }
 
       texture.needsUpdate = true;
@@ -75,8 +77,6 @@ const PictoBox = () => {
   }, [textureRight, textureLeft, textureTop, textureBottom, textureFront, textureBack]);
 
   // Устанавливаем начальный наклон
-  const degreesToRadians = (degrees) => degrees * (Math.PI / 180);
-
   useEffect(() => {
     if (meshRef.current) {
 
