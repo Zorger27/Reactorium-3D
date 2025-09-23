@@ -4,7 +4,7 @@ import { Canvas, useFrame, useThree, extend, useLoader } from '@react-three/fibe
 import * as THREE from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
-import rightImg from "@/assets/app/VortexCube/cube1/cube1-13.webp";
+import rightImg from "@/assets/app/VortexCube/cube1/cube1-14.webp";
 import leftImg from "@/assets/app/VortexCube/cube1/cube1-11.webp";
 import frontImg from "@/assets/app/VortexCube/cube1/cube1-06.webp";
 import backImg from "@/assets/app/VortexCube/cube1/cube1-03.webp";
