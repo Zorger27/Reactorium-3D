@@ -1,7 +1,8 @@
-import React, { forwardRef, useEffect } from "react";
+import React, { forwardRef, useEffect, useMemo } from "react";
 import '@/components/app/PictoCube/PictoCube1x.scss'
 import { Euler } from 'three';
 import { Canvas, useFrame, useThree, extend } from '@react-three/fiber';
+import { useLoader } from '@react-three/fiber';
 import * as THREE from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
@@ -36,66 +37,73 @@ const CameraControls = () => {
 // Куб с текстурами
 const PictoBox = () => {
   const meshRef = React.useRef(null);
-  const edgesRef = React.useRef(null);
 
-  // Загружаем текстуры
-  const loader = new THREE.TextureLoader();
-  const textureRight = loader.load(rightImg);
-  const textureLeft = loader.load(leftImg);
-  const textureTop = loader.load(topImg);
-  const textureBottom = loader.load(bottomImg);
-  const textureFront = loader.load(frontImg);
-  const textureBack = loader.load(backImg);
+  // Загружаем текстуры через useLoader (правильный способ в R3F)
+  const [textureRight, textureLeft, textureTop, textureBottom, textureFront, textureBack] = useLoader(THREE.TextureLoader, [
+    rightImg,   // 0
+    leftImg,    // 1
+    frontImg,   // 2
+    backImg,    // 3
+    bottomImg,  // 4
+    topImg      // 5
+  ]);
 
-  // включаем нормальные цвета
-  [textureRight, textureLeft, textureFront, textureBack, textureBottom, textureTop].forEach(tex => {
-    tex.encoding = THREE.sRGBEncoding;
-  });
+  // Мемоизируем материалы с правильной ориентацией текстур
+  const materials = useMemo(() => {
+    const textures = [textureRight, textureLeft, textureTop, textureBottom, textureFront, textureBack];
 
-  // Корректируем UV для отдельных сторон
-  // textureBack.center.set(0.5, 0.5);
-  // textureBack.rotation = Math.PI;
-  // textureBack.needsUpdate = true;
+    return textures.map((texture, index) => {
+      // Настраиваем каждую текстуру
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.flipY = true;
 
-  // textureLeft.center.set(0.5, 0.5);
-  // textureLeft.rotation = Math.PI / 2;
-  // textureLeft.needsUpdate = true;
+      // Исправляем ориентацию для конкретных сторон
+      if (index === 3) { // backImg
+        texture.center.set(0.5, 0.5);
+        texture.rotation = Math.PI;
+      }
+      if (index === 0) { // rightImg
+        texture.center.set(0.5, 0.5);
+        texture.rotation = -Math.PI / 2;
+      }
+      if (index === 1) { // leftImg
+        texture.center.set(0.5, 0.5);
+        texture.rotation = Math.PI / 2;
+      }
 
-  // textureRight.center.set(0.5, 0.5);
-  // textureRight.rotation = -Math.PI / 2;
-  // textureRight.needsUpdate = true;
-
-  const materials = [
-    new THREE.MeshBasicMaterial({ map: textureRight }),   // 0
-    new THREE.MeshBasicMaterial({ map: textureLeft }),    // 1
-    new THREE.MeshBasicMaterial({ map: textureTop }),     // 2
-    new THREE.MeshBasicMaterial({ map: textureBottom }),  // 3
-    new THREE.MeshBasicMaterial({ map: textureFront }),   // 4
-    new THREE.MeshBasicMaterial({ map: textureBack }),    // 5
-  ];
+      texture.needsUpdate = true;
+      return new THREE.MeshBasicMaterial({ map: texture });
+    });
+  }, [textureRight, textureLeft, textureTop, textureBottom, textureFront, textureBack]);
 
   // Устанавливаем начальный наклон
   useEffect(() => {
-    if (meshRef.current && edgesRef.current) {
+    if (meshRef.current) {
       const euler = new Euler(Math.PI / 2, 0.35, 0);
       meshRef.current.setRotationFromEuler(euler);
-      edgesRef.current.setRotationFromEuler(euler);
     }
   }, []);
 
   return (
-    <>
-      <mesh ref={meshRef} geometry={new THREE.BoxGeometry(2.5, 2.5, 2.5)} material={materials} />;
-    </>
+    <mesh ref={meshRef} material={materials}>
+      <boxGeometry args={[2.5, 2.5, 2.5]} />
+    </mesh>
   );
 };
 
 const PictoCube1x = forwardRef((props, ref) => {
   return (
     <div ref={ref} className="picto-cube-container">
-      <Canvas style={{ height: '100%', width: '100%' }} camera={{ fov: 75 }} gl={{ outputEncoding: THREE.sRGBEncoding }} >
-        <perspectiveCamera makeDefault position={[0, 0, 2.5]} />
-        <ambientLight intensity={0.6} />
+      <Canvas
+        style={{ height: '100%', width: '100%' }}
+        camera={{ fov: 75 }}
+        gl={{
+          antialias: true,
+          toneMapping: THREE.NoToneMapping // Убираем tone mapping для ярких цветов
+        }}
+      >
+        <perspectiveCamera makeDefault position={[4, 4, 4]} />
+        <ambientLight intensity={1.2} />
         <PictoBox />
         <CameraControls />
       </Canvas>

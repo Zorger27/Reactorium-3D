@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect } from "react";
+import React, {forwardRef, useEffect, useRef} from "react";
 import '@/components/app/ChromaCube/ChromaCube1x.scss'
 import {BoxGeometry, EdgesGeometry, MeshBasicMaterial, Euler} from 'three';
 // import { GridHelper, EdgesGeometry, BoxGeometry, MeshStandardMaterial } from 'three';
@@ -28,8 +28,8 @@ const CameraControls = () => {
 
 // Куб с прозрачными гранями и свечением по контуру
 const Box = () => {
-  const meshRef = React.useRef(null);
-  const edgesRef = React.useRef(null);
+  const meshRef = useRef(null);
+  const edgesRef = useRef(null);
 
   // Цвета для 6 сторон с прозрачностью - используем MeshBasicMaterial для ярких цветов
   const materials = [
