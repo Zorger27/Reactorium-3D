@@ -75,9 +75,17 @@ const PictoBox = () => {
   }, [textureRight, textureLeft, textureTop, textureBottom, textureFront, textureBack]);
 
   // Устанавливаем начальный наклон
+  const degreesToRadians = (degrees) => degrees * (Math.PI / 180);
+
   useEffect(() => {
     if (meshRef.current) {
-      const euler = new THREE.Euler(Math.PI / 2, 0.35, 0);
+
+      const euler = new THREE.Euler(
+        degreesToRadians(90),   // 90 градусов по X
+        degreesToRadians(20),   // 20 градусов по Y
+        0                            // 0° поворот по Z
+      );
+
       meshRef.current.setRotationFromEuler(euler);
     }
   }, []);
