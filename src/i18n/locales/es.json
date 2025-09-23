@@ -39,11 +39,11 @@
     "chroma-cube-3x": "3x"
   },
   "project2": {
-    "name": "TexoCube",
+    "name": "VortexCube",
     "disc": "Un cubo transformador que cobra vida con texturas y resplandece con ilusiones táctiles",
-    "texo-cube-1x": "1x",
-    "texo-cube-2x": "2x",
-    "texo-cube-3x": "3x"
+    "vortex-cube-1x": "1x",
+    "vortex-cube-2x": "2x",
+    "vortex-cube-3x": "3x"
   },
   "project3": {
     "name": "PictoCube",

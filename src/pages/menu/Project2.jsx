@@ -5,23 +5,23 @@ import {Link} from "react-router-dom";
 import {useSpaCleanup} from "@/hooks/useSpaCleanup.js";
 import ToggleFooterButton from "@/components/util/ToggleFooterButton.jsx";
 import MetaTags from "@/components/seo/MetaTags.jsx";
-import TexoCube1x from "@/components/app/TexoCube/TexoCube1x.jsx";
-import TexoCube2x from "@/components/app/TexoCube/TexoCube2x.jsx";
-import TexoCube3x from "@/components/app/TexoCube/TexoCube3x.jsx";
+import VortexCube1x from "@/components/app/VortexCube/VortexCube1x.jsx";
+import VortexCube2x from "@/components/app/VortexCube/VortexCube2x.jsx";
+import VortexCube3x from "@/components/app/VortexCube/VortexCube3x.jsx";
 
 export const Project2 = () => {
   const { t } = useTranslation();
   const siteUrl = import.meta.env.VITE_SITE_URL;
   useSpaCleanup();
 
-  const [mode, setMode] = useState("texo-cube-1x"); // "texo-cube-1x" | "texo-cube-2x" | "texo-cube-3x"
+  const [mode, setMode] = useState("vortex-cube-1x"); // "vortex-cube-1x" | "vortex-cube-2x" | "vortex-cube-3x"
 
   // Массив режимов для циклического переключения
-  const modes = ["texo-cube-1x", "texo-cube-2x", "texo-cube-3x"];
+  const modes = ["vortex-cube-1x", "vortex-cube-2x", "vortex-cube-3x"];
 
   // Загружаем сохранённый режим при первом рендере
   useEffect(() => {
-    const savedMode = localStorage.getItem("texoCubeMode");
+    const savedMode = localStorage.getItem("vortexCubeMode");
     if (savedMode && modes.includes(savedMode)) {
       setMode(savedMode);
     }
@@ -29,7 +29,7 @@ export const Project2 = () => {
 
   // Сохраняем режим при каждом изменении
   useEffect(() => {
-    localStorage.setItem("texoCubeMode", mode);
+    localStorage.setItem("vortexCubeMode", mode);
   }, [mode]);
 
   // Функция для переключения на следующий режим
@@ -46,14 +46,14 @@ export const Project2 = () => {
     const nextMode = modes[nextIndex];
 
     switch (nextMode) {
-      case "texo-cube-1x":
-        return t("project2.texo-cube-1x");
-      case "texo-cube-2x":
-        return t("project2.texo-cube-2x");
-      case "texo-cube-3x":
-        return t("project2.texo-cube-3x");
+      case "vortex-cube-1x":
+        return t("project2.vortex-cube-1x");
+      case "vortex-cube-2x":
+        return t("project2.vortex-cube-2x");
+      case "vortex-cube-3x":
+        return t("project2.vortex-cube-3x");
       default:
-        return t("project2.texo-cube-1x");
+        return t("project2.vortex-cube-1x");
     }
   };
 
@@ -96,9 +96,9 @@ export const Project2 = () => {
         </h1>
         <hr className="custom-line" />
 
-        {mode === "texo-cube-1x" && <TexoCube1x />}
-        {mode === "texo-cube-2x" && <TexoCube2x />}
-        {mode === "texo-cube-3x" && <TexoCube3x />}
+        {mode === "vortex-cube-1x" && <VortexCube1x />}
+        {mode === "vortex-cube-2x" && <VortexCube2x />}
+        {mode === "vortex-cube-3x" && <VortexCube3x />}
 
       </div>
     </div>

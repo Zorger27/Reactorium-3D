@@ -46,9 +46,9 @@ export default function handler(req, res) {
         es: { title: "ChromaCube", desc: "Un caleidoscopio giratorio de formas y matices, donde cada cara del cubo revela una nueva paleta (creado por Anatolii Zorin)" }
       },
       project2: {
-        en: { title: "TexoCube", desc: "A transforming cube that comes alive with textures and shimmers with tactile illusions (created by Anatolii Zorin)" },
-        uk: { title: "TexoCube", desc: "Куб-трансформер, що оживає текстурами й переливається тактильними ілюзіями (створено Анатолієм Зоріним)" },
-        es: { title: "TexoCube", desc: "Un cubo transformador que cobra vida con texturas y resplandece con ilusiones táctiles (creado por Anatolii Zorin)" }
+        en: { title: "VortexCube", desc: "A transforming cube that comes alive with textures and shimmers with tactile illusions (created by Anatolii Zorin)" },
+        uk: { title: "VortexCube", desc: "Куб-трансформер, що оживає текстурами й переливається тактильними ілюзіями (створено Анатолієм Зоріним)" },
+        es: { title: "VortexCube", desc: "Un cubo transformador que cobra vida con texturas y resplandece con ilusiones táctiles (creado por Anatolii Zorin)" }
       },
       project3: {
         en: { title: "PictoCube", desc: "A gallery-cube, where images awaken on its faces in perfect harmony of perspective (created by Anatolii Zorin)" },
