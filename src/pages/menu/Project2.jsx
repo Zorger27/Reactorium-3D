@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import '@/pages/menu/Project2.scss';
 import { useTranslation } from 'react-i18next';
 import {Link} from "react-router-dom";
@@ -8,6 +8,7 @@ import MetaTags from "@/components/seo/MetaTags.jsx";
 import VortexCube1x from "@/components/app/VortexCube/VortexCube1x.jsx";
 import VortexCube2x from "@/components/app/VortexCube/VortexCube2x.jsx";
 import VortexCube3x from "@/components/app/VortexCube/VortexCube3x.jsx";
+import CanvasFullScreen from "@/components/util/CanvasFullScreen.jsx";
 
 export const Project2 = () => {
   const { t } = useTranslation();
@@ -15,9 +16,17 @@ export const Project2 = () => {
   useSpaCleanup();
 
   const [mode, setMode] = useState("vortex-cube-1x"); // "vortex-cube-1x" | "vortex-cube-2x" | "vortex-cube-3x"
+  const canvasRef = useRef(null);
+  const [canvasContainer, setCanvasContainer] = useState(null);
 
   // Массив режимов для циклического переключения
   const modes = ["vortex-cube-1x", "vortex-cube-2x", "vortex-cube-3x"];
+
+  // Callback для установки контейнера
+  const setCanvasRef = useCallback((element) => {
+    canvasRef.current = element;
+    setCanvasContainer(element);
+  }, []);
 
   // Загружаем сохранённый режим при первом рендере
   useEffect(() => {
@@ -92,13 +101,14 @@ export const Project2 = () => {
             </button>
           </div>
 
+          <CanvasFullScreen canvasContainer={canvasContainer} />
           <ToggleFooterButton />
         </h1>
         <hr className="custom-line" />
 
-        {mode === "vortex-cube-1x" && <VortexCube1x />}
-        {mode === "vortex-cube-2x" && <VortexCube2x />}
-        {mode === "vortex-cube-3x" && <VortexCube3x />}
+        {mode === "vortex-cube-1x" && <VortexCube1x ref={setCanvasRef} />}
+        {mode === "vortex-cube-2x" && <VortexCube2x ref={setCanvasRef} />}
+        {mode === "vortex-cube-3x" && <VortexCube3x ref={setCanvasRef} />}
 
       </div>
     </div>
