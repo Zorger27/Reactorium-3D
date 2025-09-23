@@ -1,8 +1,6 @@
 import React, { forwardRef, useEffect, useMemo } from "react";
 import '@/components/app/PictoCube/PictoCube1x.scss'
-import { Euler } from 'three';
-import { Canvas, useFrame, useThree, extend } from '@react-three/fiber';
-import { useLoader } from '@react-three/fiber';
+import { Canvas, useFrame, useThree, extend, useLoader } from '@react-three/fiber';
 import * as THREE from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
@@ -40,12 +38,12 @@ const PictoBox = () => {
 
   // Загружаем текстуры через useLoader (правильный способ в R3F)
   const [textureRight, textureLeft, textureTop, textureBottom, textureFront, textureBack] = useLoader(THREE.TextureLoader, [
-    rightImg,   // 0
-    leftImg,    // 1
-    frontImg,   // 2
-    backImg,    // 3
-    bottomImg,  // 4
-    topImg      // 5
+    String(rightImg),   // 0
+    String(leftImg),    // 1
+    String(frontImg),   // 2
+    String(backImg),    // 3
+    String(bottomImg),  // 4
+    String(topImg)      // 5
   ]);
 
   // Мемоизируем материалы с правильной ориентацией текстур
@@ -59,15 +57,15 @@ const PictoBox = () => {
 
       // Исправляем ориентацию для конкретных сторон
       if (index === 3) { // backImg
-        texture.center.set(0.5, 0.5);
+        texture.center = new THREE.Vector2(0.5, 0.5)
         texture.rotation = Math.PI;
       }
       if (index === 0) { // rightImg
-        texture.center.set(0.5, 0.5);
+        texture.center = new THREE.Vector2(0.5, 0.5)
         texture.rotation = -Math.PI / 2;
       }
       if (index === 1) { // leftImg
-        texture.center.set(0.5, 0.5);
+        texture.center = new THREE.Vector2(0.5, 0.5)
         texture.rotation = Math.PI / 2;
       }
 
@@ -79,7 +77,7 @@ const PictoBox = () => {
   // Устанавливаем начальный наклон
   useEffect(() => {
     if (meshRef.current) {
-      const euler = new Euler(Math.PI / 2, 0.35, 0);
+      const euler = new THREE.Euler(Math.PI / 2, 0.35, 0);
       meshRef.current.setRotationFromEuler(euler);
     }
   }, []);
