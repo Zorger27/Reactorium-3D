@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useMemo } from "react";
+import React, { forwardRef, useEffect, useMemo, useRef } from "react";
 import '@/components/app/PictoCube/PictoCube1x.scss'
 import { Canvas, useFrame, useThree, extend, useLoader } from '@react-three/fiber';
 import * as THREE from "three";
@@ -17,7 +17,7 @@ extend({ OrbitControls });
 // Компонент управления камерой
 const CameraControls = () => {
   const { camera, gl } = useThree();
-  const controls = React.useRef(null);
+  const controls = useRef(null);
   useFrame(() => controls.current && controls.current.update());
   return (
     <orbitControls
@@ -34,7 +34,7 @@ const CameraControls = () => {
 
 // Куб с текстурами
 const PictoBox = () => {
-  const meshRef = React.useRef(null);
+  const meshRef = useRef(null);
 
   // Загружаем текстуры через useLoader (правильный способ в R3F)
   const [textureRight, textureLeft, textureTop, textureBottom, textureFront, textureBack] = useLoader(THREE.TextureLoader, [
@@ -57,15 +57,15 @@ const PictoBox = () => {
 
       // Исправляем ориентацию для конкретных сторон
       if (index === 3) { // backImg
-        texture.center = new THREE.Vector2(0.5, 0.5)
+        texture.center = new THREE.Vector2(0.5, 0.5);
         texture.rotation = Math.PI;
       }
       if (index === 0) { // rightImg
-        texture.center = new THREE.Vector2(0.5, 0.5)
+        texture.center = new THREE.Vector2(0.5, 0.5);
         texture.rotation = -Math.PI / 2;
       }
       if (index === 1) { // leftImg
-        texture.center = new THREE.Vector2(0.5, 0.5)
+        texture.center = new THREE.Vector2(0.5, 0.5);
         texture.rotation = Math.PI / 2;
       }
 
