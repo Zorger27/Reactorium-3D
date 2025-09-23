@@ -4,12 +4,12 @@ import { Canvas, useFrame, useThree, extend, useLoader } from '@react-three/fibe
 import * as THREE from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
-import rightImg from "@/assets/app/VortexCube/cube1/cube1-01.webp";
+import rightImg from "@/assets/app/VortexCube/cube1/cube1-13.webp";
 import leftImg from "@/assets/app/VortexCube/cube1/cube1-11.webp";
 import frontImg from "@/assets/app/VortexCube/cube1/cube1-06.webp";
 import backImg from "@/assets/app/VortexCube/cube1/cube1-03.webp";
-import bottomImg from "@/assets/app/VortexCube/cube1/cube1-08.webp";
-import topImg from "@/assets/app/VortexCube/cube1/cube1-05.webp";
+import bottomImg from "@/assets/app/VortexCube/cube1/cube1-05.webp";
+import topImg from "@/assets/app/VortexCube/cube1/cube1-12.webp";
 
 // Подключаем OrbitControls
 extend({ OrbitControls });
