@@ -42,31 +42,36 @@ const PictoBox = () => {
   const loader = new THREE.TextureLoader();
   const textureRight = loader.load(rightImg);
   const textureLeft = loader.load(leftImg);
+  const textureTop = loader.load(topImg);
+  const textureBottom = loader.load(bottomImg);
   const textureFront = loader.load(frontImg);
   const textureBack = loader.load(backImg);
-  const textureBottom = loader.load(bottomImg);
-  const textureTop = loader.load(topImg);
+
+  // включаем нормальные цвета
+  [textureRight, textureLeft, textureFront, textureBack, textureBottom, textureTop].forEach(tex => {
+    tex.encoding = THREE.sRGBEncoding;
+  });
 
   // Корректируем UV для отдельных сторон
-  textureBack.center.set(0.5, 0.5);
-  textureBack.rotation = Math.PI;
-  textureBack.needsUpdate = true;
+  // textureBack.center.set(0.5, 0.5);
+  // textureBack.rotation = Math.PI;
+  // textureBack.needsUpdate = true;
 
-  textureLeft.center.set(0.5, 0.5);
-  textureLeft.rotation = Math.PI / 2;
-  textureLeft.needsUpdate = true;
+  // textureLeft.center.set(0.5, 0.5);
+  // textureLeft.rotation = Math.PI / 2;
+  // textureLeft.needsUpdate = true;
 
-  textureRight.center.set(0.5, 0.5);
-  textureRight.rotation = -Math.PI / 2;
-  textureRight.needsUpdate = true;
+  // textureRight.center.set(0.5, 0.5);
+  // textureRight.rotation = -Math.PI / 2;
+  // textureRight.needsUpdate = true;
 
   const materials = [
-    new THREE.MeshBasicMaterial({ map: textureRight }),
-    new THREE.MeshBasicMaterial({ map: textureLeft }),
-    new THREE.MeshBasicMaterial({ map: textureFront }),
-    new THREE.MeshBasicMaterial({ map: textureBack }),
-    new THREE.MeshBasicMaterial({ map: textureBottom }),
-    new THREE.MeshBasicMaterial({ map: textureTop }),
+    new THREE.MeshBasicMaterial({ map: textureRight }),   // 0
+    new THREE.MeshBasicMaterial({ map: textureLeft }),    // 1
+    new THREE.MeshBasicMaterial({ map: textureTop }),     // 2
+    new THREE.MeshBasicMaterial({ map: textureBottom }),  // 3
+    new THREE.MeshBasicMaterial({ map: textureFront }),   // 4
+    new THREE.MeshBasicMaterial({ map: textureBack }),    // 5
   ];
 
   // Устанавливаем начальный наклон
@@ -88,7 +93,7 @@ const PictoBox = () => {
 const PictoCube1x = forwardRef((props, ref) => {
   return (
     <div ref={ref} className="picto-cube-container">
-      <Canvas style={{ height: '100%', width: '100%' }} camera={{ fov: 75 }} >
+      <Canvas style={{ height: '100%', width: '100%' }} camera={{ fov: 75 }} gl={{ outputEncoding: THREE.sRGBEncoding }} >
         <perspectiveCamera makeDefault position={[0, 0, 2.5]} />
         <ambientLight intensity={0.6} />
         <PictoBox />
