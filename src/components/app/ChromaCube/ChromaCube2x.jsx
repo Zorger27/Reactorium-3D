@@ -29,7 +29,7 @@ const CameraControls = () => {
 const Box = () => {
   const meshRef = useRef(null);
 
-  // Цвета для 6 сторон с прозрачностью - используем MeshBasicMaterial для ярких цветов
+  // Цвета для 6 сторон - используем MeshBasicMaterial для ярких цветов
   const materials = [
     new Three.MeshBasicMaterial({ color: 'red'}),
     new Three.MeshBasicMaterial({ color: 'green'}),
