@@ -1,4 +1,5 @@
 import React from "react";
+import '@/components/app/ChromaCube/ChromaCube2x.scss'
 
 export default function ChromaCube2x() {
 
