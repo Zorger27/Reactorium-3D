@@ -1,9 +1,6 @@
 @use "sass:color";
 
-.chroma-cube-container {
-  height: calc(100vh - 225px); // 100% экрана минус место для header/footer
-  width: 100%;
-
+.inner-container {
   .cube-gap {
     display: inline-flex;
     label {
@@ -16,6 +13,7 @@
       align-items: center;
       padding: 0.5rem 1.5rem;
       gap: 5px;
+      background: linear-gradient(to bottom, rgb(229, 251, 255), rgb(255, 240, 244)) no-repeat center;
       border: 1px solid rgba(0, 0, 0, 0.3);
       border-radius: 15px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
@@ -105,7 +103,8 @@
       }
 
       .scale-value {
-        background: linear-gradient(to bottom, rgb(229, 251, 255), rgb(255, 240, 244)) no-repeat center;
+        //background: linear-gradient(to bottom, rgb(244, 229, 250), rgb(255, 252, 229)) no-repeat center;
+        background: linear-gradient(to bottom, rgb(229, 255, 229), rgb(250, 247, 234)) no-repeat center;
         //margin-left: 0.5rem;
         padding: 0.2rem 0.5rem;
         font-size: 1.4rem;
@@ -117,13 +116,16 @@
     }
   }
 
-  .chroma-cube-canvas {margin-top: 3.2rem;}
+  .chroma-cube-container {
+    height: calc(100vh - 300px); // 100% экрана минус место для header/footer
+    width: 100%;
+
+    .chroma-cube-canvas {margin-top: 3.2rem;}
+  }
 }
 
 @media(max-width: 1020px) {
-  .chroma-cube-container {
-    height: calc(100vh - 218px); // 100% экрана минус место для header/footer
-
+  .inner-container {
     .cube-gap {
       label {
         top: 150px;
@@ -164,14 +166,16 @@
       }
     }
 
-    .chroma-cube-canvas {margin-top: 2.5rem;}
+    .chroma-cube-container {
+      height: calc(100vh - 280px); // 100% экрана минус место для header/footer
+
+      .chroma-cube-canvas {margin-top: 2.5rem;}
+    }
   }
 }
 
 @media (max-width: 768px) {
-  .chroma-cube-container {
-    height: calc(100vh - 206px); // 100% экрана минус место для header/footer
-
+  .inner-container {
     .cube-gap {
       label {
         top: 140px;
@@ -213,6 +217,10 @@
       }
     }
 
-    .chroma-cube-canvas {margin-top: 2.1rem;}
+    .chroma-cube-container {
+      height: calc(100vh - 270px); // 100% экрана минус место для header/footer
+
+      .chroma-cube-canvas {margin-top: 2.1rem;}
+    }
   }
 }

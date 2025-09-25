@@ -128,15 +128,16 @@ const ChromaCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
     setGap((prev) => Math.max(0, parseFloat((prev - 0.01).toFixed(2))));
 
   return (
-    <div ref={ref} className="chroma-cube-container">
+    <div className="inner-container">
+
       {/* input для gap */}
       <div className="cube-gap">
         <label>
           {t('project1.gap')}
           <button className="slider-button minus" onClick={handleDecrease} title={t("project1.decrease")}><i className="fa-solid fa-minus-circle" /></button>
           <input type="range" min="0" max="0.5" step="0.01"
-            value={gap}
-            onChange={(e) => setGap(parseFloat(e.target.value))}
+                 value={gap}
+                 onChange={(e) => setGap(parseFloat(e.target.value))}
           />
           <button className="slider-button plus" onClick={handleIncrease} title={t("project1.increase")}><i className="fa-solid fa-plus-circle" /></button>
           <button className="slider-button reset" onClick={handleReset} title={t("project1.reset")}><i className="fa-solid fa-undo" /></button>
@@ -144,17 +145,19 @@ const ChromaCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
         </label>
       </div>
 
-      <Canvas
-        style={{ height: '88%', width: '100%' }}
-        className="chroma-cube-canvas"
-        camera={{ fov: 75 }}
-        gl={{ antialias: true, toneMapping: THREE.NoToneMapping }}
-      >
-        <perspectiveCamera makeDefault position={[0, 0, 2.5]} />
-        <ambientLight intensity={0.6} />
-        <CubeGroup groupSize={groupSize} gap={gap} />
-        <CameraControls />
-      </Canvas>
+      <div ref={ref} className="chroma-cube-container">
+        <Canvas
+          style={{ height: '100%', width: '100%' }}
+          className="chroma-cube-canvas"
+          camera={{ fov: 75 }}
+          gl={{ antialias: true, toneMapping: THREE.NoToneMapping }}
+        >
+          <perspectiveCamera makeDefault position={[0, 0, 2.5]} />
+          <ambientLight intensity={0.6} />
+          <CubeGroup groupSize={groupSize} gap={gap} />
+          <CameraControls />
+        </Canvas>
+      </div>
     </div>
   )
 });
