@@ -12,18 +12,23 @@ export default defineConfig({
       react(),
       VitePWA({
         registerType: 'autoUpdate',
-        devOptions: {
-          enabled: false
-        },
+        devOptions: { enabled: false },
         workbox: {
-          globPatterns: ['**/*.{js,css,html,ico,png,svg,txt}']
+          // какие файлы собираемся кешировать
+          globPatterns: ['**/*.{js,css,html,ico,png,svg,txt}'],
+
+          // Навигационный fallback (index.html) — но исключаем sitemap/robots
+          navigateFallback: '/index.html',
+          // исключаем из навигационного fallback
+          navigateFallbackDenylist: [
+            /^\/sitemap\.xml$/,
+            /^\/robots\.txt$/
+          ]
         },
         includeAssets: [
           'favicon.png',
           'favicon.ico',
-          'apple-touch-icon.png',
-          'robots.txt',
-          'sitemap.xml'
+          'apple-touch-icon.png'
         ],
         manifest: {
           name: 'Reactorium 3D',
