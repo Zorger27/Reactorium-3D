@@ -22,7 +22,8 @@ export default defineConfig({
           'favicon.png',
           'favicon.ico',
           'apple-touch-icon.png',
-          'robots.txt'
+          'robots.txt',
+          'sitemap.xml'
         ],
         manifest: {
           name: 'Reactorium 3D',
