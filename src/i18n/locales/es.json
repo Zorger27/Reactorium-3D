@@ -36,7 +36,11 @@
     "disc": "Un caleidoscopio giratorio de formas y matices, donde cada cara del cubo revela una nueva paleta",
     "chroma-cube-1x": "1x",
     "chroma-cube-2x": "2x",
-    "chroma-cube-3x": "3x"
+    "chroma-cube-3x": "3x",
+    "gap": "Brecha:",
+    "decrease": "Disminuir",
+    "increase": "Incrementar",
+    "reset": "Restablecer a 0.15"
   },
   "project2": {
     "name": "VortexCube",

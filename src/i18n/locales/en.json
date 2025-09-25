@@ -36,7 +36,11 @@
     "disc": "A rotating kaleidoscope of forms and shades, where every face of the cube unveils a new palette",
     "chroma-cube-1x": "1x",
     "chroma-cube-2x": "2x",
-    "chroma-cube-3x": "3x"
+    "chroma-cube-3x": "3x",
+    "gap": "Gap:",
+    "decrease": "Decrease",
+    "increase": "Increase",
+    "reset": "Reset to 0.15"
   },
   "project2": {
     "name": "VortexCube",

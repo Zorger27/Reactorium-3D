@@ -36,7 +36,11 @@
     "disc": "Обертовий калейдоскоп форм і відтінків, де кожна грань куба відкриває нову палітру",
     "chroma-cube-1x": "1x",
     "chroma-cube-2x": "2x",
-    "chroma-cube-3x": "3x"
+    "chroma-cube-3x": "3x",
+    "gap": "Зазор:",
+    "decrease": "Зменшити",
+    "increase": "Збільшити",
+    "reset": "Скинути до 0.15"
   },
   "project2": {
     "name": "VortexCube",
