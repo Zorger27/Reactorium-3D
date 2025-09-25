@@ -122,17 +122,15 @@ const ChromaCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
 
   // кнопки управления
   const handleReset = () => setGap(0.15);
-
   const handleIncrease = () =>
     setGap((prev) => Math.min(0.5, parseFloat((prev + 0.01).toFixed(2))));
-
   const handleDecrease = () =>
     setGap((prev) => Math.max(0, parseFloat((prev - 0.01).toFixed(2))));
 
   return (
     <div ref={ref} className="chroma-cube-container">
       {/* input для gap */}
-      <div className="cube-scale">
+      <div className="cube-gap">
         <label>
           {t('project1.gap')}
           <button className="slider-button minus" onClick={handleDecrease} title={t("project1.decrease")}><i className="fa-solid fa-minus-circle" /></button>
