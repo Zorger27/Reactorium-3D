@@ -145,7 +145,8 @@ const ChromaCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
       </div>
 
       <Canvas
-        style={{ height: '100%', width: '100%' }}
+        style={{ height: '88%', width: '100%' }}
+        className="chroma-cube-canvas"
         camera={{ fov: 75 }}
         gl={{ antialias: true, toneMapping: THREE.NoToneMapping }}
       >
