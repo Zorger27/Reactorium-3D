@@ -1,5 +1,5 @@
 @use "sass:color";
-// Основные стили для canvas контейнера
+
 .chroma-cube-container {
   height: calc(100vh - 225px); // 100% экрана минус место для header/footer
   width: 100%;
@@ -24,22 +24,26 @@
       color: darkblue;
 
       .slider-button {
-        $color: lightseagreen;
         display: flex;
+        z-index: 2;
         align-items: center;
         justify-content: center;
         background: transparent;
         border: none;
-        color: $color;
         font-size: 1.6rem;
         cursor: pointer;
+      }
+
+      .fa-plus-circle {
+        $color: lightseagreen;
+        color: $color;
         transition: color 0.3s;
 
         &:hover {color: color.adjust($color, $lightness: -15%);}
         &:active {color: color.adjust($color, $lightness: -20%);}
       }
 
-      .minus {
+      .fa-minus-circle {
         $color: deeppink;
         color: $color;
         transition: color 0.3s;
@@ -160,7 +164,6 @@
   }
 }
 
-// Мобильная адаптация
 @media (max-width: 768px) {
   .chroma-cube-container {
     height: calc(100vh - 206px); // 100% экрана минус место для header/footer
