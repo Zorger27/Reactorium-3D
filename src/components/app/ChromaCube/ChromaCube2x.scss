@@ -2,7 +2,6 @@
 
 .inner-container {
   .cube-gap {
-    display: inline-flex;
     label {
       display: inline-flex;
       position: absolute;
@@ -115,13 +114,6 @@
       }
     }
   }
-
-  .chroma-cube-container {
-    height: calc(100vh - 300px); // 100% экрана минус место для header/footer
-    width: 100%;
-
-    .chroma-cube-canvas {margin-top: 3.2rem;}
-  }
 }
 
 @media(max-width: 1020px) {
@@ -164,12 +156,6 @@
           border-radius: 6px;
         }
       }
-    }
-
-    .chroma-cube-container {
-      height: calc(100vh - 280px); // 100% экрана минус место для header/footer
-
-      .chroma-cube-canvas {margin-top: 2.5rem;}
     }
   }
 }
@@ -215,12 +201,6 @@
           border-radius: 6px;
         }
       }
-    }
-
-    .chroma-cube-container {
-      height: calc(100vh - 270px); // 100% экрана минус место для header/footer
-
-      .chroma-cube-canvas {margin-top: 2.1rem;}
     }
   }
 }

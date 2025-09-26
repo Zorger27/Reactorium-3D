@@ -1,5 +1,6 @@
 import React, {forwardRef, useEffect, useMemo, useRef, useState} from "react";
 import '@/components/app/ChromaCube/ChromaCube2x.scss'
+import { useResponsiveStyle } from "@/hooks/useResponsiveStyle";
 import { useTranslation } from 'react-i18next';
 import { Canvas, useFrame, useThree, extend } from '@react-three/fiber';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
@@ -117,6 +118,28 @@ const CubeGroup = ({ groupSize, gap }) => {
 };
 
 const ChromaCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
+  // responsive inline-стили
+  const canvasStyle = useResponsiveStyle({
+    default: {
+      height: 'calc(100vh - 225px)',
+      width: '100%',
+      marginTop: '0rem',
+      marginLeft: '0rem',
+    },
+    "1020": {
+      height: 'calc(100vh - 218px)',
+      width: '100%',
+      marginTop: '0rem',
+      marginLeft: '0rem',
+    },
+    "768": {
+      height: 'calc(100vh - 206px)',
+      width: '100%',
+      marginTop: '0rem',
+      marginLeft: '0rem',
+    }
+  });
+
   const { t } = useTranslation();
   const [gap, setGap] = useState(0.15);
 
@@ -147,7 +170,8 @@ const ChromaCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
 
       <div ref={ref} className="chroma-cube-container">
         <Canvas
-          style={{ height: '100%', width: '100%' }}
+          // style={{ height: '100%', width: '100%' }}
+          style={canvasStyle} // responsive inline-стили
           className="chroma-cube-canvas"
           camera={{ fov: 75 }}
           gl={{ antialias: true, toneMapping: THREE.NoToneMapping }}

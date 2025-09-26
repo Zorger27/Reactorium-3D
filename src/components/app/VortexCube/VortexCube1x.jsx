@@ -1,5 +1,6 @@
 import React, { forwardRef, useEffect, useMemo, useRef } from "react";
 import "@/components/app/VortexCube/VortexCube1x.scss"
+import { useResponsiveStyle } from "@/hooks/useResponsiveStyle";
 import { Canvas, useFrame, useThree, extend, useLoader } from '@react-three/fiber';
 import * as THREE from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
@@ -13,6 +14,8 @@ import topImg from "@/assets/app/VortexCube/cube1/cube1-12.webp";
 
 // Подключаем OrbitControls
 extend({ OrbitControls });
+
+const degreesToRadians = (degrees) => degrees * (Math.PI / 180); // Перевод градусов в радианы
 
 // Компонент управления камерой
 const CameraControls = () => {
@@ -45,8 +48,6 @@ const TextureBox = () => {
     String(bottomImg),  // 4
     String(topImg)      // 5
   ]);
-
-  const degreesToRadians = (degrees) => degrees * (Math.PI / 180); // Перевод градусов в радианы
 
   // Мемоизируем материалы с правильной ориентацией текстур
   const materials = useMemo(() => {
@@ -98,10 +99,33 @@ const TextureBox = () => {
 };
 
 const VortexCube1x = forwardRef((props, ref) => {
+  // responsive inline-стили
+  const canvasStyle = useResponsiveStyle({
+    default: {
+      height: 'calc(100vh - 225px)',
+      width: '100%',
+      marginTop: '0rem',
+      marginLeft: '0rem',
+    },
+    "1020": {
+      height: 'calc(100vh - 218px)',
+      width: '100%',
+      marginTop: '0rem',
+      marginLeft: '0rem',
+    },
+    "768": {
+      height: 'calc(100vh - 206px)',
+      width: '100%',
+      marginTop: '0rem',
+      marginLeft: '0rem',
+    }
+  });
+
   return (
     <div ref={ref} className="vortex-cube-container">
       <Canvas
-        style={{ height: '100%', width: '100%' }}
+        // style={{ height: '100%', width: '100%' }}
+        style={canvasStyle} // responsive inline-стили
         camera={{ fov: 75 }}
         gl={{
           antialias: true,
