@@ -1,13 +1,13 @@
 // Основные стили для canvas контейнера
 .chroma-cube-container {
   //height: 628px;
-  height: calc(100vh - 225px); // 100% экрана минус место для header/footer
-  width: 100%;
+  //height: calc(100vh - 225px); // 100% экрана минус место для header/footer
+  //width: 100%;
 }
 
 @media(max-width: 1020px) {
   .chroma-cube-container {
-    height: calc(100vh - 218px); // 100% экрана минус место для header/footer
+    //height: calc(100vh - 218px); // 100% экрана минус место для header/footer
   }
 }
 
@@ -18,6 +18,6 @@
     //min-height: 300px; // Минимальная высота
     //max-height: 440px; // Максимальная высота
 
-    height: calc(100vh - 206px); // 100% экрана минус место для header/footer
+    //height: calc(100vh - 206px); // 100% экрана минус место для header/footer
   }
 }

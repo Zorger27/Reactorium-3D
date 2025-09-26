@@ -1,13 +1,15 @@
 import React, {forwardRef, useEffect, useRef} from "react";
 import '@/components/app/ChromaCube/ChromaCube1x.scss'
-import {BoxGeometry, EdgesGeometry, MeshBasicMaterial, Euler} from 'three';
-// import { GridHelper, EdgesGeometry, BoxGeometry, MeshStandardMaterial } from 'three';
+import { useResponsiveStyle } from "@/hooks/useResponsiveStyle";
 import { Canvas, useFrame, useThree, extend } from '@react-three/fiber';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import * as THREE from "three";
 
 // Подключаем OrbitControls
 extend({ OrbitControls });
+
+// Функция для перевода градусов в радианы
+const degreesToRadians = (degrees) => degrees * (Math.PI / 180);
 
 // Компонент управления камерой
 const CameraControls = () => {
@@ -33,21 +35,18 @@ const Box = () => {
 
   // Цвета для 6 сторон с прозрачностью - используем MeshBasicMaterial для ярких цветов
   const materials = [
-    new MeshBasicMaterial({ color: 'red', transparent: true, opacity: 0.7 }),
-    new MeshBasicMaterial({ color: 'green', transparent: true, opacity: 0.7 }),
-    new MeshBasicMaterial({ color: 'blue', transparent: true, opacity: 0.7 }),
-    new MeshBasicMaterial({ color: 'yellow', transparent: true, opacity: 0.7 }),
-    new MeshBasicMaterial({ color: 'purple', transparent: true, opacity: 0.7 }),
-    new MeshBasicMaterial({ color: 'cyan', transparent: true, opacity: 0.7 }),
+    new THREE.MeshBasicMaterial({ color: 'red', transparent: true, opacity: 0.7 }),
+    new THREE.MeshBasicMaterial({ color: 'green', transparent: true, opacity: 0.7 }),
+    new THREE.MeshBasicMaterial({ color: 'blue', transparent: true, opacity: 0.7 }),
+    new THREE.MeshBasicMaterial({ color: 'yellow', transparent: true, opacity: 0.7 }),
+    new THREE.MeshBasicMaterial({ color: 'purple', transparent: true, opacity: 0.7 }),
+    new THREE.MeshBasicMaterial({ color: 'cyan', transparent: true, opacity: 0.7 }),
   ];
 
-  // Устанавливаем начальный наклон
-  const degreesToRadians = (degrees) => degrees * (Math.PI / 180);
-
+  // Устанавливаем начальный наклон куба
   useEffect(() => {
     if (meshRef.current) {
-
-      const euler = new Euler(
+      const euler = new THREE.Euler(
         degreesToRadians(90),   // 90 градусов по X
         degreesToRadians(20),   // 20 градусов по Y
         0                            // 0° поворот по Z
@@ -57,44 +56,46 @@ const Box = () => {
     }
   }, []);
 
-  //  // Крутим именно куб! Другой вариант: камера вращается вокруг наклонённого куба (через OrbitControls)!
-  // useFrame(() => {
-  //   if (meshRef.current) {
-  //     meshRef.current.rotation.x += 0.003;
-  //     meshRef.current.rotation.y += 0.005;
-  //   }
-  //   if (edgesRef.current) {
-  //     edgesRef.current.rotation.copy(meshRef.current.rotation);
-  //   }
-  // });
-
   return (
     <group ref={meshRef}>
-      <mesh geometry={new BoxGeometry(2.5, 2.5, 2.5)} material={materials} />
-      <lineSegments geometry={new EdgesGeometry(new BoxGeometry(2.5,2.5,2.5))}>
+      <mesh geometry={new THREE.BoxGeometry(2.5, 2.5, 2.5)} material={materials} />
+      {/* Белые линии по рёбрам куба */}
+      <lineSegments geometry={new THREE.EdgesGeometry(new THREE.BoxGeometry(2.5,2.5,2.5))}>
         <lineBasicMaterial color="white" transparent opacity={0.8} depthTest={false} />
       </lineSegments>
     </group>
   );
 };
 
-// // Сетка для сцены
-// const Grid = () => {
-//   const { scene } = useThree();
-//   React.useEffect(() => {
-//     const grid = new GridHelper(10, 10, 0xffffff, 0x444444);
-//     scene.add(grid);
-//     return () => { scene.remove(grid); };
-//   }, [scene]);
-//   return null;
-// };
-
 const ChromaCube1x = forwardRef((props, ref) => {
+  // responsive inline-стили
+  const canvasStyle = useResponsiveStyle({
+    default: {
+      height: 'calc(100vh - 225px)',
+      width: '100%',
+      marginTop: '0rem',
+      marginLeft: '0rem',
+    },
+    "1020": {
+      height: 'calc(100vh - 218px)',
+      width: '100%',
+      marginTop: '0rem',
+      marginLeft: '0rem',
+    },
+    "768": {
+      height: 'calc(100vh - 206px)',
+      width: '100%',
+      marginTop: '0rem',
+      marginLeft: '0rem',
+    }
+  });
+
   return (
     <div ref={ref} className="chroma-cube-container">
       {/* 3D сцена */}
       <Canvas
-        style={{ height: '100%', width: '100%' }}
+        // style={{ height: '100%', width: '100%' }}
+        style={canvasStyle} // responsive inline-стили
         camera={{ fov: 75 }}
         gl={{
           antialias: true,
