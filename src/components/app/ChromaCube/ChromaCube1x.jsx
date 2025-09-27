@@ -94,7 +94,6 @@ const ChromaCube1x = forwardRef((props, ref) => {
     <div ref={ref} className="chroma-cube-container">
       {/* 3D сцена */}
       <Canvas
-        // style={{ height: '100%', width: '100%' }}
         style={canvasStyle} // responsive inline-стили
         camera={{ fov: 75 }}
         gl={{
@@ -105,7 +104,6 @@ const ChromaCube1x = forwardRef((props, ref) => {
         <perspectiveCamera makeDefault position={[0, 0, 2.5]} />
         <ambientLight intensity={0.6} />
         <Box />
-        {/*<Grid />*/}
         <CameraControls />
       </Canvas>
     </div>

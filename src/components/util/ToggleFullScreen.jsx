@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import "./ToggleFullScreen.scss";
+import "@/components/util/ToggleFullScreen.scss";
 
 export default function ToggleFullScreen({ className = "", style }) {
   const { t } = useTranslation();

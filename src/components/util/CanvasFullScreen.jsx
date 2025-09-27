@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback } from 'react';
-import './CanvasFullScreen.scss';
+import '@/components/util/CanvasFullScreen.scss';
 import { useTranslation } from 'react-i18next';
 
 const CanvasFullScreen = ({ canvasContainer }) => {
