@@ -32,18 +32,24 @@ export function useResponsiveStyle(stylesByBreakpoint) {
           isPageFullscreen: false,
           isCanvasFullscreen: false
         });
+        // Убираем класс для body
+        document.body.classList.remove('page-fullscreen');
       } else if (fullscreenElement === document.documentElement) {
         // Вся страница в fullscreen (ToggleFullScreen)
         setFullscreenState({
           isPageFullscreen: true,
           isCanvasFullscreen: false
         });
+        // Добавляем класс для body чтобы сбросить все отступы
+        document.body.classList.add('page-fullscreen');
       } else {
         // Отдельный элемент в fullscreen (CanvasFullScreen)
         setFullscreenState({
           isPageFullscreen: false,
           isCanvasFullscreen: true
         });
+        // Убираем класс для body
+        document.body.classList.remove('page-fullscreen');
       }
     };
 
@@ -62,6 +68,8 @@ export function useResponsiveStyle(stylesByBreakpoint) {
       document.removeEventListener("webkitfullscreenchange", handleFullscreenChange);
       document.removeEventListener("mozfullscreenchange", handleFullscreenChange);
       document.removeEventListener("MSFullscreenChange", handleFullscreenChange);
+      // Убираем класс при размонтировании компонента
+      document.body.classList.remove('page-fullscreen');
     };
   }, []);
 
@@ -70,13 +78,16 @@ export function useResponsiveStyle(stylesByBreakpoint) {
     return {
       height: "100vh",
       width: "100%",
-      margin: "0",
+      marginTop: "0",
+      marginLeft: "0",
+      marginRight: "0",
+      marginBottom: "0"
     };
   }
 
-  // === Если вся страница в fullscreen (ToggleFullScreen) → используем обычные стили но с 100vh ===
+  // === Если вся страница в fullscreen (ToggleFullScreen) → используем те же calc() что и обычно ===
   if (fullscreenState.isPageFullscreen) {
-    // Получаем текущие стили для экрана, но заменяем высоту на 100vh
+    // Получаем текущие стили для экрана
     let currentStyle = stylesByBreakpoint.default || {};
 
     if (windowWidth <= 768 && stylesByBreakpoint["768"]) {
@@ -85,12 +96,8 @@ export function useResponsiveStyle(stylesByBreakpoint) {
       currentStyle = { ...currentStyle, ...stylesByBreakpoint["1020"] };
     }
 
-    // Возвращаем те же стили, но с height: 100vh
-    return {
-      ...currentStyle,
-      height: "100vh",
-      margin: "0"
-    };
+    // Возвращаем те же стили, что и в обычном режиме
+    return currentStyle;
   }
 
   // === Обычные брейкпоинты ===
