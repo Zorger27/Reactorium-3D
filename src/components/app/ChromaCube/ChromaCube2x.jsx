@@ -151,7 +151,7 @@ const ChromaCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
     setGap((prev) => Math.max(0, parseFloat((prev - 0.01).toFixed(2))));
 
   return (
-    <div className="inner-container">
+    <div className="cube2x-inner-container">
 
       {/* input для gap */}
       <div className="cube-gap">

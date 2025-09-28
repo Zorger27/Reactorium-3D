@@ -152,7 +152,7 @@ const ChromaCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
     setGap((prev) => Math.max(0, parseFloat((prev - 0.01).toFixed(2))));
 
   return (
-    <div className="inner-container">
+    <div className="cube3x-inner-container">
 
       {/* input для gap */}
       <div className="cube-gap">
@@ -187,6 +187,6 @@ const ChromaCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
   )
 });
 
-ChromaCube3x.displayName = 'ChromaCube2x';
+ChromaCube3x.displayName = 'ChromaCube3x';
 
 export default ChromaCube3x;
