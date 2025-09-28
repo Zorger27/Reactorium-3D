@@ -143,6 +143,8 @@ const ChromaCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
 
   const { t } = useTranslation();
   const [gap, setGap] = useState(0.15);
+  const [isOpen, setIsOpen] = useState(false);
+  const gapRef = useRef(null);
 
   // кнопки управления
   const handleReset = () => setGap(0.15);
@@ -151,22 +153,42 @@ const ChromaCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
   const handleDecrease = () =>
     setGap((prev) => Math.max(0, parseFloat((prev - 0.01).toFixed(2))));
 
+  // закрытие при клике вне блока
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (gapRef.current && !gapRef.current.contains(e.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <div className="cube3x-inner-container">
 
       {/* input для gap */}
-      <div className="cube-gap">
+      <div className="cube-gap" ref={gapRef}>
         <label>
-          {t('project1.gap')}
-          <div className="slider-wrapper">
-            <button className="slider-button minus" onClick={handleDecrease} title={t("project1.decrease")}><i className="fa-solid fa-minus-circle"/></button>
-            <input type="range" min="0" max="0.5" step="0.01" value={gap} onChange={(e) => setGap(parseFloat(e.target.value))}/>
-            <button className="slider-button plus" onClick={handleIncrease} title={t("project1.increase")}><i className="fa-solid fa-plus-circle"/></button>
-          </div>
-          <div className="reset-wrapper">
-            <button className="slider-button reset" onClick={handleReset} title={t("project1.reset")}><i className="fa-solid fa-undo"/></button>
-            <div className="scale-value">{gap.toFixed(2)}x</div>
-          </div>
+          {/* заголовок, который открывает/закрывает блок */}
+          <div className={`gap-label ${isOpen ? "open" : "closed"}`} onClick={() => setIsOpen((prev) => !prev)}>{t("project1.gap")}</div>
+
+          {/* скрываем/показываем блок */}
+          {isOpen && (
+            <div className="gap-controls">
+              <div className="slider-wrapper">
+                <button className="slider-button minus" onClick={handleDecrease} title={t("project1.decrease")}><i className="fa-solid fa-minus-circle"/></button>
+                <input type="range" min="0" max="0.5" step="0.01" value={gap} onChange={(e) => setGap(parseFloat(e.target.value))}/>
+                <button className="slider-button plus" onClick={handleIncrease} title={t("project1.increase")}><i className="fa-solid fa-plus-circle"/></button>
+              </div>
+              <div className="reset-wrapper">
+                <button className="slider-button reset" onClick={handleReset} title={t("project1.reset")}><i className="fa-solid fa-undo"/></button>
+                <div className="scale-value">{gap.toFixed(2)}x</div>
+              </div>
+            </div>
+          )}
         </label>
       </div>
 
