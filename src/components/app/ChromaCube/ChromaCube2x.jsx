@@ -156,7 +156,7 @@ const ChromaCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
       {/* input для gap */}
       <div className="cube-gap">
         <label>
-          {t('project1.gap')}
+          {t('project1.gap')}:
           <button className="slider-button minus" onClick={handleDecrease} title={t("project1.decrease")}><i className="fa-solid fa-minus-circle" /></button>
           <input type="range" min="0" max="0.5" step="0.01"
                  value={gap}
