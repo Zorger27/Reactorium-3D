@@ -3,114 +3,126 @@
 .inner-container {
   .cube-gap {
     label {
-      display: inline-flex;
+      display: flex;
+      flex-direction: column;
       position: absolute;
-      top: 160px;
-      transform: translateX(-50%);
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
       z-index: 10;
       justify-content: center;
       align-items: center;
-      padding: 0.5rem 1.5rem;
-      gap: 5px;
-      background: linear-gradient(to bottom, rgb(229, 251, 255), rgb(255, 240, 244)) no-repeat center;
+      padding: 0.5rem 1rem;
+      background: linear-gradient(to bottom, rgb(229, 255, 229), rgb(251, 244, 213)) no-repeat center;
       border: 1px solid rgba(0, 0, 0, 0.3);
-      border-radius: 15px;
+      border-radius: 10px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
       font-size: 1.8rem;
       font-weight: bold;
       color: darkblue;
 
-      .slider-button {
+      .slider-wrapper {
         display: flex;
-        z-index: 2;
         align-items: center;
-        justify-content: center;
-        background: transparent;
-        border: none;
-        font-size: 1.6rem;
-        cursor: pointer;
-      }
+        gap: 5px;
 
-      .fa-plus-circle {
-        $color: lightseagreen;
-        color: $color;
-        transition: color 0.3s;
-
-        &:hover {color: color.adjust($color, $lightness: -15%);}
-        &:active {color: color.adjust($color, $lightness: -20%);}
-      }
-
-      .fa-minus-circle {
-        $color: deeppink;
-        color: $color;
-        transition: color 0.3s;
-
-        &:hover {color: color.adjust($color, $lightness: -15%);}
-        &:active {color: color.adjust($color, $lightness: -20%);}
-      }
-
-      .reset {
-        $hover-color: red;
-        color: blue;
-        margin: 0 0.2rem;
-        transition: color 0.3s, text-shadow 0.3s;
-
-        &:hover {color: $hover-color; text-shadow: 2px 2px 4px black;}
-        &:active {color: color.adjust($hover-color, $lightness: -10%); text-shadow: 2px 2px 4px black;}
-      }
-
-      input[type="range"] {
-        width: 200px;
-        height: 6px;
-        -webkit-appearance: none; // убираем стандартный стиль
-        background: transparent; // чтобы фон не мешал
-        cursor: pointer;
-
-        // трек (полоска)
-        &::-webkit-slider-runnable-track {
-          height: 6px;
-          background: linear-gradient(to right, #4caf50, #2196f3); // зелёно-синяя
-          border-radius: 3px;
-        }
-
-        &::-moz-range-track {
-          height: 6px;
-          background: linear-gradient(to right, #4caf50, #2196f3);
-          border-radius: 3px;
-        }
-
-        // бегунок (кружок)
-        &::-webkit-slider-thumb {
-          -webkit-appearance: none;
-          width: 16px;
-          height: 16px;
-          background: #fff;
-          border: 2px solid #4caf50;
-          border-radius: 50%;
-          cursor: pointer;
-          margin-top: -5px; // центрируем по полоске
-        }
-
-        &::-moz-range-thumb {
-          width: 16px;
-          height: 16px;
-          background: #fff;
-          border: 2px solid #4caf50;
-          border-radius: 50%;
+        .slider-button {
+          display: flex;
+          flex-direction: column;
+          z-index: 2;
+          align-items: center;
+          justify-content: center;
+          background: transparent;
+          border: none;
+          font-size: 1.6rem;
           cursor: pointer;
         }
+
+        .fa-minus-circle {
+          $color: deeppink;
+          color: $color;
+          transition: color 0.3s;
+
+          &:hover {color: color.adjust($color, $lightness: -15%);}
+          &:active {color: color.adjust($color, $lightness: -20%);}
+        }
+
+        input[type="range"] {
+          width: 120px;
+          height: 6px;
+          -webkit-appearance: none; // убираем стандартный стиль
+          background: transparent; // чтобы фон не мешал
+          cursor: pointer;
+
+          // трек (полоска)
+          &::-webkit-slider-runnable-track {
+            height: 6px;
+            background: linear-gradient(to right, #4caf50, #2196f3); // зелёно-синяя
+            border-radius: 3px;
+          }
+
+          &::-moz-range-track {
+            height: 6px;
+            background: linear-gradient(to right, #4caf50, #2196f3);
+            border-radius: 3px;
+          }
+
+          // бегунок (кружок)
+          &::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #fff;
+            border: 2px solid #4caf50;
+            border-radius: 50%;
+            cursor: pointer;
+            margin-top: -5px; // центрируем по полоске
+          }
+
+          &::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: #fff;
+            border: 2px solid #4caf50;
+            border-radius: 50%;
+            cursor: pointer;
+          }
+        }
+
+        .fa-plus-circle {
+          $color: lightseagreen;
+          color: $color;
+          transition: color 0.3s;
+
+          &:hover {color: color.adjust($color, $lightness: -15%);}
+          &:active {color: color.adjust($color, $lightness: -20%);}
+        }
       }
 
-      .scale-value {
-        //background: linear-gradient(to bottom, rgb(244, 229, 250), rgb(255, 252, 229)) no-repeat center;
-        background: linear-gradient(to bottom, rgb(229, 255, 229), rgb(250, 247, 234)) no-repeat center;
-        //margin-left: 0.5rem;
-        padding: 0.2rem 0.5rem;
-        font-size: 1.4rem;
-        font-weight: bold;
-        color: darkblue;
-        border: 1px solid rgba(0, 0, 0, 0.3);
-        border-radius: 8px;
+      .reset-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+
+        .reset {
+          $hover-color: red;
+          color: blue;
+          margin: 0 0.2rem;
+          transition: color 0.3s, text-shadow 0.3s;
+
+          &:hover {color: $hover-color; text-shadow: 2px 2px 4px black;}
+          &:active {color: color.adjust($hover-color, $lightness: -10%); text-shadow: 2px 2px 4px black;}
+        }
+
+        .scale-value {
+          background: linear-gradient(to bottom, rgb(229, 255, 229), rgb(250, 247, 234)) no-repeat center;
+          padding: 0.2rem 0.5rem;
+          font-size: 1.4rem;
+          font-weight: bold;
+          color: darkblue;
+          border: 1px solid rgba(0, 0, 0, 0.3);
+          border-radius: 8px;
+        }
       }
     }
   }
@@ -120,40 +132,63 @@
   .inner-container {
     .cube-gap {
       label {
-        top: 150px;
-        transform: translateX(-50%);
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
         z-index: 10;
-        padding: 0.4rem 1.2rem;
+        //opacity: 80%;
+        padding: 0.4rem 0.8rem;
         gap: 4px;
-        border-radius: 13px;
+        border-radius: 8px;
         font-size: 1.6rem;
 
-        .slider-button {font-size: 1.4rem;}
+        .slider-wrapper {
+          gap: 4px;
 
-        .reset {margin: 0 0.2rem;}
+          .slider-button {font-size: 1.4rem;}
 
-        input[type="range"] {
-          width: 150px;
-          height: 5px;
+          input[type="range"] {
+            width: 90px;
+            height: 5px;
 
-          &::-webkit-slider-thumb {
-            width: 14px;
-            height: 14px;
-            margin-top: -4.5px;
-          }
+            // трек (полоска)
+            &::-webkit-slider-runnable-track {
+              height: 5px;
+              border-radius: 3px;
+            }
 
-          &::-moz-range-thumb {
-            width: 14px;
-            height: 14px;
+            &::-moz-range-track {
+              height: 5px;
+              border-radius: 3px;
+            }
+
+            // бегунок (кружок)
+            &::-webkit-slider-thumb {
+              width: 14px;
+              height: 14px;
+              border: 2px solid #4caf50;
+              margin-top: -5px; // центрируем по полоске
+            }
+
+            &::-moz-range-thumb {
+              width: 16px;
+              height: 16px;
+              border: 2px solid #4caf50;
+            }
           }
         }
 
-        .scale-value {
-          margin-left: 0.3rem;
-          padding: 0.2rem 0.5rem;
-          font-size: 1.2rem;
-          font-weight: bold;
-          border-radius: 6px;
+        .reset-wrapper {
+          gap: 4px;
+
+          .reset {margin: 0 0.2rem;}
+
+          .scale-value {
+            padding: 0.2rem 0.4rem;
+            font-size: 1.4rem;
+            font-weight: bold;
+            border-radius: 6px;
+          }
         }
       }
     }
@@ -164,41 +199,53 @@
   .inner-container {
     .cube-gap {
       label {
-        top: 140px;
-        transform: translateX(-50%);
+        left: 0.5rem;
+        top: 50%;
+        transform: translateY(-50%);
         z-index: 10;
-        padding: 0.4rem 0.6rem;
-        border-radius: 10px;
-        gap: 4px;
-        font-size: 1.3rem;
+        background: none;
+        box-shadow: none;
+        border: none;
         font-weight: normal;
+        color: black;
+        padding: 0;
+        gap: 3px;
+        font-size: 1.4rem;
 
-        .slider-button {font-size: 1.3rem;}
+        .slider-wrapper {
+          gap: 10px;
 
-        .reset {margin: 0 0.3rem;}
-
-        input[type="range"] {
-          width: 120px;
-          height: 4px;
-
-          //&::-webkit-slider-thumb {
-          //  width: 12px;
-          //  height: 12px;
-          //  margin-top: -4px;
-          //}
-          //
-          //&::-moz-range-thumb {
-          //  width: 12px;
-          //  height: 12px;
-          //}
+          .slider-button {
+            font-size: 1.8rem;
+            text-shadow: 0 3px 3px rgba(0, 0, 0, 0.9);
+          }
+          input {display: none;}
         }
 
-        .scale-value {
-          margin-left: 0.3rem;
-          padding: 0.2rem 0.2rem;
-          font-size: 0.9rem;
-          font-weight: normal;
-          border-radius: 6px;
+        .reset-wrapper {
+          display: flex;
+          flex-direction: column;
+          margin-top: 0.5rem;
+          gap: 7px;
+
+          .reset {
+            font-size: 1.6rem;
+            margin: 0;
+          }
+
+          .scale-value {
+            padding: 0.2rem 0.4rem;
+            font-size: 1.2rem;
+            font-weight: normal;
+            color: black;
+            //background: white;
+            background-image: url("@/assets/background/background08.webp");
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            border: 1px solid rgba(0, 0, 0, 1.0);
+            border-radius: 4px;
+          }
         }
       }
     }

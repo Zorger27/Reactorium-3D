@@ -158,14 +158,15 @@ const ChromaCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
       <div className="cube-gap">
         <label>
           {t('project1.gap')}
-          <button className="slider-button minus" onClick={handleDecrease} title={t("project1.decrease")}><i className="fa-solid fa-minus-circle" /></button>
-          <input type="range" min="0" max="0.5" step="0.01"
-                 value={gap}
-                 onChange={(e) => setGap(parseFloat(e.target.value))}
-          />
-          <button className="slider-button plus" onClick={handleIncrease} title={t("project1.increase")}><i className="fa-solid fa-plus-circle" /></button>
-          <button className="slider-button reset" onClick={handleReset} title={t("project1.reset")}><i className="fa-solid fa-undo" /></button>
-          <div className="scale-value">{gap.toFixed(2)}x</div>
+          <div className="slider-wrapper">
+            <button className="slider-button minus" onClick={handleDecrease} title={t("project1.decrease")}><i className="fa-solid fa-minus-circle"/></button>
+            <input type="range" min="0" max="0.5" step="0.01" value={gap} onChange={(e) => setGap(parseFloat(e.target.value))}/>
+            <button className="slider-button plus" onClick={handleIncrease} title={t("project1.increase")}><i className="fa-solid fa-plus-circle"/></button>
+          </div>
+          <div className="reset-wrapper">
+            <button className="slider-button reset" onClick={handleReset} title={t("project1.reset")}><i className="fa-solid fa-undo"/></button>
+            <div className="scale-value">{gap.toFixed(2)}x</div>
+          </div>
         </label>
       </div>
 
