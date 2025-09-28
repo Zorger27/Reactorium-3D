@@ -1,18 +1,206 @@
-// Основные стили для canvas контейнера
-.chroma-cube-container {
-  height: calc(100vh - 225px); // 100% экрана минус место для header/footer
-  width: 100%;
-}
+@use "sass:color";
 
-@media(max-width: 1020px) {
-  .chroma-cube-container {
-    height: calc(100vh - 218px); // 100% экрана минус место для header/footer
+.inner-container {
+  .cube-gap {
+    label {
+      display: inline-flex;
+      position: absolute;
+      top: 160px;
+      transform: translateX(-50%);
+      z-index: 10;
+      justify-content: center;
+      align-items: center;
+      padding: 0.5rem 1.5rem;
+      gap: 5px;
+      background: linear-gradient(to bottom, rgb(229, 251, 255), rgb(255, 240, 244)) no-repeat center;
+      border: 1px solid rgba(0, 0, 0, 0.3);
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: darkblue;
+
+      .slider-button {
+        display: flex;
+        z-index: 2;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        border: none;
+        font-size: 1.6rem;
+        cursor: pointer;
+      }
+
+      .fa-plus-circle {
+        $color: lightseagreen;
+        color: $color;
+        transition: color 0.3s;
+
+        &:hover {color: color.adjust($color, $lightness: -15%);}
+        &:active {color: color.adjust($color, $lightness: -20%);}
+      }
+
+      .fa-minus-circle {
+        $color: deeppink;
+        color: $color;
+        transition: color 0.3s;
+
+        &:hover {color: color.adjust($color, $lightness: -15%);}
+        &:active {color: color.adjust($color, $lightness: -20%);}
+      }
+
+      .reset {
+        $hover-color: red;
+        color: blue;
+        margin: 0 0.2rem;
+        transition: color 0.3s, text-shadow 0.3s;
+
+        &:hover {color: $hover-color; text-shadow: 2px 2px 4px black;}
+        &:active {color: color.adjust($hover-color, $lightness: -10%); text-shadow: 2px 2px 4px black;}
+      }
+
+      input[type="range"] {
+        width: 200px;
+        height: 6px;
+        -webkit-appearance: none; // убираем стандартный стиль
+        background: transparent; // чтобы фон не мешал
+        cursor: pointer;
+
+        // трек (полоска)
+        &::-webkit-slider-runnable-track {
+          height: 6px;
+          background: linear-gradient(to right, #4caf50, #2196f3); // зелёно-синяя
+          border-radius: 3px;
+        }
+
+        &::-moz-range-track {
+          height: 6px;
+          background: linear-gradient(to right, #4caf50, #2196f3);
+          border-radius: 3px;
+        }
+
+        // бегунок (кружок)
+        &::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          width: 16px;
+          height: 16px;
+          background: #fff;
+          border: 2px solid #4caf50;
+          border-radius: 50%;
+          cursor: pointer;
+          margin-top: -5px; // центрируем по полоске
+        }
+
+        &::-moz-range-thumb {
+          width: 16px;
+          height: 16px;
+          background: #fff;
+          border: 2px solid #4caf50;
+          border-radius: 50%;
+          cursor: pointer;
+        }
+      }
+
+      .scale-value {
+        //background: linear-gradient(to bottom, rgb(244, 229, 250), rgb(255, 252, 229)) no-repeat center;
+        background: linear-gradient(to bottom, rgb(229, 255, 229), rgb(250, 247, 234)) no-repeat center;
+        //margin-left: 0.5rem;
+        padding: 0.2rem 0.5rem;
+        font-size: 1.4rem;
+        font-weight: bold;
+        color: darkblue;
+        border: 1px solid rgba(0, 0, 0, 0.3);
+        border-radius: 8px;
+      }
+    }
   }
 }
 
-// Мобильная адаптация
+@media(max-width: 1020px) {
+  .inner-container {
+    .cube-gap {
+      label {
+        top: 150px;
+        transform: translateX(-50%);
+        z-index: 10;
+        padding: 0.4rem 1.2rem;
+        gap: 4px;
+        border-radius: 13px;
+        font-size: 1.6rem;
+
+        .slider-button {font-size: 1.4rem;}
+
+        .reset {margin: 0 0.2rem;}
+
+        input[type="range"] {
+          width: 150px;
+          height: 5px;
+
+          &::-webkit-slider-thumb {
+            width: 14px;
+            height: 14px;
+            margin-top: -4.5px;
+          }
+
+          &::-moz-range-thumb {
+            width: 14px;
+            height: 14px;
+          }
+        }
+
+        .scale-value {
+          margin-left: 0.3rem;
+          padding: 0.2rem 0.5rem;
+          font-size: 1.2rem;
+          font-weight: bold;
+          border-radius: 6px;
+        }
+      }
+    }
+  }
+}
+
 @media (max-width: 768px) {
-  .chroma-cube-container {
-    height: calc(100vh - 206px); // 100% экрана минус место для header/footer
+  .inner-container {
+    .cube-gap {
+      label {
+        top: 140px;
+        transform: translateX(-50%);
+        z-index: 10;
+        padding: 0.4rem 0.6rem;
+        border-radius: 10px;
+        gap: 4px;
+        font-size: 1.3rem;
+        font-weight: normal;
+
+        .slider-button {font-size: 1.3rem;}
+
+        .reset {margin: 0 0.3rem;}
+
+        input[type="range"] {
+          width: 120px;
+          height: 4px;
+
+          //&::-webkit-slider-thumb {
+          //  width: 12px;
+          //  height: 12px;
+          //  margin-top: -4px;
+          //}
+          //
+          //&::-moz-range-thumb {
+          //  width: 12px;
+          //  height: 12px;
+          //}
+        }
+
+        .scale-value {
+          margin-left: 0.3rem;
+          padding: 0.2rem 0.2rem;
+          font-size: 0.9rem;
+          font-weight: normal;
+          border-radius: 6px;
+        }
+      }
+    }
   }
 }
