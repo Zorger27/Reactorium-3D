@@ -34,7 +34,7 @@ const CubeGroup = ({ groupSize, gap }) => {
   const groupRef = useRef(null);
 
   // размер маленького кубика
-  const cubeSize = groupSize / 2;
+  const cubeSize = groupSize / 3;
   const geometry = useMemo(
     () => new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize),
     [cubeSize]
@@ -77,13 +77,13 @@ const CubeGroup = ({ groupSize, gap }) => {
       const j = Math.floor(Math.random() * (i + 1));
       [palette[i], palette[j]] = [palette[j], palette[i]];
     }
-    return palette.slice(0, 8);
+    return palette.slice(0, 27);
   }, []);
 
   // === Позиции для 2×2×2 ===
   const positions = useMemo(() => {
-    const half = cubeSize / 2;
-    const coords = [-(half + gap / 2), half + gap / 2];
+    const half = cubeSize + gap;
+    const coords = [-half, 0, half];
     const result = [];
     for (let x of coords) {
       for (let y of coords) {
