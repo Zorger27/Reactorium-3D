@@ -29,7 +29,7 @@ const CameraControls = () => {
   );
 };
 
-// === Группа из 8 кубиков ===
+// === Группа из 27 кубиков ===
 const CubeGroup = ({ groupSize, gap }) => {
   const groupRef = useRef(null);
 
@@ -80,10 +80,10 @@ const CubeGroup = ({ groupSize, gap }) => {
     return palette.slice(0, 27);
   }, []);
 
-  // === Позиции для 2×2×2 ===
+  // === Позиции для 3×3×3 ===
   const positions = useMemo(() => {
-    const half = cubeSize + gap;
-    const coords = [-half, 0, half];
+    const step = cubeSize + gap;
+    const coords = [-step, 0, step];
     const result = [];
     for (let x of coords) {
       for (let y of coords) {
