@@ -1,6 +1,5 @@
 import React, {forwardRef, useEffect, useMemo, useRef, useState} from "react";
-import '@/components/app/ChromaCube/ChromaCube3x.scss'
-
+import '@/components/app/ChromaCube/ChromaCube3x.scss';
 import { useResponsiveStyle } from "@/hooks/useResponsiveStyle";
 import { useTranslation } from 'react-i18next';
 import { Canvas, useFrame, useThree, extend } from '@react-three/fiber';
