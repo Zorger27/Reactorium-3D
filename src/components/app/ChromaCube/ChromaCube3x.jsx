@@ -49,36 +49,45 @@ const CubeGroup = ({ groupSize, gap }) => {
       { name: "Жёлтый", value: 0xffff00 },
       { name: "Пурпурный", value: 0xff00ff },
       { name: "Бирюзовый", value: 0x00ffff },
-      { name: "Оранжевый", value: 0xff4500 },
+      { name: "Оранжевый", value: 0xff8c00 },
       { name: "Сиреневый", value: 0x8a2be2 },
       { name: "Ярко-зелёный", value: 0x32cd32 },
       { name: "Золотой", value: 0xffd700 },
       { name: "Розовый", value: 0xff69b4 },
       { name: "Фиолетовый", value: 0x9400d3 },
       { name: "Морская волна", value: 0x00fa9a },
-      { name: "Тёмно-оранжевый", value: 0xff8c00 },
-      { name: "Коричневый", value: 0x8b4513 },
+      { name: "Коралловый", value: 0xff7f50 },
+      { name: "Каштановый", value: 0x8b4513 },
       { name: "Тёмно-бирюзовый", value: 0x00ced1 },
-      { name: "Хаки", value: 0xf0e68c },
-      { name: "Тёмно-красный", value: 0xff6347 },
+      { name: "Песочный", value: 0xf0e68c },
+      { name: "Томатный", value: 0xff6347 },
       { name: "Светло-голубой", value: 0x87ceeb },
-      { name: "Синевато-серый", value: 0x4682b4 },
+      { name: "Стальной", value: 0x4682b4 },
       { name: "Тёмно-фиолетовый", value: 0x9932cc },
-      { name: "Зеленовато-коричневый", value: 0x2e8b57 },
-      { name: "Глубокий розовый", value: 0xff1493 },
+      { name: "Морской зелёный", value: 0x2e8b57 },
+      { name: "Малиновый", value: 0xff1493 },
       { name: "Лайм", value: 0x7cfc00 },
-      { name: "Огненно-красный", value: 0xb22222 },
-      { name: "Синевато-зелёный", value: 0x20b2aa },
-      { name: "Красновато-коричневый", value: 0xff4500 },
-    ].map((c) => ({ ...c, color: new THREE.Color(c.value) }));
+      { name: "Кирпичный", value: 0xb22222 },
+      { name: "Бирюзово-зелёный", value: 0x20b2aa },
+      { name: "Индиго", value: 0x4b0082 },
+    ];
 
-    // перемешивание Фишера-Йетса
-    for (let i = palette.length - 1; i > 0; i--) {
+    // Создаем THREE.Color объекты только один раз
+    const colorsWithThree = palette.map((c) => ({
+      ...c,
+      color: new THREE.Color(c.value)
+    }));
+
+    // Перемешивание Фишера-Йетса для случайного порядка при каждой загрузке
+    const shuffled = [...colorsWithThree];
+
+    for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [palette[i], palette[j]] = [palette[j], palette[i]];
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
-    return palette.slice(0, 27);
-  }, []);
+
+    return shuffled.slice(0, 27);
+  }, []); // цвета будут перемешиваться заново при каждом монтировании компонента
 
   // === Позиции для 3×3×3 ===
   const positions = useMemo(() => {
