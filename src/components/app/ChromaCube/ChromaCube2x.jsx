@@ -184,11 +184,9 @@ const ChromaCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
         </div>
       </div>
 
-      <div ref={ref} className="chroma-cube-container">
+      <div ref={ref}>
         <Canvas
-          // style={{ height: '100%', width: '100%' }}
           style={canvasStyle} // responsive inline-стили
-          className="chroma-cube-canvas"
           camera={{ fov: 75 }}
           gl={{ antialias: true, toneMapping: THREE.NoToneMapping }}
         >
