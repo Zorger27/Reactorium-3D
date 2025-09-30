@@ -143,6 +143,22 @@ const ChromaCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
   const { t } = useTranslation();
   const [gap, setGap] = useState(0.15);
 
+  // === загрузка из localStorage при первом рендере ===
+  useEffect(() => {
+    const saved = localStorage.getItem("chromaCube2xGap");
+    if (saved !== null) {
+      const num = parseFloat(saved);
+      if (!isNaN(num)) {
+        setGap(num);
+      }
+    }
+  }, []);
+
+  // === сохранение в localStorage при изменении gap ===
+  useEffect(() => {
+    localStorage.setItem("chromaCube2xGap", gap.toString());
+  }, [gap]);
+
   // кнопки управления
   const handleReset = () => setGap(0.15);
   const handleIncrease = () =>

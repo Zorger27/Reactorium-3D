@@ -91,7 +91,7 @@ const ChromaCube1x = forwardRef((props, ref) => {
   });
 
   return (
-    <div ref={ref} className="chroma-cube-container">
+    <div ref={ref} className="chroma-cube1x-container">
       {/* 3D сцена */}
       <Canvas
         style={canvasStyle} // responsive inline-стили
