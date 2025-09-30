@@ -56,20 +56,10 @@ const CubeGroup = ({ groupSize, gap }) => {
 
   // === Загружаем текстуры (через useLoader) ===
   const textures = useLoader(THREE.TextureLoader, [
-    String(smallCube01),
-    String(smallCube02),
-    String(smallCube03),
-    String(smallCube04),
-    String(smallCube05),
-    String(smallCube06),
-    String(smallCube07),
-    String(smallCube08),
-    String(smallCube09),
-    String(smallCube10),
-    String(smallCube11),
-    String(smallCube12),
-    String(smallCube13),
-    String(smallCube14),
+    String(smallCube01), String(smallCube02), String(smallCube03), String(smallCube04),
+    String(smallCube05), String(smallCube06), String(smallCube07), String(smallCube08),
+    String(smallCube09), String(smallCube10), String(smallCube11), String(smallCube12),
+    String(smallCube13), String(smallCube14),
   ]);
 
   // === Перемешиваем текстуры один раз ===
