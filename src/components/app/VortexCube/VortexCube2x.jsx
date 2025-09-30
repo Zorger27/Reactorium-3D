@@ -16,10 +16,6 @@ import smallCube07 from "@/assets/app/VortexCube/cube2/cube2-07.webp";
 import smallCube08 from "@/assets/app/VortexCube/cube2/cube2-08.webp";
 import smallCube09 from "@/assets/app/VortexCube/cube2/cube2-09.webp";
 import smallCube10 from "@/assets/app/VortexCube/cube2/cube2-10.webp";
-import smallCube11 from "@/assets/app/VortexCube/cube2/cube2-11.webp";
-import smallCube12 from "@/assets/app/VortexCube/cube2/cube2-12.webp";
-import smallCube13 from "@/assets/app/VortexCube/cube2/cube2-13.webp";
-import smallCube14 from "@/assets/app/VortexCube/cube2/cube2-14.webp";
 
 // Подключаем OrbitControls
 extend({ OrbitControls });
@@ -58,8 +54,7 @@ const CubeGroup = ({ groupSize, gap }) => {
   const textures = useLoader(THREE.TextureLoader, [
     String(smallCube01), String(smallCube02), String(smallCube03), String(smallCube04),
     String(smallCube05), String(smallCube06), String(smallCube07), String(smallCube08),
-    String(smallCube09), String(smallCube10), String(smallCube11), String(smallCube12),
-    String(smallCube13), String(smallCube14),
+    String(smallCube09), String(smallCube10),
   ]);
 
   // === Перемешиваем текстуры один раз ===
