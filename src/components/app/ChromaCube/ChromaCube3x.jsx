@@ -179,7 +179,7 @@ const ChromaCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
 
       {/* input для gap */}
       <div className="cube-gap" ref={gapRef}>
-        <label className={`label-all ${isOpen ? "open" : "closed"}`}>
+        <div className={`label-all ${isOpen ? "open" : "closed"}`}>
           {/* заголовок, который открывает/закрывает блок */}
           <div className={`gap-label ${isOpen ? "open" : "closed"}`}
                onClick={() => setIsOpen((prev) => !prev)}>
@@ -200,7 +200,7 @@ const ChromaCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
               </div>
             </div>
           )}
-        </label>
+        </div>
       </div>
 
       <div ref={ref} className="chroma-cube-container">
