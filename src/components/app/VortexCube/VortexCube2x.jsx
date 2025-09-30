@@ -219,7 +219,7 @@ const VortexCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
         </div>
       </div>
 
-      <div ref={ref} className="chroma-cube-container">
+      <div ref={ref}>
         <Canvas
           style={canvasStyle} // responsive inline-стили
           camera={{ fov: 75 }}
