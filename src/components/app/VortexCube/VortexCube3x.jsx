@@ -2,9 +2,37 @@ import React, {forwardRef, useEffect, useMemo, useRef, useState} from "react";
 import "@/components/app/VortexCube/VortexCube3x.scss"
 import { useResponsiveStyle } from "@/hooks/useResponsiveStyle";
 import { useTranslation } from 'react-i18next';
-import { Canvas, useFrame, useThree, extend } from '@react-three/fiber';
+import {Canvas, useFrame, useThree, extend, useLoader} from '@react-three/fiber';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import * as THREE from "three";
+
+import small2Cube01 from "@/assets/app/VortexCube/cube3/cube3-01.webp";
+import small2Cube02 from "@/assets/app/VortexCube/cube3/cube3-02.webp";
+import small2Cube03 from "@/assets/app/VortexCube/cube3/cube3-03.webp";
+import small2Cube04 from "@/assets/app/VortexCube/cube3/cube3-04.webp";
+import small2Cube05 from "@/assets/app/VortexCube/cube3/cube3-05.webp";
+import small2Cube06 from "@/assets/app/VortexCube/cube3/cube3-06.webp";
+import small2Cube07 from "@/assets/app/VortexCube/cube3/cube3-07.webp";
+import small2Cube08 from "@/assets/app/VortexCube/cube3/cube3-08.webp";
+import small2Cube09 from "@/assets/app/VortexCube/cube3/cube3-09.webp";
+import small2Cube10 from "@/assets/app/VortexCube/cube3/cube3-10.webp";
+import small2Cube11 from "@/assets/app/VortexCube/cube3/cube3-11.webp";
+import small2Cube12 from "@/assets/app/VortexCube/cube3/cube3-12.webp";
+import small2Cube13 from "@/assets/app/VortexCube/cube3/cube3-13.webp";
+import small2Cube14 from "@/assets/app/VortexCube/cube3/cube3-14.webp";
+import small2Cube15 from "@/assets/app/VortexCube/cube3/cube3-15.webp";
+import small2Cube16 from "@/assets/app/VortexCube/cube3/cube3-16.webp";
+import small2Cube17 from "@/assets/app/VortexCube/cube3/cube3-17.webp";
+import small2Cube18 from "@/assets/app/VortexCube/cube3/cube3-18.webp";
+import small2Cube19 from "@/assets/app/VortexCube/cube3/cube3-19.webp";
+import small2Cube20 from "@/assets/app/VortexCube/cube3/cube3-20.webp";
+import small2Cube21 from "@/assets/app/VortexCube/cube3/cube3-21.webp";
+import small2Cube22 from "@/assets/app/VortexCube/cube3/cube3-22.webp";
+import small2Cube23 from "@/assets/app/VortexCube/cube3/cube3-23.webp";
+import small2Cube24 from "@/assets/app/VortexCube/cube3/cube3-24.webp";
+import small2Cube25 from "@/assets/app/VortexCube/cube3/cube3-25.webp";
+import small2Cube26 from "@/assets/app/VortexCube/cube3/cube3-26.webp";
+import small2Cube27 from "@/assets/app/VortexCube/cube3/cube3-27.webp";
 
 // Подключаем OrbitControls
 extend({ OrbitControls });
@@ -39,54 +67,25 @@ const CubeGroup = ({ groupSize, gap }) => {
     [cubeSize]
   );
 
-  // === Цвета с названиями ===
-  const colors = useMemo(() => {
-    const palette = [
-      { name: "Красный", value: 0xff0000 },
-      { name: "Зелёный", value: 0x00ff00 },
-      { name: "Синий", value: 0x0000ff },
-      { name: "Жёлтый", value: 0xffff00 },
-      { name: "Пурпурный", value: 0xff00ff },
-      { name: "Бирюзовый", value: 0x00ffff },
-      { name: "Оранжевый", value: 0xff8c00 },
-      { name: "Сиреневый", value: 0x8a2be2 },
-      { name: "Ярко-зелёный", value: 0x32cd32 },
-      { name: "Золотой", value: 0xffd700 },
-      { name: "Розовый", value: 0xff69b4 },
-      { name: "Фиолетовый", value: 0x9400d3 },
-      { name: "Морская волна", value: 0x00fa9a },
-      { name: "Коралловый", value: 0xff7f50 },
-      { name: "Каштановый", value: 0x8b4513 },
-      { name: "Тёмно-бирюзовый", value: 0x00ced1 },
-      { name: "Песочный", value: 0xf0e68c },
-      { name: "Томатный", value: 0xff6347 },
-      { name: "Светло-голубой", value: 0x87ceeb },
-      { name: "Стальной", value: 0x4682b4 },
-      { name: "Тёмно-фиолетовый", value: 0x9932cc },
-      { name: "Морской зелёный", value: 0x2e8b57 },
-      { name: "Малиновый", value: 0xff1493 },
-      { name: "Лайм", value: 0x7cfc00 },
-      { name: "Кирпичный", value: 0xb22222 },
-      { name: "Бирюзово-зелёный", value: 0x20b2aa },
-      { name: "Индиго", value: 0x4b0082 },
-    ];
+  // === Загружаем текстуры (через useLoader) ===
+  const textures = useLoader(THREE.TextureLoader, [
+    String(small2Cube01), String(small2Cube02), String(small2Cube03), String(small2Cube04), String(small2Cube05),
+    String(small2Cube06), String(small2Cube07), String(small2Cube08), String(small2Cube09), String(small2Cube10),
+    String(small2Cube11), String(small2Cube12), String(small2Cube13), String(small2Cube14), String(small2Cube15),
+    String(small2Cube16), String(small2Cube17), String(small2Cube18), String(small2Cube19), String(small2Cube20),
+    String(small2Cube21), String(small2Cube22), String(small2Cube23), String(small2Cube24), String(small2Cube25),
+    String(small2Cube26), String(small2Cube27),
+  ]);
 
-    // Создаем THREE.Color объекты только один раз
-    const colorsWithThree = palette.map((c) => ({
-      ...c,
-      color: new THREE.Color(c.value)
-    }));
-
-    // Перемешивание Фишера-Йетса для случайного порядка при каждой загрузке
-    const shuffled = [...colorsWithThree];
-
-    for (let i = shuffled.length - 1; i > 0; i--) {
+  // === Перемешиваем текстуры один раз ===
+  const shuffledTextures = useMemo(() => {
+    const arr = [...textures];
+    for (let i = arr.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      [arr[i], arr[j]] = [arr[j], arr[i]];
     }
-
-    return shuffled.slice(0, 27);
-  }, []); // цвета будут перемешиваться заново при каждом монтировании компонента
+    return arr;
+  }, [textures]);
 
   // === Позиции для 3×3×3 ===
   const positions = useMemo(() => {
@@ -119,7 +118,7 @@ const CubeGroup = ({ groupSize, gap }) => {
     <group ref={groupRef}>
       {positions.map((pos, i) => (
         <mesh key={i} position={pos} geometry={geometry}>
-          <meshBasicMaterial color={colors[i].color} />
+          <meshBasicMaterial map={shuffledTextures[i]} />
         </mesh>
       ))}
     </group>
