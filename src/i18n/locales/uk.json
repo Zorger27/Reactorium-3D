@@ -47,7 +47,11 @@
     "disc": "Куб-трансформер, що оживає текстурами й переливається тактильними ілюзіями",
     "vortex-cube-1x": "1x",
     "vortex-cube-2x": "2x",
-    "vortex-cube-3x": "3x"
+    "vortex-cube-3x": "3x",
+    "gap": "Зазор",
+    "decrease": "Зменшити",
+    "increase": "Збільшити",
+    "reset": "Скинути до 0.15"
   },
   "project3": {
     "name": "PictoCube",

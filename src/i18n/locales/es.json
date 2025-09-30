@@ -47,7 +47,11 @@
     "disc": "Un cubo transformador que cobra vida con texturas y resplandece con ilusiones táctiles",
     "vortex-cube-1x": "1x",
     "vortex-cube-2x": "2x",
-    "vortex-cube-3x": "3x"
+    "vortex-cube-3x": "3x",
+    "gap": "Brecha",
+    "decrease": "Disminuir",
+    "increase": "Incrementar",
+    "reset": "Restablecer a 0.15"
   },
   "project3": {
     "name": "PictoCube",
