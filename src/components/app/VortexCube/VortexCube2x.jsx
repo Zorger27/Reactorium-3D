@@ -2,9 +2,24 @@ import React, {forwardRef, useEffect, useMemo, useRef, useState} from "react";
 import "@/components/app/VortexCube/VortexCube2x.scss"
 import { useResponsiveStyle } from "@/hooks/useResponsiveStyle";
 import { useTranslation } from 'react-i18next';
-import { Canvas, useFrame, useThree, extend } from '@react-three/fiber';
+import {Canvas, useFrame, useThree, extend, useLoader} from '@react-three/fiber';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import * as THREE from "three";
+
+import smallCube01 from "@/assets/app/VortexCube/cube2/cube2-01.webp";
+import smallCube02 from "@/assets/app/VortexCube/cube2/cube2-02.webp";
+import smallCube03 from "@/assets/app/VortexCube/cube2/cube2-03.webp";
+import smallCube04 from "@/assets/app/VortexCube/cube2/cube2-04.webp";
+import smallCube05 from "@/assets/app/VortexCube/cube2/cube2-05.webp";
+import smallCube06 from "@/assets/app/VortexCube/cube2/cube2-06.webp";
+import smallCube07 from "@/assets/app/VortexCube/cube2/cube2-07.webp";
+import smallCube08 from "@/assets/app/VortexCube/cube2/cube2-08.webp";
+import smallCube09 from "@/assets/app/VortexCube/cube2/cube2-09.webp";
+import smallCube10 from "@/assets/app/VortexCube/cube2/cube2-10.webp";
+import smallCube11 from "@/assets/app/VortexCube/cube2/cube2-11.webp";
+import smallCube12 from "@/assets/app/VortexCube/cube2/cube2-12.webp";
+import smallCube13 from "@/assets/app/VortexCube/cube2/cube2-13.webp";
+import smallCube14 from "@/assets/app/VortexCube/cube2/cube2-14.webp";
 
 // Подключаем OrbitControls
 extend({ OrbitControls });
@@ -28,70 +43,49 @@ const CameraControls = () => {
   );
 };
 
-// === Группа из 27 кубиков ===
+// === Группа из 8 кубиков с текстурами ===
 const CubeGroup = ({ groupSize, gap }) => {
   const groupRef = useRef(null);
 
   // размер маленького кубика
-  const cubeSize = groupSize / 3;
+  const cubeSize = groupSize / 2;
   const geometry = useMemo(
     () => new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize),
     [cubeSize]
   );
 
-  // === Цвета с названиями ===
-  const colors = useMemo(() => {
-    const palette = [
-      { name: "Красный", value: 0xff0000 },
-      { name: "Зелёный", value: 0x00ff00 },
-      { name: "Синий", value: 0x0000ff },
-      { name: "Жёлтый", value: 0xffff00 },
-      { name: "Пурпурный", value: 0xff00ff },
-      { name: "Бирюзовый", value: 0x00ffff },
-      { name: "Оранжевый", value: 0xff8c00 },
-      { name: "Сиреневый", value: 0x8a2be2 },
-      { name: "Ярко-зелёный", value: 0x32cd32 },
-      { name: "Золотой", value: 0xffd700 },
-      { name: "Розовый", value: 0xff69b4 },
-      { name: "Фиолетовый", value: 0x9400d3 },
-      { name: "Морская волна", value: 0x00fa9a },
-      { name: "Коралловый", value: 0xff7f50 },
-      { name: "Каштановый", value: 0x8b4513 },
-      { name: "Тёмно-бирюзовый", value: 0x00ced1 },
-      { name: "Песочный", value: 0xf0e68c },
-      { name: "Томатный", value: 0xff6347 },
-      { name: "Светло-голубой", value: 0x87ceeb },
-      { name: "Стальной", value: 0x4682b4 },
-      { name: "Тёмно-фиолетовый", value: 0x9932cc },
-      { name: "Морской зелёный", value: 0x2e8b57 },
-      { name: "Малиновый", value: 0xff1493 },
-      { name: "Лайм", value: 0x7cfc00 },
-      { name: "Кирпичный", value: 0xb22222 },
-      { name: "Бирюзово-зелёный", value: 0x20b2aa },
-      { name: "Индиго", value: 0x4b0082 },
-    ];
+  // === Загружаем текстуры (через useLoader) ===
+  const textures = useLoader(THREE.TextureLoader, [
+    String(smallCube01),
+    String(smallCube02),
+    String(smallCube03),
+    String(smallCube04),
+    String(smallCube05),
+    String(smallCube06),
+    String(smallCube07),
+    String(smallCube08),
+    String(smallCube09),
+    String(smallCube10),
+    String(smallCube11),
+    String(smallCube12),
+    String(smallCube13),
+    String(smallCube14),
+  ]);
 
-    // Создаем THREE.Color объекты только один раз
-    const colorsWithThree = palette.map((c) => ({
-      ...c,
-      color: new THREE.Color(c.value)
-    }));
-
-    // Перемешивание Фишера-Йетса для случайного порядка при каждой загрузке
-    const shuffled = [...colorsWithThree];
-
-    for (let i = shuffled.length - 1; i > 0; i--) {
+  // === Перемешиваем текстуры один раз ===
+  const shuffledTextures = useMemo(() => {
+    const arr = [...textures];
+    for (let i = arr.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      [arr[i], arr[j]] = [arr[j], arr[i]];
     }
+    return arr;
+  }, [textures]);
 
-    return shuffled.slice(0, 27);
-  }, []); // цвета будут перемешиваться заново при каждом монтировании компонента
-
-  // === Позиции для 3×3×3 ===
+  // === Позиции для 2×2×2 (8 кубиков) ===
   const positions = useMemo(() => {
     const step = cubeSize + gap;
-    const coords = [-step, 0, step];
+    const coords = [-step / 2, step / 2];
     const result = [];
     for (let x of coords) {
       for (let y of coords) {
@@ -103,13 +97,13 @@ const CubeGroup = ({ groupSize, gap }) => {
     return result;
   }, [cubeSize, gap]);
 
-  // === Наклон по Эйлеру ===
+  // === Наклон ===
   useEffect(() => {
     if (groupRef.current) {
       const euler = new THREE.Euler(
-        degreesToRadians(90),   // 90 градусов по X
-        degreesToRadians(20),   // 20 градусов по Y
-        0                            // 0° поворот по Z
+        degreesToRadians(90),
+        degreesToRadians(20),
+        0
       );
       groupRef.current.setRotationFromEuler(euler);
     }
@@ -119,7 +113,7 @@ const CubeGroup = ({ groupSize, gap }) => {
     <group ref={groupRef}>
       {positions.map((pos, i) => (
         <mesh key={i} position={pos} geometry={geometry}>
-          <meshBasicMaterial color={colors[i].color} />
+          <meshBasicMaterial map={shuffledTextures[i]} />
         </mesh>
       ))}
     </group>
