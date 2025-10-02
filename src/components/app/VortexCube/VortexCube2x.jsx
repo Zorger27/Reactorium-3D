@@ -6,6 +6,8 @@ import {Canvas, useFrame, useThree, extend, useLoader} from '@react-three/fiber'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import * as THREE from "three";
 
+import ControlBlock from "@/components/util/ControlBlock.jsx";
+
 import smallCube01 from "@/assets/app/VortexCube/cube2/cube2-01.webp";
 import smallCube02 from "@/assets/app/VortexCube/cube2/cube2-02.webp";
 import smallCube03 from "@/assets/app/VortexCube/cube2/cube2-03.webp";
@@ -40,7 +42,7 @@ const CameraControls = () => {
 };
 
 // === Группа из 8 кубиков с текстурами ===
-const CubeGroup = ({ groupSize, gap }) => {
+const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ }) => {
   const groupRef = useRef(null);
 
   // размер маленького кубика
@@ -52,9 +54,8 @@ const CubeGroup = ({ groupSize, gap }) => {
 
   // === Загружаем текстуры (через useLoader) ===
   const textures = useLoader(THREE.TextureLoader, [
-    String(smallCube01), String(smallCube02), String(smallCube03), String(smallCube04),
-    String(smallCube05), String(smallCube06), String(smallCube07), String(smallCube08),
-    String(smallCube09), String(smallCube10),
+    String(smallCube01), String(smallCube02), String(smallCube03), String(smallCube04), String(smallCube05),
+    String(smallCube06), String(smallCube07), String(smallCube08), String(smallCube09), String(smallCube10),
   ]);
 
   // === Перемешиваем текстуры один раз ===
@@ -86,13 +87,13 @@ const CubeGroup = ({ groupSize, gap }) => {
   useEffect(() => {
     if (groupRef.current) {
       const euler = new THREE.Euler(
-        degreesToRadians(90),
-        degreesToRadians(20),
-        0
+        degreesToRadians(rotationX),
+        degreesToRadians(rotationY),
+        degreesToRadians(rotationZ)
       );
       groupRef.current.setRotationFromEuler(euler);
     }
-  }, []);
+  }, [rotationX, rotationY, rotationZ]);
 
   return (
     <group ref={groupRef}>
@@ -105,114 +106,110 @@ const CubeGroup = ({ groupSize, gap }) => {
   );
 };
 
+// === Основной компонент ===
 const VortexCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
+  const { t } = useTranslation();
   // responsive inline-стили
   const canvasStyle = useResponsiveStyle({
     default: {
       height: 'calc(100vh - 225px)',
       width: '100%',
-      marginTop: '0rem',
-      marginLeft: '0rem',
+      marginTop: '0',
+      marginLeft: '0',
     },
     "1020": {
       height: 'calc(100vh - 218px)',
       width: '100%',
-      marginTop: '0rem',
-      marginLeft: '0rem',
+      marginTop: '0',
+      marginLeft: '0',
     },
     "768": {
       height: 'calc(100vh - 206px)',
       width: '100%',
-      marginTop: '0rem',
-      marginLeft: '0rem',
+      marginTop: '0',
+      marginLeft: '0',
     }
   });
 
-  const { t } = useTranslation();
+  // states
   const [gap, setGap] = useState(0.15);
-  const [isOpen, setIsOpen] = useState(false);
-  const gapRef = useRef(null);
+  const [rotationX, setRotationX] = useState(90);
+  const [rotationY, setRotationY] = useState(20);
+  const [rotationZ, setRotationZ] = useState(0);
 
-  // === загрузка из localStorage при первом рендере ===
+  // === загрузка из localStorage ===
   useEffect(() => {
-    const saved = localStorage.getItem("vortexCube2xGap");
-    if (saved !== null) {
-      const num = parseFloat(saved);
-      if (!isNaN(num)) {
-        setGap(num);
-      }
-    }
+    const savedGap = localStorage.getItem("vortexCube2xGap");
+    if (savedGap) setGap(parseFloat(savedGap));
+
+    const rx = localStorage.getItem("vortexCube2xRotX");
+    const ry = localStorage.getItem("vortexCube2xRotY");
+    const rz = localStorage.getItem("vortexCube2xRotZ");
+
+    if (rx) setRotationX(parseFloat(rx));
+    if (ry) setRotationY(parseFloat(ry));
+    if (rz) setRotationZ(parseFloat(rz));
   }, []);
 
-  // === сохранение в localStorage при изменении gap ===
-  useEffect(() => {
-    localStorage.setItem("vortexCube2xGap", gap.toString());
-  }, [gap]);
+  // === сохранение в localStorage ===
+  useEffect(() => { localStorage.setItem("vortexCube2xGap", String(gap)); }, [gap]);
+  useEffect(() => { localStorage.setItem("vortexCube2xRotX", String(rotationX)); }, [rotationX]);
+  useEffect(() => { localStorage.setItem("vortexCube2xRotY", String(rotationY)); }, [rotationY]);
+  useEffect(() => { localStorage.setItem("vortexCube2xRotZ", String(rotationZ)); }, [rotationZ]);
 
-  // кнопки управления
-  const handleReset = () => setGap(0.15);
-  const handleIncrease = () =>
-    setGap((prev) => Math.min(0.5, parseFloat((prev + 0.01).toFixed(2))));
-  const handleDecrease = () =>
-    setGap((prev) => Math.max(0, parseFloat((prev - 0.01).toFixed(2))));
+  // --- Управление значениями ---
+  const makeHandlers = (setter, defaultValue, min, max, step = 1) => ({
+    reset: () => setter(defaultValue),
+    increase: () => setter(prev => Math.min(max, +(prev + step).toFixed(2))),
+    decrease: () => setter(prev => Math.max(min, +(prev - step).toFixed(2))),
+  });
 
-  // закрытие при клике вне блока
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (gapRef.current && !gapRef.current.contains(e.target)) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+  const gapHandlers = makeHandlers(setGap, 0.15, 0, 0.5, 0.01);
+  const rotXHandlers = makeHandlers(setRotationX, 90, -180, 180);
+  const rotYHandlers = makeHandlers(setRotationY, 20, -180, 180);
+  const rotZHandlers = makeHandlers(setRotationZ, 0, -180, 180);
 
   return (
     <div className="cube2x-inner-container">
+      <div className="cube-controls">
 
-      {/* input для gap */}
-      <div className="cube-gap" ref={gapRef}>
-        <div className={`label-all ${isOpen ? "open" : "closed"}`}>
-          {/* заголовок, который открывает/закрывает блок */}
-          <div className={`gap-label ${isOpen ? "open" : "closed"}`}
-               onClick={() => setIsOpen((prev) => !prev)}>
-            {t("project2.gap")}
-          </div>
+        {/* Gap блок */}
+        <ControlBlock
+          label={t("project2.gap")}
+          gapConfig={{
+            value: gap,
+            min: 0,
+            max: 0.5,
+            step: 0.01,
+            onChange: setGap,
+            ...gapHandlers
+          }}
+        />
 
-          {/* скрываем/показываем блок */}
-          {isOpen && (
-            <div className="gap-controls">
-              <div className="slider-wrapper">
-                <button className="slider-button minus" onClick={handleDecrease} title={t("project2.decrease")}><i className="fa-solid fa-minus-circle"/></button>
-                <input type="range" min="0" max="0.5" step="0.01" value={gap} onChange={(e) => setGap(parseFloat(e.target.value))}/>
-                <button className="slider-button plus" onClick={handleIncrease} title={t("project2.increase")}><i className="fa-solid fa-plus-circle"/></button>
-              </div>
-              <div className="reset-wrapper">
-                <button className="slider-button reset" onClick={handleReset} title={t("project2.reset")}><i className="fa-solid fa-undo"/></button>
-                <div className="scale-value">{gap.toFixed(2)}x</div>
-              </div>
-            </div>
-          )}
-        </div>
+        {/* Rotation блок */}
+        <ControlBlock
+          label={t("project2.incline")}
+          sliders={[
+            { label: "X", value: rotationX, min: -180, max: 180, handlers: { ...rotXHandlers, onChange: (v) => setRotationX(v) } },
+            { label: "Y", value: rotationY, min: -180, max: 180, handlers: { ...rotYHandlers, onChange: (v) => setRotationY(v) } },
+            { label: "Z", value: rotationZ, min: -180, max: 180, handlers: { ...rotZHandlers, onChange: (v) => setRotationZ(v) } },
+          ]}
+        />
+
       </div>
 
       <div ref={ref}>
-        <Canvas
-          style={canvasStyle} // responsive inline-стили
-          camera={{ fov: 75 }}
-          gl={{ antialias: true, toneMapping: THREE.NoToneMapping }}
-        >
+        <Canvas style={canvasStyle} camera={{ fov: 75 }} gl={{ antialias: true, toneMapping: THREE.NoToneMapping }}>
           <perspectiveCamera makeDefault position={[0, 0, 2.5]} />
           <ambientLight intensity={0.6} />
-          <CubeGroup groupSize={groupSize} gap={gap} />
+          <CubeGroup groupSize={groupSize} gap={gap} rotationX={rotationX} rotationY={rotationY} rotationZ={rotationZ} />
           <CameraControls />
         </Canvas>
       </div>
     </div>
-  )
+  );
 });
+
 
 VortexCube2x.displayName = 'VortexCube2x';
 

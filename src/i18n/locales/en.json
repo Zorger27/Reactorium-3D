@@ -38,6 +38,7 @@
     "chroma-cube-2x": "2x",
     "chroma-cube-3x": "3x",
     "gap": "Gap",
+    "incline": "Incline",
     "decrease": "Decrease",
     "increase": "Increase",
     "reset": "Reset to 0.15"
@@ -49,6 +50,7 @@
     "vortex-cube-2x": "2x",
     "vortex-cube-3x": "3x",
     "gap": "Gap",
+    "incline": "Incline",
     "decrease": "Decrease",
     "increase": "Increase",
     "reset": "Reset to 0.15"
@@ -58,7 +60,12 @@
     "disc": "A gallery-cube, where images awaken on its faces in perfect harmony of perspective",
     "picto-cube-1x": "1x",
     "picto-cube-2x": "2x",
-    "picto-cube-3x": "3x"
+    "picto-cube-3x": "3x",
+    "gap": "Gap",
+    "incline": "Incline",
+    "decrease": "Decrease",
+    "increase": "Increase",
+    "reset": "Reset to 0.15"
   },
   "project4": {
     "name": "CubeForge",

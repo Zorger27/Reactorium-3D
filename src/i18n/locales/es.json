@@ -38,6 +38,7 @@
     "chroma-cube-2x": "2x",
     "chroma-cube-3x": "3x",
     "gap": "Brecha",
+    "incline": "Inclinar",
     "decrease": "Disminuir",
     "increase": "Incrementar",
     "reset": "Restablecer a 0.15"
