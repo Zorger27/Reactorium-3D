@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import SliderControl from "./SliderControl";
+import SliderControl from "@/components/util/SliderControl";
 import "@/components/util/ControlBlock.scss";
 
 function ControlBlock({ label, sliders = [], gapConfig = null }) {
