@@ -176,14 +176,7 @@ const VortexCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
         {/* Gap блок */}
         <ControlBlock
           label={t("project2.gap")}
-          gapConfig={{
-            value: gap,
-            min: 0,
-            max: 0.5,
-            step: 0.01,
-            onChange: setGap,
-            ...gapHandlers
-          }}
+          gapConfig={{value: gap, min: 0, max: 0.5, step: 0.01, onChange: setGap, ...gapHandlers}}
         />
 
         {/* Rotation блок */}
