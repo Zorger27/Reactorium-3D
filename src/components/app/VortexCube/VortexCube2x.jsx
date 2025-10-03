@@ -83,7 +83,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ }) => {
     return result;
   }, [cubeSize, gap]);
 
-  // === Наклон ===
+  // === Наклон по Эйлеру ===
   useEffect(() => {
     if (groupRef.current) {
       const euler = new THREE.Euler(
@@ -165,6 +165,7 @@ const VortexCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
     decrease: () => setter(prev => Math.max(min, +(prev - step).toFixed(2))),
   });
 
+  // Кнопки управления
   const gapHandlers = makeHandlers(setGap, 0.15, 0, 0.5, 0.01);
   const rotXHandlers = makeHandlers(setRotationX, 90, -180, 180);
   const rotYHandlers = makeHandlers(setRotationY, 20, -180, 180);
@@ -222,7 +223,6 @@ const VortexCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
     </div>
   );
 });
-
 
 VortexCube2x.displayName = 'VortexCube2x';
 
