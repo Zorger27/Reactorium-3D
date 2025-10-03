@@ -1,0 +1,80 @@
+@use "sass:color";
+
+button {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+
+.fa-minus-circle {
+  display: flex;
+  flex-direction: column;
+  z-index: 2;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  font-size: 1.6rem;
+  cursor: pointer;
+  $color: deeppink;
+  color: $color;
+  transition: color 0.3s;
+
+  &:hover {color: color.adjust($color, $lightness: -15%);}
+  &:active {color: color.adjust($color, $lightness: -20%);}
+}
+
+.fa-plus-circle {
+  display: flex;
+  flex-direction: column;
+  z-index: 2;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  font-size: 1.6rem;
+  cursor: pointer;
+  $color: lightseagreen;
+  color: $color;
+  transition: color 0.3s;
+
+  &:hover {color: color.adjust($color, $lightness: -15%);}
+  &:active {color: color.adjust($color, $lightness: -20%);}
+}
+
+.fa-undo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  $hover-color: red;
+  color: blue;
+  background: transparent;
+  border: none;
+  font-size: 1.8rem;
+  margin: 0 0.2rem;
+  cursor: pointer;
+  transition: color 0.3s, text-shadow 0.3s;
+
+  &:hover {color: $hover-color; text-shadow: 2px 2px 4px black;}
+  &:active {color: color.adjust($hover-color, $lightness: -10%); text-shadow: 2px 2px 4px black;}
+}
+
+@media(max-width: 1020px) {
+  .fa-minus-circle {font-size: 1.6rem;}
+
+  .fa-plus-circle {font-size: 1.6rem;}
+
+  .fa-undo {font-size: 1.6rem; margin: 0 0.2rem;}
+}
+
+
+@media (max-width: 768px) {
+  .fa-minus-circle {font-size: 1.8rem; text-shadow: 0 3px 3px rgba(0, 0, 0, 0.9);}
+
+  .fa-plus-circle {font-size: 1.8rem; text-shadow: 0 3px 3px rgba(0, 0, 0, 0.9);}
+
+  .fa-undo {font-size: 1.7rem; margin: 0;}
+}

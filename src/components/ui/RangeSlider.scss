@@ -1,0 +1,77 @@
+input[type="range"] {
+  width: 120px;
+  height: 6px;
+  -webkit-appearance: none; // убираем стандартный стиль
+  background: transparent; // чтобы фон не мешал
+  cursor: pointer;
+
+  // трек (полоска)
+  &::-webkit-slider-runnable-track {
+    height: 6px;
+    background: linear-gradient(to right, #4caf50, #2196f3); // зелёно-синяя
+    border-radius: 3px;
+  }
+
+  &::-moz-range-track {
+    height: 6px;
+    background: linear-gradient(to right, #4caf50, #2196f3);
+    border-radius: 3px;
+  }
+
+  // бегунок (кружок)
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    background: #fff;
+    border: 2px solid #4caf50;
+    border-radius: 50%;
+    cursor: pointer;
+    margin-top: -5px; // центрируем по полоске
+  }
+
+  &::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: #fff;
+    border: 2px solid #4caf50;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+}
+
+@media(max-width: 1020px) {
+  input[type="range"] {
+    width: 90px;
+    height: 5px;
+
+    // трек (полоска)
+    &::-webkit-slider-runnable-track {
+      height: 5px;
+      border-radius: 3px;
+    }
+
+    &::-moz-range-track {
+      height: 5px;
+      border-radius: 3px;
+    }
+
+    // бегунок (кружок)
+    &::-webkit-slider-thumb {
+      width: 14px;
+      height: 14px;
+      border: 2px solid #4caf50;
+      margin-top: -5px; // центрируем по полоске
+    }
+
+    &::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border: 2px solid #4caf50;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  input[type="range"] {display: none;}
+}
