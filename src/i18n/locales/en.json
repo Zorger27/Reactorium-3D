@@ -84,7 +84,8 @@
     "incline": "Incline",
     "decrease": "Decrease",
     "increase": "Increase",
-    "reset": "Reset to 0.15",
+    "reset-gup": "Reset to 0.15",
+    "reset-incline": "Reset to Default",
     "x-axis": "X-axis",
     "y-axis": "Y-axis",
     "z-axis": "Z-axis"

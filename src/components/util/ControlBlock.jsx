@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useTranslation } from 'react-i18next';
 import SliderControl from "@/components/util/SliderControl";
 import { RangeSlider } from "@/components/ui/RangeSlider";
 import { ControlButton } from "@/components/ui/ControlButton";
 import "@/components/util/ControlBlock.scss";
 
 function ControlBlock({ label, sliders = [], gapConfig = null }) {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef(null);
 
@@ -31,7 +33,7 @@ function ControlBlock({ label, sliders = [], gapConfig = null }) {
             {gapConfig && (
               <div className="gap-block">
                 <div className="gap-control">
-                  <ControlButton icon="fa-solid fa-minus-circle" onClick={gapConfig.decrease} variant="minus"/>
+                  <ControlButton icon="fa-solid fa-minus-circle" onClick={gapConfig.decrease} title={t("control.decrease")} variant="minus"/>
 
                   <RangeSlider
                     min={gapConfig.min}
@@ -42,10 +44,10 @@ function ControlBlock({ label, sliders = [], gapConfig = null }) {
                     style={{pointerEvents: "auto"}}
                   />
 
-                  <ControlButton icon="fa-solid fa-plus-circle" onClick={gapConfig.increase} variant="plus"/>
+                  <ControlButton icon="fa-solid fa-plus-circle" onClick={gapConfig.increase} title={t("control.increase")} variant="plus"/>
                 </div>
                 <div className="reset-wrapper">
-                  <ControlButton icon="fa-solid fa-undo" onClick={gapConfig.reset} variant="reset"/>
+                  <ControlButton icon="fa-solid fa-undo" onClick={gapConfig.reset} title={t("control.reset-gup")} variant="reset"/>
 
                   <div className="gap-value">
                     {gapConfig.value.toFixed(2)}x

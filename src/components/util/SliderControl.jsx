@@ -1,10 +1,12 @@
 import React from "react";
 import "@/components/util/SliderControl.scss";
+import { useTranslation } from 'react-i18next';
 
 import { RangeSlider } from "@/components/ui/RangeSlider";
 import { ControlButton } from "@/components/ui/ControlButton";
 
 function SliderControl({ label, value, handlers, min, max, defaultValue, formatValue }) {
+  const { t } = useTranslation();
   return (
     <div className="slider-control">
       <div className="slider-label">{label}</div>
@@ -12,6 +14,7 @@ function SliderControl({ label, value, handlers, min, max, defaultValue, formatV
         <ControlButton
           icon="fa-solid fa-minus-circle"
           onClick={handlers.decrease}
+          title={t("control.decrease")}
           variant="minus"
         />
         <RangeSlider
@@ -24,6 +27,7 @@ function SliderControl({ label, value, handlers, min, max, defaultValue, formatV
         <ControlButton
           icon="fa-solid fa-plus-circle"
           onClick={handlers.increase}
+          title={t("control.increase")}
           variant="plus"
         />
       </div>
@@ -31,6 +35,7 @@ function SliderControl({ label, value, handlers, min, max, defaultValue, formatV
         <ControlButton
           icon="fa-solid fa-undo"
           onClick={() => handlers.reset(defaultValue)}
+          title={t("control.reset-incline")}
           variant="reset"
         />
         <div className="scale-value">

@@ -84,7 +84,8 @@
     "incline": "Inclinar",
     "decrease": "Disminuir",
     "increase": "Incrementar",
-    "reset": "Restablecer a 0.15",
+    "reset-gup": "Restablecer a 0.15",
+    "reset-incline": "Restablecer a valores predeterminados",
     "x-axis": "Eje X",
     "y-axis": "Eje Y",
     "z-axis": "Eje Z"
