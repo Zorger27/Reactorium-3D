@@ -36,23 +36,14 @@
     "disc": "Un caleidoscopio giratorio de formas y matices, donde cada cara del cubo revela una nueva paleta",
     "chroma-cube-1x": "1x",
     "chroma-cube-2x": "2x",
-    "chroma-cube-3x": "3x",
-    "gap": "Brecha",
-    "incline": "Inclinar",
-    "decrease": "Disminuir",
-    "increase": "Incrementar",
-    "reset": "Restablecer a 0.15"
+    "chroma-cube-3x": "3x"
   },
   "project2": {
     "name": "VortexCube",
     "disc": "Un cubo transformador que cobra vida con texturas y resplandece con ilusiones táctiles",
     "vortex-cube-1x": "1x",
     "vortex-cube-2x": "2x",
-    "vortex-cube-3x": "3x",
-    "gap": "Brecha",
-    "decrease": "Disminuir",
-    "increase": "Incrementar",
-    "reset": "Restablecer a 0.15"
+    "vortex-cube-3x": "3x"
   },
   "project3": {
     "name": "PictoCube",
@@ -87,6 +78,16 @@
     "disc": "Página 404 - página no encontrada",
     "info404": "Página no encontrada, volver a la página principal",
     "btn404": "Volver a la página PRINCIPAL"
+  },
+  "control": {
+    "gap": "Brecha",
+    "incline": "Inclinar",
+    "decrease": "Disminuir",
+    "increase": "Incrementar",
+    "reset": "Restablecer a 0.15",
+    "x-axis": "Eje X",
+    "y-axis": "Eje Y",
+    "z-axis": "Eje Z"
   },
   "extra": {
     "loading": "Cargando...",

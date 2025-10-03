@@ -161,14 +161,14 @@ const ChromaCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
       {/* input для gap */}
       <div className="cube-gap">
         <div className="label">
-          {t('project1.gap')}:
-          <button className="slider-button minus" onClick={handleDecrease} title={t("project1.decrease")}><i className="fa-solid fa-minus-circle" /></button>
+          {t('control.gap')}:
+          <button className="slider-button minus" onClick={handleDecrease} title={t("control.decrease")}><i className="fa-solid fa-minus-circle" /></button>
           <input type="range" min="0" max="0.5" step="0.01"
                  value={gap}
                  onChange={(e) => setGap(parseFloat(e.target.value))}
           />
-          <button className="slider-button plus" onClick={handleIncrease} title={t("project1.increase")}><i className="fa-solid fa-plus-circle" /></button>
-          <button className="slider-button reset" onClick={handleReset} title={t("project1.reset")}><i className="fa-solid fa-undo" /></button>
+          <button className="slider-button plus" onClick={handleIncrease} title={t("control.increase")}><i className="fa-solid fa-plus-circle" /></button>
+          <button className="slider-button reset" onClick={handleReset} title={t("control.reset-gup")}><i className="fa-solid fa-undo" /></button>
           <div className="scale-value">{gap.toFixed(2)}x</div>
         </div>
       </div>

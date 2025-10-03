@@ -36,36 +36,21 @@
     "disc": "A rotating kaleidoscope of forms and shades, where every face of the cube unveils a new palette",
     "chroma-cube-1x": "1x",
     "chroma-cube-2x": "2x",
-    "chroma-cube-3x": "3x",
-    "gap": "Gap",
-    "incline": "Incline",
-    "decrease": "Decrease",
-    "increase": "Increase",
-    "reset": "Reset to 0.15"
+    "chroma-cube-3x": "3x"
   },
   "project2": {
     "name": "VortexCube",
     "disc": "A transforming cube that comes alive with textures and shimmers with tactile illusions",
     "vortex-cube-1x": "1x",
     "vortex-cube-2x": "2x",
-    "vortex-cube-3x": "3x",
-    "gap": "Gap",
-    "incline": "Incline",
-    "decrease": "Decrease",
-    "increase": "Increase",
-    "reset": "Reset to 0.15"
+    "vortex-cube-3x": "3x"
   },
   "project3": {
     "name": "PictoCube",
     "disc": "A gallery-cube, where images awaken on its faces in perfect harmony of perspective",
     "picto-cube-1x": "1x",
     "picto-cube-2x": "2x",
-    "picto-cube-3x": "3x",
-    "gap": "Gap",
-    "incline": "Incline",
-    "decrease": "Decrease",
-    "increase": "Increase",
-    "reset": "Reset to 0.15"
+    "picto-cube-3x": "3x"
   },
   "project4": {
     "name": "CubeForge",
@@ -93,6 +78,16 @@
     "disc": "Page 404 - page not found",
     "info404": "Page not found, back to main page",
     "btn404": "Back to MAIN page"
+  },
+  "control": {
+    "gap": "Gap",
+    "incline": "Incline",
+    "decrease": "Decrease",
+    "increase": "Increase",
+    "reset": "Reset to 0.15",
+    "x-axis": "X-axis",
+    "y-axis": "Y-axis",
+    "z-axis": "Z-axis"
   },
   "extra": {
     "loading": "Loading...",

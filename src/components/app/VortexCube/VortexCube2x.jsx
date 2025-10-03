@@ -175,17 +175,17 @@ const VortexCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
 
         {/* Gap блок */}
         <ControlBlock
-          label={t("project2.gap")}
+          label={t("control.gap")}
           gapConfig={{value: gap, min: 0, max: 0.5, step: 0.01, onChange: setGap, ...gapHandlers}}
         />
 
         {/* Rotation блок */}
         <ControlBlock
-          label={t("project2.incline")}
+          label={t("control.incline")}
           sliders={[
-            { label: "X", value: rotationX, min: -180, max: 180, handlers: { ...rotXHandlers, onChange: (v) => setRotationX(v) } },
-            { label: "Y", value: rotationY, min: -180, max: 180, handlers: { ...rotYHandlers, onChange: (v) => setRotationY(v) } },
-            { label: "Z", value: rotationZ, min: -180, max: 180, handlers: { ...rotZHandlers, onChange: (v) => setRotationZ(v) } },
+            { label: t("control.x-axis"), value: rotationX, min: -180, max: 180, handlers: { ...rotXHandlers, onChange: (v) => setRotationX(v) } },
+            { label: t("control.y-axis"), value: rotationY, min: -180, max: 180, handlers: { ...rotYHandlers, onChange: (v) => setRotationY(v) } },
+            { label: t("control.z-axis"), value: rotationZ, min: -180, max: 180, handlers: { ...rotZHandlers, onChange: (v) => setRotationZ(v) } },
           ]}
         />
 
