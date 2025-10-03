@@ -16,12 +16,12 @@
 
 @media(max-width: 1020px) {
   .cube3x-inner-container {
-    .cube-controls {left: 1rem;}
+    .cube-controls {left: 0.7rem;}
   }
 }
 
 @media (max-width: 768px) {
   .cube3x-inner-container {
-    .cube-controls {left: 0.5rem;}
+    .cube-controls {left: 0.5rem; top: 53%;}
   }
 }
