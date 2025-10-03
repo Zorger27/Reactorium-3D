@@ -136,6 +136,7 @@ const VortexCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
   const [rotationX, setRotationX] = useState(90);
   const [rotationY, setRotationY] = useState(20);
   const [rotationZ, setRotationZ] = useState(0);
+  const [openBlock, setOpenBlock] = useState(null);
 
   // === загрузка из localStorage ===
   useEffect(() => {
@@ -173,21 +174,40 @@ const VortexCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
     <div className="cube2x-inner-container">
       <div className="cube-controls">
 
-        {/* Gap блок */}
-        <ControlBlock
-          label={t("control.gap")}
-          gapConfig={{value: gap, min: 0, max: 0.5, step: 0.01, onChange: setGap, ...gapHandlers}}
-        />
+        {/* Состояние: ничего не открыто → показываем ВСЕ блоки (закрытые) */}
+        {openBlock === null && (
+          <>
+            <ControlBlock label={t("control.gap")} isOpen={false} onToggle={() => setOpenBlock("gap")}
+              gapConfig={{value: gap, min: 0, max: 0.5, step: 0.01, onChange: setGap, ...gapHandlers}}
+            />
 
-        {/* Rotation блок */}
-        <ControlBlock
-          label={t("control.incline")}
-          sliders={[
-            { label: t("control.x-axis"), value: rotationX, min: -180, max: 180, handlers: { ...rotXHandlers, onChange: (v) => setRotationX(v) } },
-            { label: t("control.y-axis"), value: rotationY, min: -180, max: 180, handlers: { ...rotYHandlers, onChange: (v) => setRotationY(v) } },
-            { label: t("control.z-axis"), value: rotationZ, min: -180, max: 180, handlers: { ...rotZHandlers, onChange: (v) => setRotationZ(v) } },
-          ]}
-        />
+            <ControlBlock label={t("control.incline")} isOpen={false} onToggle={() => setOpenBlock("rotation")}
+              sliders={[
+                { label: t("control.x-axis"), value: rotationX, min: -180, max: 180, handlers: { ...rotXHandlers, onChange: (v) => setRotationX(v) } },
+                { label: t("control.y-axis"), value: rotationY, min: -180, max: 180, handlers: { ...rotYHandlers, onChange: (v) => setRotationY(v) } },
+                { label: t("control.z-axis"), value: rotationZ, min: -180, max: 180, handlers: { ...rotZHandlers, onChange: (v) => setRotationZ(v) } },
+              ]}
+            />
+          </>
+        )}
+
+        {/* Состояние: открыт gap → показываем только его */}
+        {openBlock === "gap" && (
+          <ControlBlock label={t("control.gap")} isOpen={true} onToggle={() => setOpenBlock(null)}
+            gapConfig={{value: gap, min: 0, max: 0.5, step: 0.01, onChange: setGap, ...gapHandlers}}
+          />
+        )}
+
+        {/* Состояние: открыт rotation → показываем только его */}
+        {openBlock === "rotation" && (
+          <ControlBlock label={t("control.incline")} isOpen={true} onToggle={() => setOpenBlock(null)}
+            sliders={[
+              { label: t("control.x-axis"), value: rotationX, min: -180, max: 180, handlers: { ...rotXHandlers, onChange: (v) => setRotationX(v) } },
+              { label: t("control.y-axis"), value: rotationY, min: -180, max: 180, handlers: { ...rotYHandlers, onChange: (v) => setRotationY(v) } },
+              { label: t("control.z-axis"), value: rotationZ, min: -180, max: 180, handlers: { ...rotZHandlers, onChange: (v) => setRotationZ(v) } },
+            ]}
+          />
+        )}
 
       </div>
 
