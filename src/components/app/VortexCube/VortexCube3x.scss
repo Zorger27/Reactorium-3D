@@ -44,11 +44,33 @@
 @media(max-width: 1020px) {
   .cube3x-inner-container {
     .cube-controls {left: 0.7rem;}
+
+    .rotation-buttons {
+      bottom: 85px; // Перемещаем вниз
+      gap: 15px; // Отступ между кнопками
+
+      button {
+        height: 2.6rem;
+        width: 3.6rem;
+        font-size: 1.4rem;
+      }
+    }
   }
 }
 
 @media (max-width: 768px) {
   .cube3x-inner-container {
     .cube-controls {left: 0.5rem; top: 53%;}
+
+    .rotation-buttons {
+      bottom: 82px; // Перемещаем вниз
+      gap: 12px; // Отступ между кнопками
+
+      button {
+        height: 2.4rem;
+        width: 3.4rem;
+        font-size: 1.2rem;
+      }
+    }
   }
 }
