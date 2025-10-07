@@ -331,20 +331,18 @@ const VortexCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
         <Canvas style={canvasStyle} camera={{ fov: 75 }} gl={{ antialias: true, toneMapping: THREE.NoToneMapping }}>
           <perspectiveCamera makeDefault position={[0, 0, 2.5]} />
           <ambientLight intensity={0.6} />
-          {isLoaded && (
-            <CubeGroup
-              groupSize={groupSize}
-              gap={gap}
-              rotationX={rotationX}
-              rotationY={rotationY}
-              rotationZ={rotationZ}
-              isRotating={isRotating}
-              direction={direction}
-              speed={speed}
-              resetTrigger={resetTrigger}
-              flipTrigger={flipTrigger}
-            />
-          )}
+          <CubeGroup
+            groupSize={groupSize}
+            gap={gap}
+            rotationX={rotationX}
+            rotationY={rotationY}
+            rotationZ={rotationZ}
+            isRotating={isRotating}
+            direction={direction}
+            speed={speed}
+            resetTrigger={resetTrigger}
+            flipTrigger={flipTrigger}
+          />
           <CameraControls />
         </Canvas>
       </div>
