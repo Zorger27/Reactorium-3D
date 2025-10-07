@@ -25,21 +25,24 @@
           //padding: 0.65rem;
           height: 3rem;
           width: 3rem;
-          color: black;
-          background-image: url("@/assets/background/background08.webp");
-          background-position: center;
-          background-size: cover;
-          background-repeat: no-repeat;
+          color: white;
+          text-shadow: 2px 2px 4px black;
+          background: linear-gradient(to bottom, rgb(148, 167, 225), rgb(227, 144, 165)) no-repeat center;
+          //background-image: url("@/assets/background/background06.webp");
+          //background-position: center;
+          //background-size: cover;
+          //background-repeat: no-repeat;
           border: 1px solid grey;
-          border-radius: 50%;
+          //border-radius: 50%;
+          border-radius: 5px;
           cursor: pointer;
           font-size: 1.5rem;
           font-weight: bold;
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
+          //box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
           transition: border 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 
           &:hover {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            box-shadow: 2px 2px 4px black;
             border: 1px solid lightslategrey;
           }
         }
