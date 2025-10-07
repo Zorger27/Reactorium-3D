@@ -51,14 +51,15 @@ const CameraControls = () => {
       enableDamping
       enablePan={false}
       enableZoom={true}
-      autoRotate={true}
-      autoRotateSpeed={5}
+      // УБИРАЕМ авто-ротацию!
+      autoRotate={false}
+      // autoRotateSpeed={5}
     />
   );
 };
 
 // === Группа из 27 кубиков ===
-const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ }) => {
+const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating, direction, speed, resetTrigger, flipTrigger }) => {
   const groupRef = useRef(null);
 
   // размер маленького кубика
@@ -103,17 +104,67 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ }) => {
     return result;
   }, [cubeSize, gap]);
 
-  // === Наклон по Эйлеру ===
+  // === Первоначальная ориентация ===
   useEffect(() => {
     if (groupRef.current) {
-      const euler = new THREE.Euler(
+      groupRef.current.rotation.set(
         degreesToRadians(rotationX),
         degreesToRadians(rotationY),
         degreesToRadians(rotationZ)
       );
-      groupRef.current.setRotationFromEuler(euler);
     }
   }, [rotationX, rotationY, rotationZ]);
+
+  // --- Управление вращением ---
+  const [targetRotationZ, setTargetRotationZ] = useState(null);
+
+  useFrame((_, delta) => {
+    if (!groupRef.current) return;
+
+    // ручное вращение (если пользователь крутит)
+    if (isRotating) {
+      groupRef.current.rotation.z += direction * speed;
+    }
+
+    // плавный поворот к цели
+    if (targetRotationZ !== null) {
+      const currentZ = groupRef.current.rotation.z;
+      const diff = targetRotationZ - currentZ;
+
+      // нормализуем, чтобы поворачивался кратчайшим путём
+      const normalizedDiff = ((diff + Math.PI) % (2 * Math.PI)) - Math.PI;
+
+      // плавная интерполяция
+      groupRef.current.rotation.z += normalizedDiff * Math.min(10 * delta, 1);
+
+      // когда близко — фиксируем угол и останавливаем
+      if (Math.abs(normalizedDiff) < 0.01) {
+        groupRef.current.rotation.z = targetRotationZ;
+        setTargetRotationZ(null);
+      }
+    }
+  });
+
+  // === Сброс ===
+  useEffect(() => {
+    if (groupRef.current) {
+      groupRef.current.rotation.set(
+        degreesToRadians(rotationX),
+        degreesToRadians(rotationY),
+        degreesToRadians(rotationZ)
+      );
+      setTargetRotationZ(null);
+    }
+  }, [resetTrigger]);
+
+  // === Поворот на 180° ===
+  useEffect(() => {
+    if (groupRef.current) {
+      const currentZ = groupRef.current.rotation.z;
+      const newTarget = currentZ + Math.PI;
+      setTargetRotationZ(newTarget);
+    }
+  }, [flipTrigger]);
 
   return (
     <group ref={groupRef}>
@@ -157,6 +208,37 @@ const VortexCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
   const [rotationZ, setRotationZ] = useState(0);
   const [openBlock, setOpenBlock] = useState(null);
 
+  // управление вращением
+  const [isRotating, setIsRotating] = useState(false);
+  const [direction, setDirection] = useState(1); // 1 — по часовой, -1 — против
+  const [speed] = useState(0.02); // скорость вращения
+  const [resetTrigger, setResetTrigger] = useState(false);
+  const [flipTrigger, setFlipTrigger] = useState(false);
+
+  // --- кнопки вращения ---
+  const handleClockwise = () => {
+    setDirection(1);
+    setIsRotating(true);
+  };
+
+  const handleCounterClockwise = () => {
+    setDirection(-1);
+    setIsRotating(true);
+  };
+
+  const handlePause = () => {
+    setIsRotating(prev => !prev);
+  };
+
+  const handleStop = () => {
+    setIsRotating(false);
+    setResetTrigger(prev => !prev); // триггер на сброс
+  };
+
+  const handleFlip = () => {
+    setFlipTrigger(prev => !prev);
+  };
+
   // === загрузка из localStorage ===
   useEffect(() => {
     const savedGap = localStorage.getItem("vortexCube3xGap");
@@ -177,7 +259,7 @@ const VortexCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
   useEffect(() => { localStorage.setItem("vortexCube3xRotY", String(rotationY)); }, [rotationY]);
   useEffect(() => { localStorage.setItem("vortexCube3xRotZ", String(rotationZ)); }, [rotationZ]);
 
-  // --- Управление значениями ---
+  // --- фабрика хэндлеров для ControlBlock ---
   const makeHandlers = (setter, defaultValue, min, max, step = 1) => ({
     reset: () => setter(defaultValue),
     increase: () => setter(prev => Math.min(max, +(prev + step).toFixed(2))),
@@ -231,11 +313,33 @@ const VortexCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
 
       </div>
 
+      {/* === Панель кнопок управления вращением === */}
+      <div className="rotation-buttons">
+        <button onClick={handleClockwise} title={t('control.clockwise')}><i className="fas fa-rotate-right"></i></button>
+        <button onClick={handlePause} title={ isRotating ? t('control.pause') : t('control.continue') }>
+          <i className={`fas ${isRotating ? "fa-pause" : "fa-play"}`}></i>
+        </button>
+        <button onClick={handleStop} title={t('control.stop')}><i className="fas fa-stop"></i></button>
+        <button onClick={handleFlip} title={t('control.180')}><i className="fas fa-sync-alt"></i></button>
+        <button onClick={handleCounterClockwise} title={t('control.counterclockwise')}><i className="fas fa-rotate-left"></i></button>
+      </div>
+
       <div ref={ref}>
         <Canvas style={canvasStyle} camera={{ fov: 75 }} gl={{ antialias: true, toneMapping: THREE.NoToneMapping }}>
           <perspectiveCamera makeDefault position={[0, 0, 2.5]} />
           <ambientLight intensity={0.6} />
-          <CubeGroup groupSize={groupSize} gap={gap} rotationX={rotationX} rotationY={rotationY} rotationZ={rotationZ} />
+          <CubeGroup
+            groupSize={groupSize}
+            gap={gap}
+            rotationX={rotationX}
+            rotationY={rotationY}
+            rotationZ={rotationZ}
+            isRotating={isRotating}
+            direction={direction}
+            speed={speed}
+            resetTrigger={resetTrigger}
+            flipTrigger={flipTrigger}
+          />
           <CameraControls />
         </Canvas>
       </div>

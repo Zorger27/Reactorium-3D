@@ -88,7 +88,13 @@
     "reset-incline": "Restablecer a valores predeterminados",
     "x-axis": "Eje X",
     "y-axis": "Eje Y",
-    "z-axis": "Eje Z"
+    "z-axis": "Eje Z",
+    "clockwise": "Girar en sentido horario",
+    "counterclockwise": "Girar en sentido antihorario",
+    "pause": "Pausa la rotación",
+    "continue": "Continuar girando",
+    "stop": "Dejar de rotar",
+    "180": "Girar 180°"
   },
   "extra": {
     "loading": "Cargando...",

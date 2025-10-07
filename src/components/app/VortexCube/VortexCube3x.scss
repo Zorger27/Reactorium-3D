@@ -12,6 +12,33 @@
     justify-content: center;
     align-items: center;
   }
+
+  .rotation-buttons {
+    position: absolute;
+    bottom: 90px; // Перемещаем вниз
+    left: 50%; // Центрируем
+    transform: translateX(-50%); // Смещаем на половину ширины
+    z-index: 10;
+    display: flex;
+    flex-direction: row; // Горизонтальное расположение
+    gap: 20px; // Отступ между кнопками
+
+    button {
+      color: white;
+      background-color: #87ceeb;
+      height: 3rem;
+      width: 4rem;
+      font-size: 1.8rem;
+      border-radius: 5px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
+      transition:  background-color .2s ease-in-out, box-shadow .2s ease-in-out;
+
+      &:hover {
+        background-color: #00bfff; /* Более яркий цвет при наведении */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
 }
 
 @media(max-width: 1020px) {

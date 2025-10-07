@@ -88,7 +88,13 @@
     "reset-incline": "Reset to Default",
     "x-axis": "X-axis",
     "y-axis": "Y-axis",
-    "z-axis": "Z-axis"
+    "z-axis": "Z-axis",
+    "clockwise": "Rotate clockwise",
+    "counterclockwise": "Rotate counterclockwise",
+    "pause": "Pause rotation",
+    "continue": "Continue rotating",
+    "stop": "Stop rotation",
+    "180": "Rotate 180°"
   },
   "extra": {
     "loading": "Loading...",
