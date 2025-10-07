@@ -121,23 +121,18 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
   useFrame((_, delta) => {
     if (!groupRef.current) return;
 
-    // ручное вращение (если пользователь крутит)
-    if (isRotating) {
+    // Если идёт плавный поворот, ручное вращение не применяем
+    if (targetRotationZ === null && isRotating) {
       groupRef.current.rotation.z += direction * speed;
     }
 
-    // плавный поворот к цели
     if (targetRotationZ !== null) {
       const currentZ = groupRef.current.rotation.z;
       const diff = targetRotationZ - currentZ;
-
-      // нормализуем, чтобы поворачивался кратчайшим путём
       const normalizedDiff = ((diff + Math.PI) % (2 * Math.PI)) - Math.PI;
 
-      // плавная интерполяция
       groupRef.current.rotation.z += normalizedDiff * Math.min(10 * delta, 1);
 
-      // когда близко — фиксируем угол и останавливаем
       if (Math.abs(normalizedDiff) < 0.01) {
         groupRef.current.rotation.z = targetRotationZ;
         setTargetRotationZ(null);
@@ -207,13 +202,19 @@ const VortexCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
   const [rotationY, setRotationY] = useState(20);
   const [rotationZ, setRotationZ] = useState(0);
   const [openBlock, setOpenBlock] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   // управление вращением
-  const [isRotating, setIsRotating] = useState(false);
-  const [direction, setDirection] = useState(1); // 1 — по часовой, -1 — против
-  const [speed] = useState(0.02); // скорость вращения
+  const [isRotating, setIsRotating] = useState(false); // стартовое вращение включено
+  const [direction, setDirection] = useState(-1);     // против часовой стрелки
+  const [speed] = useState(0.01);                     // скорость
   const [resetTrigger, setResetTrigger] = useState(false);
   const [flipTrigger, setFlipTrigger] = useState(false);
+
+  // включаем вращение сразу после загрузки
+  useEffect(() => {
+    if (isLoaded) setIsRotating(true);
+  }, [isLoaded]);
 
   // --- кнопки вращения ---
   const handleClockwise = () => {
@@ -251,6 +252,8 @@ const VortexCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
     if (rx) setRotationX(parseFloat(rx));
     if (ry) setRotationY(parseFloat(ry));
     if (rz) setRotationZ(parseFloat(rz));
+
+    setIsLoaded(true); // всё готово, можно крутить
   }, []);
 
   // === сохранение в localStorage ===
@@ -328,18 +331,20 @@ const VortexCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
         <Canvas style={canvasStyle} camera={{ fov: 75 }} gl={{ antialias: true, toneMapping: THREE.NoToneMapping }}>
           <perspectiveCamera makeDefault position={[0, 0, 2.5]} />
           <ambientLight intensity={0.6} />
-          <CubeGroup
-            groupSize={groupSize}
-            gap={gap}
-            rotationX={rotationX}
-            rotationY={rotationY}
-            rotationZ={rotationZ}
-            isRotating={isRotating}
-            direction={direction}
-            speed={speed}
-            resetTrigger={resetTrigger}
-            flipTrigger={flipTrigger}
-          />
+          {isLoaded && (
+            <CubeGroup
+              groupSize={groupSize}
+              gap={gap}
+              rotationX={rotationX}
+              rotationY={rotationY}
+              rotationZ={rotationZ}
+              isRotating={isRotating}
+              direction={direction}
+              speed={speed}
+              resetTrigger={resetTrigger}
+              flipTrigger={flipTrigger}
+            />
+          )}
           <CameraControls />
         </Canvas>
       </div>
