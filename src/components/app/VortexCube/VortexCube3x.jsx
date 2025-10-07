@@ -203,7 +203,7 @@ const VortexCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   // управление вращением
-  const [isRotating, setIsRotating] = useState(false); // стартовое вращение включено
+  const [isRotating, setIsRotating] = useState(false); // стартовое вращение выключено
   const [direction, setDirection] = useState(-1);     // против часовой стрелки
   const [speed] = useState(0.01);                     // скорость
   const [resetTrigger, setResetTrigger] = useState(false);
