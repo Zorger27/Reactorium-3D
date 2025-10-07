@@ -51,9 +51,7 @@ const CameraControls = () => {
       enableDamping
       enablePan={false}
       enableZoom={true}
-      // УБИРАЕМ авто-ротацию!
       autoRotate={false}
-      // autoRotateSpeed={5}
     />
   );
 };
