@@ -282,7 +282,7 @@ const VortexCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
         {openBlock === null && (
           <>
             <ControlBlock label={t("control.speed")} isOpen={false} onToggle={() => setOpenBlock("speed")}
-                          gapConfig={{value: speed, min: 0.001, max: 0.05, step: 0.001, onChange: setSpeed, ...speedHandlers,}}
+                          gapConfig={{value: speed, min: 0, max: 0.05, step: 0.01, onChange: setSpeed, ...speedHandlers,}}
             />
             <ControlBlock label={t("control.gap")} isOpen={false} onToggle={() => setOpenBlock("gap")}
                           gapConfig={{value: gap, min: 0, max: 0.5, step: 0.01, onChange: setGap, ...gapHandlers}}
@@ -301,7 +301,7 @@ const VortexCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
         {/* Состояние: открыт speed → показываем только его */}
         {openBlock === "speed" && (
           <ControlBlock label={t("control.speed")} isOpen={true} onToggle={() => setOpenBlock(null)}
-                        gapConfig={{value: speed, min: 0.001, max: 0.05, step: 0.001, onChange: setSpeed, ...speedHandlers,}}
+                        gapConfig={{value: speed, min: 0, max: 0.05, step: 0.01, onChange: setSpeed, ...speedHandlers,}}
           />
         )}
 
