@@ -200,7 +200,7 @@ const VortexCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
   const [rotationY, setRotationY] = useState(20);
   const [rotationZ, setRotationZ] = useState(0);
   const [openBlock, setOpenBlock] = useState(null);
-  const [isLoaded, setIsLoaded] = useState(false);
+  // const [isLoaded, setIsLoaded] = useState(false);
 
   // управление вращением
   const [isRotating, setIsRotating] = useState(false); // стартовое вращение выключено
@@ -209,10 +209,10 @@ const VortexCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
   const [resetTrigger, setResetTrigger] = useState(false);
   const [flipTrigger, setFlipTrigger] = useState(false);
 
-  // включаем вращение сразу после загрузки
-  useEffect(() => {
-    if (isLoaded) setIsRotating(true);
-  }, [isLoaded]);
+  // // включаем вращение сразу после загрузки
+  // useEffect(() => {
+  //   if (isLoaded) setIsRotating(true);
+  // }, [isLoaded]);
 
   // --- кнопки вращения ---
   const handleClockwise = () => {
@@ -251,7 +251,16 @@ const VortexCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
     if (ry) setRotationY(parseFloat(ry));
     if (rz) setRotationZ(parseFloat(rz));
 
-    setIsLoaded(true); // всё готово, можно крутить
+    const savedSpeed = localStorage.getItem("vortexCube3xSpeed");
+    if (savedSpeed) setSpeed(parseFloat(savedSpeed));
+
+    const savedDirection = localStorage.getItem("vortexCube3xDirection");
+    if (savedDirection) setDirection(parseInt(savedDirection, 10));
+
+    const savedRotating = localStorage.getItem("vortexCube3xIsRotating");
+    if (savedRotating) setIsRotating(savedRotating === "true");
+
+    // setIsLoaded(true); // всё готово, можно крутить
   }, []);
 
   // === сохранение в localStorage ===
@@ -259,6 +268,9 @@ const VortexCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
   useEffect(() => { localStorage.setItem("vortexCube3xRotX", String(rotationX)); }, [rotationX]);
   useEffect(() => { localStorage.setItem("vortexCube3xRotY", String(rotationY)); }, [rotationY]);
   useEffect(() => { localStorage.setItem("vortexCube3xRotZ", String(rotationZ)); }, [rotationZ]);
+  useEffect(() => { localStorage.setItem("vortexCube3xSpeed", String(speed)); }, [speed]);
+  useEffect(() => { localStorage.setItem("vortexCube3xDirection", String(direction)); }, [direction]);
+  useEffect(() => { localStorage.setItem("vortexCube3xIsRotating", String(isRotating)); }, [isRotating]);
 
   // --- фабрика хэндлеров для ControlBlock ---
   const makeHandlers = (setter, defaultValue, min, max, step = 1) => ({
