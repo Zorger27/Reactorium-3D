@@ -1,6 +1,7 @@
 import React, {forwardRef, useEffect, useMemo, useRef, useState} from "react";
 import "@/components/app/VortexCube/VortexCube3x.scss"
 import { useResponsiveStyle } from "@/hooks/useResponsiveStyle";
+import { useLocalStorage } from "@/hooks/useLocalStorage.js";
 import ControlBlock from "@/components/util/ControlBlock.jsx";
 import { useTranslation } from 'react-i18next';
 import {Canvas, useFrame, useThree, extend, useLoader} from '@react-three/fiber';
@@ -195,24 +196,11 @@ const VortexCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
   });
 
   // states
-  const [gap, setGap] = useState(0.15);
-  const [rotationX, setRotationX] = useState(90);
-  const [rotationY, setRotationY] = useState(20);
-  const [rotationZ, setRotationZ] = useState(0);
   const [openBlock, setOpenBlock] = useState(null);
-  // const [isLoaded, setIsLoaded] = useState(false);
 
   // управление вращением
-  const [isRotating, setIsRotating] = useState(false); // стартовое вращение выключено
-  const [direction, setDirection] = useState(-1);     // против часовой стрелки
-  const [speed, setSpeed] = useState(0.01);          // скорость
   const [resetTrigger, setResetTrigger] = useState(false);
   const [flipTrigger, setFlipTrigger] = useState(false);
-
-  // // включаем вращение сразу после загрузки
-  // useEffect(() => {
-  //   if (isLoaded) setIsRotating(true);
-  // }, [isLoaded]);
 
   // --- кнопки вращения ---
   const handleClockwise = () => {
@@ -238,39 +226,15 @@ const VortexCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
     setFlipTrigger(prev => !prev);
   };
 
-  // === загрузка из localStorage ===
-  useEffect(() => {
-    const savedGap = localStorage.getItem("vortexCube3xGap");
-    if (savedGap) setGap(parseFloat(savedGap));
+  // === загрузка и сохранение в localStorage ===
+  const [gap, setGap] = useLocalStorage("vortexCube3xGap", 0.15, parseFloat);
+  const [rotationX, setRotationX] = useLocalStorage("vortexCube3xRotX", 90, parseFloat);
+  const [rotationY, setRotationY] = useLocalStorage("vortexCube3xRotY", 20, parseFloat);
+  const [rotationZ, setRotationZ] = useLocalStorage("vortexCube3xRotZ", 0, parseFloat);
+  const [speed, setSpeed] = useLocalStorage("vortexCube3xSpeed", 0.01, parseFloat);
+  const [direction, setDirection] = useLocalStorage("vortexCube3xDirection", -1, v => parseInt(v, 10));
+  const [isRotating, setIsRotating] = useLocalStorage("vortexCube3xIsRotating", false, v => v === "true");
 
-    const rx = localStorage.getItem("vortexCube3xRotX");
-    const ry = localStorage.getItem("vortexCube3xRotY");
-    const rz = localStorage.getItem("vortexCube3xRotZ");
-
-    if (rx) setRotationX(parseFloat(rx));
-    if (ry) setRotationY(parseFloat(ry));
-    if (rz) setRotationZ(parseFloat(rz));
-
-    const savedSpeed = localStorage.getItem("vortexCube3xSpeed");
-    if (savedSpeed) setSpeed(parseFloat(savedSpeed));
-
-    const savedDirection = localStorage.getItem("vortexCube3xDirection");
-    if (savedDirection) setDirection(parseInt(savedDirection, 10));
-
-    const savedRotating = localStorage.getItem("vortexCube3xIsRotating");
-    if (savedRotating) setIsRotating(savedRotating === "true");
-
-    // setIsLoaded(true); // всё готово, можно крутить
-  }, []);
-
-  // === сохранение в localStorage ===
-  useEffect(() => { localStorage.setItem("vortexCube3xGap", String(gap)); }, [gap]);
-  useEffect(() => { localStorage.setItem("vortexCube3xRotX", String(rotationX)); }, [rotationX]);
-  useEffect(() => { localStorage.setItem("vortexCube3xRotY", String(rotationY)); }, [rotationY]);
-  useEffect(() => { localStorage.setItem("vortexCube3xRotZ", String(rotationZ)); }, [rotationZ]);
-  useEffect(() => { localStorage.setItem("vortexCube3xSpeed", String(speed)); }, [speed]);
-  useEffect(() => { localStorage.setItem("vortexCube3xDirection", String(direction)); }, [direction]);
-  useEffect(() => { localStorage.setItem("vortexCube3xIsRotating", String(isRotating)); }, [isRotating]);
 
   // --- фабрика хэндлеров для ControlBlock ---
   const makeHandlers = (setter, defaultValue, min, max, step = 1) => ({
