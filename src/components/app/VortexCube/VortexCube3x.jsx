@@ -202,6 +202,15 @@ const VortexCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
   const [resetTrigger, setResetTrigger] = useState(false);
   const [flipTrigger, setFlipTrigger] = useState(false);
 
+  // === загрузка и сохранение в localStorage ===
+  const [gap, setGap] = useLocalStorage("vortexCube3xGap", 0.15, parseFloat);
+  const [rotationX, setRotationX] = useLocalStorage("vortexCube3xRotX", 90, parseFloat);
+  const [rotationY, setRotationY] = useLocalStorage("vortexCube3xRotY", 20, parseFloat);
+  const [rotationZ, setRotationZ] = useLocalStorage("vortexCube3xRotZ", 0, parseFloat);
+  const [speed, setSpeed] = useLocalStorage("vortexCube3xSpeed", 0.01, parseFloat);
+  const [direction, setDirection] = useLocalStorage("vortexCube3xDirection", -1, v => parseInt(v, 10));
+  const [isRotating, setIsRotating] = useLocalStorage("vortexCube3xIsRotating", false, v => v === "true");
+
   // --- кнопки вращения ---
   const handleClockwise = () => {
     setDirection(1);
@@ -225,16 +234,6 @@ const VortexCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
   const handleFlip = () => {
     setFlipTrigger(prev => !prev);
   };
-
-  // === загрузка и сохранение в localStorage ===
-  const [gap, setGap] = useLocalStorage("vortexCube3xGap", 0.15, parseFloat);
-  const [rotationX, setRotationX] = useLocalStorage("vortexCube3xRotX", 90, parseFloat);
-  const [rotationY, setRotationY] = useLocalStorage("vortexCube3xRotY", 20, parseFloat);
-  const [rotationZ, setRotationZ] = useLocalStorage("vortexCube3xRotZ", 0, parseFloat);
-  const [speed, setSpeed] = useLocalStorage("vortexCube3xSpeed", 0.01, parseFloat);
-  const [direction, setDirection] = useLocalStorage("vortexCube3xDirection", -1, v => parseInt(v, 10));
-  const [isRotating, setIsRotating] = useLocalStorage("vortexCube3xIsRotating", false, v => v === "true");
-
 
   // --- фабрика хэндлеров для ControlBlock ---
   const makeHandlers = (setter, defaultValue, min, max, step = 1) => ({
