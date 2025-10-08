@@ -80,6 +80,7 @@
     "btn404": "Back to MAIN page"
   },
   "control": {
+    "speed": "Speed",
     "gap": "Gap",
     "incline": "Incline",
     "decrease": "Decrease",

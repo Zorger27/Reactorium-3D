@@ -205,7 +205,7 @@ const VortexCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
   // управление вращением
   const [isRotating, setIsRotating] = useState(false); // стартовое вращение выключено
   const [direction, setDirection] = useState(-1);     // против часовой стрелки
-  const [speed] = useState(0.01);                     // скорость
+  const [speed, setSpeed] = useState(0.01);          // скорость
   const [resetTrigger, setResetTrigger] = useState(false);
   const [flipTrigger, setFlipTrigger] = useState(false);
 
@@ -268,6 +268,7 @@ const VortexCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
   });
 
   // Кнопки управления
+  const speedHandlers = makeHandlers(setSpeed, 0.01, 0, 0.05, 0.01);
   const gapHandlers = makeHandlers(setGap, 0.15, 0, 0.5, 0.01);
   const rotXHandlers = makeHandlers(setRotationX, 90, -180, 180);
   const rotYHandlers = makeHandlers(setRotationY, 20, -180, 180);
@@ -280,6 +281,9 @@ const VortexCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
         {/* Состояние: ничего не открыто → показываем ВСЕ блоки (закрытые) */}
         {openBlock === null && (
           <>
+            <ControlBlock label={t("control.speed")} isOpen={false} onToggle={() => setOpenBlock("speed")}
+                          gapConfig={{value: speed, min: 0.001, max: 0.05, step: 0.001, onChange: setSpeed, ...speedHandlers,}}
+            />
             <ControlBlock label={t("control.gap")} isOpen={false} onToggle={() => setOpenBlock("gap")}
                           gapConfig={{value: gap, min: 0, max: 0.5, step: 0.01, onChange: setGap, ...gapHandlers}}
             />
@@ -292,6 +296,13 @@ const VortexCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
                           ]}
             />
           </>
+        )}
+
+        {/* Состояние: открыт speed → показываем только его */}
+        {openBlock === "speed" && (
+          <ControlBlock label={t("control.speed")} isOpen={true} onToggle={() => setOpenBlock(null)}
+                        gapConfig={{value: speed, min: 0.001, max: 0.05, step: 0.001, onChange: setSpeed, ...speedHandlers,}}
+          />
         )}
 
         {/* Состояние: открыт gap → показываем только его */}

@@ -80,6 +80,7 @@
     "btn404": "Volver a la página PRINCIPAL"
   },
   "control": {
+    "speed": "Velocidad",
     "gap": "Brecha",
     "incline": "Inclinar",
     "decrease": "Disminuir",
