@@ -54,31 +54,53 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     [cubeSize]
   );
 
-  // массив конфигураций кубиков
-  const cubeConfigs = [
-    { top: topSmallCube01, bottom: bottomSmallCube01, sides: [sideSmallCube01, sideSmallCube01, sideSmallCube01, sideSmallCube01, sideSmallCube01, sideSmallCube01] },
-    { top: topSmallCube01, bottom: bottomSmallCube01, sides: [sideSmallCube02, sideSmallCube02, sideSmallCube02, sideSmallCube02, sideSmallCube02, sideSmallCube02] },
-    { top: topSmallCube01, bottom: bottomSmallCube01, sides: [sideSmallCube03, sideSmallCube03, sideSmallCube03, sideSmallCube03, sideSmallCube03, sideSmallCube03] },
-    { top: topSmallCube01, bottom: bottomSmallCube01, sides: [sideSmallCube04, sideSmallCube04, sideSmallCube04, sideSmallCube04, sideSmallCube04, sideSmallCube04] },
-    { top: topSmallCube01, bottom: bottomSmallCube01, sides: [sideSmallCube05, sideSmallCube05, sideSmallCube05, sideSmallCube05, sideSmallCube05, sideSmallCube05] },
-    { top: topSmallCube01, bottom: bottomSmallCube01, sides: [sideSmallCube06, sideSmallCube06, sideSmallCube06, sideSmallCube06, sideSmallCube06, sideSmallCube06] },
-    { top: topSmallCube01, bottom: bottomSmallCube01, sides: [sideSmallCube07, sideSmallCube07, sideSmallCube07, sideSmallCube07, sideSmallCube07, sideSmallCube07] },
-    { top: topSmallCube01, bottom: bottomSmallCube01, sides: [sideSmallCube08, sideSmallCube08, sideSmallCube08, sideSmallCube08, sideSmallCube08, sideSmallCube08] },
+  // === Загружаем все текстуры один раз ===
+  const texturePaths = [
+    topSmallCube01, topSmallCube02,
+    bottomSmallCube01, bottomSmallCube02,
+    sideSmallCube01, sideSmallCube02, sideSmallCube03, sideSmallCube04,
+    sideSmallCube05, sideSmallCube06, sideSmallCube07, sideSmallCube08, sideSmallCube09
   ];
+  const textures = useLoader(THREE.TextureLoader, texturePaths);
 
-  // загружаем все текстуры
-  const allTextures = useLoader(THREE.TextureLoader, cubeConfigs.flatMap(cfg => [cfg.top, cfg.bottom, ...cfg.sides]));
+  // === Настраиваем каждую текстуру ===
+  const processedTextures = useMemo(() => {
+    return textures.map((texture, index) => {
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.flipY = true;
 
-  // нормализуем их обратно по кубикам
-  const texturesPerCube = cubeConfigs.map((cfg, i) => {
-    const base = i * 8;
-    const tex = allTextures.slice(base, base + 8);
-    return {
-      top: tex[0],
-      bottom: tex[1],
-      sides: tex.slice(2)
-    };
-  });
+      // Индивидуальные повороты для ориентации
+      texture.center = new THREE.Vector2(0.5, 0.5);
+      switch (index) {
+        case 0: // topSmallCube01
+        case 1: // topSmallCube02
+          texture.rotation = 0;
+          break;
+        case 2: // bottomSmallCube01
+        case 3: // bottomSmallCube02
+          texture.rotation = Math.PI;
+          break;
+        default:
+          // Боковые — выравниваем ориентацию
+          texture.rotation = 0;
+      }
+
+      texture.needsUpdate = true;
+      return texture;
+    });
+  }, [textures]);
+
+  // === Конфигурация 8 кубиков ===
+  const cubeConfigs = [
+    { top: processedTextures[0], bottom: processedTextures[2], sides: processedTextures.slice(4, 5) },
+    { top: processedTextures[0], bottom: processedTextures[2], sides: processedTextures.slice(5, 6) },
+    { top: processedTextures[0], bottom: processedTextures[2], sides: processedTextures.slice(6, 7) },
+    { top: processedTextures[0], bottom: processedTextures[2], sides: processedTextures.slice(7, 8) },
+    { top: processedTextures[1], bottom: processedTextures[3], sides: processedTextures.slice(8, 9) },
+    { top: processedTextures[1], bottom: processedTextures[3], sides: processedTextures.slice(9, 10) },
+    { top: processedTextures[1], bottom: processedTextures[3], sides: processedTextures.slice(10, 11) },
+    { top: processedTextures[1], bottom: processedTextures[3], sides: processedTextures.slice(11, 12) },
+  ];
 
   // === Позиции для 2×2×2 (8 кубиков) ===
   const positions = useMemo(() => {
@@ -155,15 +177,31 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
   return (
     <group ref={groupRef}>
       {positions.map((pos, i) => {
-        const texSet = texturesPerCube[i % texturesPerCube.length];
-        const materials = [
-          new THREE.MeshBasicMaterial({ map: texSet.sides[0] }), // right
-          new THREE.MeshBasicMaterial({ map: texSet.sides[1] }), // left
-          new THREE.MeshBasicMaterial({ map: texSet.sides[2] }), // front
-          new THREE.MeshBasicMaterial({ map: texSet.sides[3] }), // back
-          new THREE.MeshBasicMaterial({ map: texSet.bottom }),   // bottom
-          new THREE.MeshBasicMaterial({ map: texSet.top }),      // top
-        ];
+        const texSet = cubeConfigs[i % cubeConfigs.length];
+        const sides = texSet.sides[0]; // сейчас одна текстура для всех боков
+
+        // создаём материалы со своей ориентацией
+        const materials = [0, 1, 2, 3, 4, 5].map((sideIndex) => {
+          const tex =
+            sideIndex === 4 ? texSet.bottom :
+              sideIndex === 5 ? texSet.top :
+                sides;
+
+          // клонируем чтобы не крутить оригинал
+          const t = tex.clone();
+          t.colorSpace = THREE.SRGBColorSpace;
+          t.center = new THREE.Vector2(0.5, 0.5);
+          t.flipY = true;
+
+          // коррекция ориентации по сторонам
+          if (sideIndex === 1) t.rotation = degreesToRadians(90); // left
+          if (sideIndex === 0) t.rotation = degreesToRadians(-90); // right
+          if (sideIndex === 3) t.rotation = degreesToRadians(180); // back
+
+          t.needsUpdate = true;
+          return new THREE.MeshBasicMaterial({ map: t });
+        });
+
         return (
           <mesh key={i} position={pos} geometry={geometry} material={materials} />
         );
