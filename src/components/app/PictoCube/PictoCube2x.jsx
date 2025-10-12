@@ -101,9 +101,6 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     return map;
   }, [loaded, texturePathList]);
 
-  // ---- Вспомогательная функция: получить текстуру по пути, или null ----
-  const getTex = (path) => (path ? textureByPath.get(path) || null : null);
-
   // === Позиции для 2×2×2 (8 кубиков) ===
   const positions = useMemo(() => {
     const step = cubeSize + gap;
@@ -165,7 +162,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
       );
       setTargetRotationZ(null);
     }
-  }, [resetTrigger, rotationX, rotationY, rotationZ]);
+  }, [resetTrigger]);
 
   // === Поворот на 180° ===
   useEffect(() => {
@@ -178,6 +175,10 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
 
   // Мемоизируем создание материалов
   const cubeMaterials = useMemo(() => {
+
+    // ---- Вспомогательная функция: получить текстуру по пути, или null ----
+    const getTex = (path) => (path ? textureByPath.get(path) || null : null);
+
     const makeMat = (tex, rotateDeg = 0) => {
       if (!tex) return new THREE.MeshBasicMaterial({ color: 0xcccccc });
       const t = tex.clone();
