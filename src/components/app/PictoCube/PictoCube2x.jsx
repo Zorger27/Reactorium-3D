@@ -8,33 +8,19 @@ import {Canvas, useFrame, useThree, extend, useLoader} from '@react-three/fiber'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import * as THREE from "three";
 
-import small2Cube01 from "@/assets/app/VortexCube/cube3/cube3-01.webp";
-import small2Cube02 from "@/assets/app/VortexCube/cube3/cube3-02.webp";
-import small2Cube03 from "@/assets/app/VortexCube/cube3/cube3-03.webp";
-import small2Cube04 from "@/assets/app/VortexCube/cube3/cube3-04.webp";
-import small2Cube05 from "@/assets/app/VortexCube/cube3/cube3-05.webp";
-import small2Cube06 from "@/assets/app/VortexCube/cube3/cube3-06.webp";
-import small2Cube07 from "@/assets/app/VortexCube/cube3/cube3-07.webp";
-import small2Cube08 from "@/assets/app/VortexCube/cube3/cube3-08.webp";
-import small2Cube09 from "@/assets/app/VortexCube/cube3/cube3-09.webp";
-import small2Cube10 from "@/assets/app/VortexCube/cube3/cube3-10.webp";
-import small2Cube11 from "@/assets/app/VortexCube/cube3/cube3-11.webp";
-import small2Cube12 from "@/assets/app/VortexCube/cube3/cube3-12.webp";
-import small2Cube13 from "@/assets/app/VortexCube/cube3/cube3-13.webp";
-import small2Cube14 from "@/assets/app/VortexCube/cube3/cube3-14.webp";
-import small2Cube15 from "@/assets/app/VortexCube/cube3/cube3-15.webp";
-import small2Cube16 from "@/assets/app/VortexCube/cube3/cube3-16.webp";
-import small2Cube17 from "@/assets/app/VortexCube/cube3/cube3-17.webp";
-import small2Cube18 from "@/assets/app/VortexCube/cube3/cube3-18.webp";
-import small2Cube19 from "@/assets/app/VortexCube/cube3/cube3-19.webp";
-import small2Cube20 from "@/assets/app/VortexCube/cube3/cube3-20.webp";
-import small2Cube21 from "@/assets/app/VortexCube/cube3/cube3-21.webp";
-import small2Cube22 from "@/assets/app/VortexCube/cube3/cube3-22.webp";
-import small2Cube23 from "@/assets/app/VortexCube/cube3/cube3-23.webp";
-import small2Cube24 from "@/assets/app/VortexCube/cube3/cube3-24.webp";
-import small2Cube25 from "@/assets/app/VortexCube/cube3/cube3-25.webp";
-import small2Cube26 from "@/assets/app/VortexCube/cube3/cube3-26.webp";
-import small2Cube27 from "@/assets/app/VortexCube/cube3/cube3-27.webp";
+import topSmallCube01 from "@/assets/app/PictoCube/cube2/top01.webp"
+import topSmallCube02 from "@/assets/app/PictoCube/cube2/top02.webp"
+import bottomSmallCube01 from "@/assets/app/PictoCube/cube2/bottom01.webp"
+import bottomSmallCube02 from "@/assets/app/PictoCube/cube2/bottom02.webp"
+import sideSmallCube01 from "@/assets/app/PictoCube/cube2/cube01.webp"
+import sideSmallCube02 from "@/assets/app/PictoCube/cube2/cube02.webp"
+import sideSmallCube03 from "@/assets/app/PictoCube/cube2/cube03.webp"
+import sideSmallCube04 from "@/assets/app/PictoCube/cube2/cube04.webp"
+import sideSmallCube05 from "@/assets/app/PictoCube/cube2/cube05.webp"
+import sideSmallCube06 from "@/assets/app/PictoCube/cube2/cube06.webp"
+import sideSmallCube07 from "@/assets/app/PictoCube/cube2/cube07.webp"
+import sideSmallCube08 from "@/assets/app/PictoCube/cube2/cube08.webp"
+import sideSmallCube09 from "@/assets/app/PictoCube/cube2/cube09.webp"
 
 // Подключаем OrbitControls
 extend({ OrbitControls });
@@ -70,12 +56,9 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
 
   // === Загружаем текстуры (через useLoader) ===
   const textures = useLoader(THREE.TextureLoader, [
-    String(small2Cube01), String(small2Cube02), String(small2Cube03), String(small2Cube04), String(small2Cube05),
-    String(small2Cube06), String(small2Cube07), String(small2Cube08), String(small2Cube09), String(small2Cube10),
-    String(small2Cube11), String(small2Cube12), String(small2Cube13), String(small2Cube14), String(small2Cube15),
-    String(small2Cube16), String(small2Cube17), String(small2Cube18), String(small2Cube19), String(small2Cube20),
-    String(small2Cube21), String(small2Cube22), String(small2Cube23), String(small2Cube24), String(small2Cube25),
-    String(small2Cube26), String(small2Cube27),
+    String(topSmallCube01), String(topSmallCube02), String(bottomSmallCube01), String(bottomSmallCube02), String(sideSmallCube01),
+    String(sideSmallCube02), String(sideSmallCube03), String(sideSmallCube04), String(sideSmallCube05), String(sideSmallCube06),
+    String(sideSmallCube07), String(sideSmallCube08), String(sideSmallCube09),
   ]);
 
   // === Перемешиваем текстуры один раз ===
