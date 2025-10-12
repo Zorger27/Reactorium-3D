@@ -122,7 +122,7 @@ const PictoCube1x = forwardRef((props, ref) => {
   });
 
   return (
-    <div ref={ref} className="picto-cube-container">
+    <div ref={ref} className="picto-cube1x-container">
       <Canvas
         // style={{ height: '100%', width: '100%' }}
         style={canvasStyle} // responsive inline-стили
