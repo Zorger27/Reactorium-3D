@@ -8,10 +8,8 @@ import {Canvas, useFrame, useThree, extend, useLoader} from '@react-three/fiber'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import * as THREE from "three";
 
-import topSmallCube01 from "@/assets/app/PictoCube/cube2/top01.webp"
-import topSmallCube02 from "@/assets/app/PictoCube/cube2/top02.webp"
-import bottomSmallCube01 from "@/assets/app/PictoCube/cube2/bottom01.webp"
-import bottomSmallCube02 from "@/assets/app/PictoCube/cube2/bottom02.webp"
+import topSmallCube from "@/assets/app/PictoCube/cube2/top01.webp"
+import bottomSmallCube from "@/assets/app/PictoCube/cube2/bottom01.webp"
 import sideSmallCube01 from "@/assets/app/PictoCube/cube2/cube01.webp"
 import sideSmallCube02 from "@/assets/app/PictoCube/cube2/cube02.webp"
 import sideSmallCube03 from "@/assets/app/PictoCube/cube2/cube03.webp"
@@ -42,14 +40,14 @@ const CameraControls = () => {
 
 // Конфигурации кубиков
 const CUBE_CONFIGS = [
-  { top: topSmallCube01, bottom: bottomSmallCube01, sides: [sideSmallCube01, sideSmallCube01, sideSmallCube01, sideSmallCube01] },
-  { top: topSmallCube01, bottom: bottomSmallCube01, sides: [sideSmallCube02, sideSmallCube02, sideSmallCube02, sideSmallCube02] },
-  { top: topSmallCube01, bottom: bottomSmallCube01, sides: [sideSmallCube03, sideSmallCube03, sideSmallCube03, sideSmallCube03] },
-  { top: topSmallCube02, bottom: bottomSmallCube02, sides: [sideSmallCube04, sideSmallCube04, sideSmallCube04, sideSmallCube04] },
-  { top: topSmallCube01, bottom: bottomSmallCube01, sides: [sideSmallCube05, sideSmallCube05, sideSmallCube05, sideSmallCube05] },
-  { top: topSmallCube01, bottom: bottomSmallCube01, sides: [sideSmallCube06, sideSmallCube06, sideSmallCube06, sideSmallCube06] },
-  { top: topSmallCube01, bottom: bottomSmallCube01, sides: [sideSmallCube07, sideSmallCube07, sideSmallCube07, sideSmallCube07] },
-  { top: topSmallCube01, bottom: bottomSmallCube01, sides: [sideSmallCube08, sideSmallCube08, sideSmallCube08, sideSmallCube08] },
+  { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube01, sideSmallCube01, sideSmallCube01, sideSmallCube01] },
+  { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube02, sideSmallCube02, sideSmallCube02, sideSmallCube02] },
+  { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube03, sideSmallCube03, sideSmallCube03, sideSmallCube03] },
+  { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube04, sideSmallCube04, sideSmallCube04, sideSmallCube04] },
+  { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube05, sideSmallCube05, sideSmallCube05, sideSmallCube05] },
+  { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube06, sideSmallCube06, sideSmallCube06, sideSmallCube06] },
+  { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube07, sideSmallCube07, sideSmallCube07, sideSmallCube07] },
+  { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube08, sideSmallCube08, sideSmallCube08, sideSmallCube08] },
 ];
 
 // ---- Настройка поворотов по умолчанию для граней (можно расширить/перенастроить) ----
