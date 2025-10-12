@@ -57,12 +57,12 @@ const CameraControls = () => {
   );
 };
 
-// === Группа из 27 кубиков ===
+// === Группа из 8 кубиков с картинками ===
 const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating, direction, speed, resetTrigger, flipTrigger }) => {
   const groupRef = useRef(null);
 
   // размер маленького кубика
-  const cubeSize = groupSize / 3;
+  const cubeSize = groupSize / 2;
   const geometry = useMemo(
     () => new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize),
     [cubeSize]
@@ -88,10 +88,10 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     return arr;
   }, [textures]);
 
-  // === Позиции для 3×3×3 ===
+  // === Позиции для 2×2×2 (8 кубиков) ===
   const positions = useMemo(() => {
     const step = cubeSize + gap;
-    const coords = [-step, 0, step];
+    const coords = [-step / 2, step / 2];
     const result = [];
     for (let x of coords) {
       for (let y of coords) {
@@ -103,7 +103,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     return result;
   }, [cubeSize, gap]);
 
-  // === Первоначальная ориентация ===
+  // === Первоначальная ориентация - Наклон по Эйлеру ===
   useEffect(() => {
     if (groupRef.current) {
       groupRef.current.rotation.set(
