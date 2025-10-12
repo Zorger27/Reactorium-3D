@@ -54,14 +54,14 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     [cubeSize]
   );
 
-  // === Загружаем текстуры (через useLoader) ===
+  // === Загружаем картинки (через useLoader) ===
   const textures = useLoader(THREE.TextureLoader, [
     String(topSmallCube01), String(topSmallCube02), String(bottomSmallCube01), String(bottomSmallCube02), String(sideSmallCube01),
     String(sideSmallCube02), String(sideSmallCube03), String(sideSmallCube04), String(sideSmallCube05), String(sideSmallCube06),
     String(sideSmallCube07), String(sideSmallCube08), String(sideSmallCube09),
   ]);
 
-  // === Перемешиваем текстуры один раз ===
+  // === Перемешиваем картинки один раз ===
   const shuffledTextures = useMemo(() => {
     const arr = [...textures];
     for (let i = arr.length - 1; i > 0; i--) {
