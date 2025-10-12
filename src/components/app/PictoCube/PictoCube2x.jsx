@@ -106,7 +106,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     back: 180,
     front: 0,
     top: 0,
-    bottom: 180
+    bottom: 0
   };
 
   // === Позиции для 2×2×2 (8 кубиков) ===
@@ -265,13 +265,13 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
   const [flipTrigger, setFlipTrigger] = useState(false);
 
   // === загрузка и сохранение в localStorage ===
-  const [gap, setGap] = useLocalStorage("vortexCube3xGap", 0.15, parseFloat);
-  const [rotationX, setRotationX] = useLocalStorage("vortexCube3xRotX", 90, parseFloat);
-  const [rotationY, setRotationY] = useLocalStorage("vortexCube3xRotY", 20, parseFloat);
-  const [rotationZ, setRotationZ] = useLocalStorage("vortexCube3xRotZ", 0, parseFloat);
-  const [speed, setSpeed] = useLocalStorage("vortexCube3xSpeed", 0.01, parseFloat);
-  const [direction, setDirection] = useLocalStorage("vortexCube3xDirection", -1, v => parseInt(v, 10));
-  const [isRotating, setIsRotating] = useLocalStorage("vortexCube3xIsRotating", false, v => v === "true");
+  const [gap, setGap] = useLocalStorage("pictoCube2xGap", 0.15, parseFloat);
+  const [rotationX, setRotationX] = useLocalStorage("pictoCube2xRotX", 90, parseFloat);
+  const [rotationY, setRotationY] = useLocalStorage("pictoCube2xRotY", 20, parseFloat);
+  const [rotationZ, setRotationZ] = useLocalStorage("pictoCube2xRotZ", 0, parseFloat);
+  const [speed, setSpeed] = useLocalStorage("pictoCube2xSpeed", 0.01, parseFloat);
+  const [direction, setDirection] = useLocalStorage("pictoCube2xDirection", -1, v => parseInt(v, 10));
+  const [isRotating, setIsRotating] = useLocalStorage("pictoCube2xIsRotating", false, v => v === "true");
 
   // --- кнопки вращения ---
   const handleClockwise = () => {
