@@ -5,12 +5,12 @@ import { Canvas, useFrame, useThree, extend, useLoader } from '@react-three/fibe
 import * as THREE from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
-import rightImg from "@/assets/app/PictoCube/right.webp";
-import leftImg from "@/assets/app/PictoCube/left.webp";
-import frontImg from "@/assets/app/PictoCube/front.webp";
-import backImg from "@/assets/app/PictoCube/back.webp";
-import bottomImg from "@/assets/app/PictoCube/bottom.webp";
-import topImg from "@/assets/app/PictoCube/top.webp";
+import rightImg from "@/assets/app/PictoCube/cube1/right.webp";
+import leftImg from "@/assets/app/PictoCube/cube1/left.webp";
+import frontImg from "@/assets/app/PictoCube/cube1/front.webp";
+import backImg from "@/assets/app/PictoCube/cube1/back.webp";
+import bottomImg from "@/assets/app/PictoCube/cube1/bottom.webp";
+import topImg from "@/assets/app/PictoCube/cube1/top.webp";
 
 // Подключаем OrbitControls
 extend({ OrbitControls });
