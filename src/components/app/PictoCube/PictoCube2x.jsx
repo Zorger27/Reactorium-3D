@@ -20,7 +20,6 @@ import sideSmallCube05 from "@/assets/app/PictoCube/cube2/cube05.webp"
 import sideSmallCube06 from "@/assets/app/PictoCube/cube2/cube06.webp"
 import sideSmallCube07 from "@/assets/app/PictoCube/cube2/cube07.webp"
 import sideSmallCube08 from "@/assets/app/PictoCube/cube2/cube08.webp"
-import sideSmallCube09 from "@/assets/app/PictoCube/cube2/cube09.webp"
 
 // Подключаем OrbitControls
 extend({ OrbitControls });
@@ -54,53 +53,61 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     [cubeSize]
   );
 
-  // === Загружаем все текстуры один раз ===
-  const texturePaths = [
-    topSmallCube01, topSmallCube02,
-    bottomSmallCube01, bottomSmallCube02,
-    sideSmallCube01, sideSmallCube02, sideSmallCube03, sideSmallCube04,
-    sideSmallCube05, sideSmallCube06, sideSmallCube07, sideSmallCube08, sideSmallCube09
+  // ---- конфигурации ----
+  const cubeConfigsRaw = [
+    { top: topSmallCube01, bottom: bottomSmallCube01, sides: [sideSmallCube01, sideSmallCube01, sideSmallCube01, sideSmallCube01] },
+    { top: topSmallCube01, bottom: bottomSmallCube01, sides: [sideSmallCube02, sideSmallCube02, sideSmallCube02, sideSmallCube02] },
+    { top: topSmallCube01, bottom: bottomSmallCube01, sides: [sideSmallCube03, sideSmallCube03, sideSmallCube03, sideSmallCube03] },
+    { top: topSmallCube02, bottom: bottomSmallCube02, sides: [sideSmallCube04, sideSmallCube04, sideSmallCube04, sideSmallCube04] },
+    { top: topSmallCube01, bottom: bottomSmallCube01, sides: [sideSmallCube05, sideSmallCube05, sideSmallCube05, sideSmallCube05] },
+    { top: topSmallCube01, bottom: bottomSmallCube01, sides: [sideSmallCube06, sideSmallCube06, sideSmallCube06, sideSmallCube06] },
+    { top: topSmallCube01, bottom: bottomSmallCube01, sides: [sideSmallCube07, sideSmallCube07, sideSmallCube07, sideSmallCube07] },
+    { top: topSmallCube01, bottom: bottomSmallCube01, sides: [sideSmallCube08, sideSmallCube08, sideSmallCube08, sideSmallCube08] },
   ];
-  const textures = useLoader(THREE.TextureLoader, texturePaths);
 
-  // === Настраиваем каждую текстуру ===
-  const processedTextures = useMemo(() => {
-    return textures.map((texture, index) => {
-      texture.colorSpace = THREE.SRGBColorSpace;
-      texture.flipY = true;
+  // ---- Собираем все пути, фильтруем undefined и делаем уникальными ----
+  const texturePathList = useMemo(() => {
+    const arr = cubeConfigsRaw.flatMap(cfg => [cfg.top, cfg.bottom, ...(cfg.sides || [])]);
+    return Array.from(new Set(arr.filter(Boolean))); // только truthy строки, уникально
+  }, [cubeConfigsRaw]);
 
-      // Индивидуальные повороты для ориентации
-      texture.center = new THREE.Vector2(0.5, 0.5);
-      switch (index) {
-        case 0: // topSmallCube01
-        case 1: // topSmallCube02
-          texture.rotation = 0;
-          break;
-        case 2: // bottomSmallCube01
-        case 3: // bottomSmallCube02
-          texture.rotation = Math.PI;
-          break;
-        default:
-          // Боковые — выравниваем ориентацию
-          texture.rotation = 0;
+  // ---- Загружаем все текстуры одним вызовом ----
+  // Если texturePathList пуст — передадим пустой массив (useLoader вернёт либо [], либо что-то корректное)
+  const loaded = useLoader(THREE.TextureLoader, texturePathList.length ? texturePathList : []);
+  // loaded гарантированно — либо Texture, либо Array; защитимся ниже.
+
+  // ---- Создаём map: path -> Texture (чтобы можно было восстанавливать конкретную текстуру по её пути) ----
+  const textureByPath = useMemo(() => {
+    const map = new Map();
+    if (Array.isArray(loaded)) {
+      for (let i = 0; i < texturePathList.length; i++) {
+        const path = texturePathList[i];
+        const tex = loaded[i];
+        if (path && tex) {
+          // базовые параметры для всех текстур
+          tex.colorSpace = THREE.SRGBColorSpace;
+          tex.flipY = true;
+          tex.center = new THREE.Vector2(0.5, 0.5);
+          tex.needsUpdate = true;
+          map.set(path, tex);
+        }
       }
+    }
+    return map;
+  }, [loaded, texturePathList]);
 
-      texture.needsUpdate = true;
-      return texture;
-    });
-  }, [textures]);
+  // ---- Вспомогательная функция: получить текстуру по пути, или null ----
+  const getTex = (path) => (path ? textureByPath.get(path) || null : null);
 
-  // === Конфигурация 8 кубиков ===
-  const cubeConfigs = [
-    { top: processedTextures[0], bottom: processedTextures[2], sides: processedTextures.slice(4, 5) },
-    { top: processedTextures[0], bottom: processedTextures[2], sides: processedTextures.slice(5, 6) },
-    { top: processedTextures[0], bottom: processedTextures[2], sides: processedTextures.slice(6, 7) },
-    { top: processedTextures[0], bottom: processedTextures[2], sides: processedTextures.slice(7, 8) },
-    { top: processedTextures[1], bottom: processedTextures[3], sides: processedTextures.slice(8, 9) },
-    { top: processedTextures[1], bottom: processedTextures[3], sides: processedTextures.slice(9, 10) },
-    { top: processedTextures[1], bottom: processedTextures[3], sides: processedTextures.slice(10, 11) },
-    { top: processedTextures[1], bottom: processedTextures[3], sides: processedTextures.slice(11, 12) },
-  ];
+  // ---- Настройка поворотов по умолчанию для граней (можно расширить/перенастроить) ----
+  const defaultSideRotations = {
+    right: -90,
+    left: 90,
+    back: 180,
+    front: 0,
+    top: 0,
+    bottom: 180
+  };
 
   // === Позиции для 2×2×2 (8 кубиков) ===
   const positions = useMemo(() => {
@@ -177,30 +184,46 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
   return (
     <group ref={groupRef}>
       {positions.map((pos, i) => {
-        const texSet = cubeConfigs[i % cubeConfigs.length];
-        const sides = texSet.sides[0]; // сейчас одна текстура для всех боков
+        // Получаем конфиг для кубика (если нет — берём по модулю)
+        const cfg = cubeConfigsRaw[i % cubeConfigsRaw.length];
 
-        // создаём материалы со своей ориентацией
-        const materials = [0, 1, 2, 3, 4, 5].map((sideIndex) => {
-          const tex =
-            sideIndex === 4 ? texSet.bottom :
-              sideIndex === 5 ? texSet.top :
-                sides;
+        // Получаем оригинальные текстуры (или null)
+        const topTex = getTex(cfg.top);
+        const bottomTex = getTex(cfg.bottom);
 
-          // клонируем чтобы не крутить оригинал
+        // sides ожидается массив длины 4; если меньше — заполняем повтором
+        const sidesPaths = (cfg.sides || []);
+        while (sidesPaths.length < 4) sidesPaths.push(sidesPaths[sidesPaths.length - 1] || null);
+
+        const sideTexs = sidesPaths.map(p => getTex(p));
+
+        // Для BoxGeometry порядок материалов: [ right, left, top, bottom, front, back ]
+        const materials = [];
+
+        // helper для создания материалов с поворотом (клонируем текстуру чтобы не мутировать оригинал)
+        const makeMat = (tex, rotateDeg = 0) => {
+          if (!tex) return new THREE.MeshBasicMaterial({ color: 0xcccccc }); // заглушка
           const t = tex.clone();
-          t.colorSpace = THREE.SRGBColorSpace;
           t.center = new THREE.Vector2(0.5, 0.5);
           t.flipY = true;
-
-          // коррекция ориентации по сторонам
-          if (sideIndex === 1) t.rotation = degreesToRadians(90); // left
-          if (sideIndex === 0) t.rotation = degreesToRadians(-90); // right
-          if (sideIndex === 3) t.rotation = degreesToRadians(180); // back
-
+          t.colorSpace = THREE.SRGBColorSpace;
+          t.rotation = degreesToRadians(rotateDeg || 0);
           t.needsUpdate = true;
           return new THREE.MeshBasicMaterial({ map: t });
-        });
+        };
+
+        // right (0) <- возьмём sideTexs[0] и повернём на defaultSideRotations.right
+        materials[0] = makeMat(sideTexs[0], defaultSideRotations.right);
+        // left (1)
+        materials[1] = makeMat(sideTexs[1], defaultSideRotations.left);
+        // front (4)
+        materials[2] = makeMat(sideTexs[2], defaultSideRotations.front);
+        // back (5)
+        materials[3] = makeMat(sideTexs[3], defaultSideRotations.back);
+        // top (2)
+        materials[4] = makeMat(topTex, defaultSideRotations.top);
+        // bottom (3)
+        materials[5] = makeMat(bottomTex, defaultSideRotations.bottom);
 
         return (
           <mesh key={i} position={pos} geometry={geometry} material={materials} />
