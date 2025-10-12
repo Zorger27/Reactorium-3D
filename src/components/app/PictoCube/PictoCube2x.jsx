@@ -54,22 +54,31 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     [cubeSize]
   );
 
-  // === Загружаем картинки (через useLoader) ===
-  const textures = useLoader(THREE.TextureLoader, [
-    String(topSmallCube01), String(topSmallCube02), String(bottomSmallCube01), String(bottomSmallCube02), String(sideSmallCube01),
-    String(sideSmallCube02), String(sideSmallCube03), String(sideSmallCube04), String(sideSmallCube05), String(sideSmallCube06),
-    String(sideSmallCube07), String(sideSmallCube08), String(sideSmallCube09),
-  ]);
+  // массив конфигураций кубиков
+  const cubeConfigs = [
+    { top: topSmallCube01, bottom: bottomSmallCube01, sides: [sideSmallCube01, sideSmallCube01, sideSmallCube01, sideSmallCube01, sideSmallCube01, sideSmallCube01] },
+    { top: topSmallCube01, bottom: bottomSmallCube01, sides: [sideSmallCube02, sideSmallCube02, sideSmallCube02, sideSmallCube02, sideSmallCube02, sideSmallCube02] },
+    { top: topSmallCube01, bottom: bottomSmallCube01, sides: [sideSmallCube03, sideSmallCube03, sideSmallCube03, sideSmallCube03, sideSmallCube03, sideSmallCube03] },
+    { top: topSmallCube01, bottom: bottomSmallCube01, sides: [sideSmallCube04, sideSmallCube04, sideSmallCube04, sideSmallCube04, sideSmallCube04, sideSmallCube04] },
+    { top: topSmallCube01, bottom: bottomSmallCube01, sides: [sideSmallCube05, sideSmallCube05, sideSmallCube05, sideSmallCube05, sideSmallCube05, sideSmallCube05] },
+    { top: topSmallCube01, bottom: bottomSmallCube01, sides: [sideSmallCube06, sideSmallCube06, sideSmallCube06, sideSmallCube06, sideSmallCube06, sideSmallCube06] },
+    { top: topSmallCube01, bottom: bottomSmallCube01, sides: [sideSmallCube07, sideSmallCube07, sideSmallCube07, sideSmallCube07, sideSmallCube07, sideSmallCube07] },
+    { top: topSmallCube01, bottom: bottomSmallCube01, sides: [sideSmallCube08, sideSmallCube08, sideSmallCube08, sideSmallCube08, sideSmallCube08, sideSmallCube08] },
+  ];
 
-  // === Перемешиваем картинки один раз ===
-  const shuffledTextures = useMemo(() => {
-    const arr = [...textures];
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-  }, [textures]);
+  // загружаем все текстуры
+  const allTextures = useLoader(THREE.TextureLoader, cubeConfigs.flatMap(cfg => [cfg.top, cfg.bottom, ...cfg.sides]));
+
+  // нормализуем их обратно по кубикам
+  const texturesPerCube = cubeConfigs.map((cfg, i) => {
+    const base = i * 8;
+    const tex = allTextures.slice(base, base + 8);
+    return {
+      top: tex[0],
+      bottom: tex[1],
+      sides: tex.slice(2)
+    };
+  });
 
   // === Позиции для 2×2×2 (8 кубиков) ===
   const positions = useMemo(() => {
@@ -145,11 +154,20 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
 
   return (
     <group ref={groupRef}>
-      {positions.map((pos, i) => (
-        <mesh key={i} position={pos} geometry={geometry}>
-          <meshBasicMaterial map={shuffledTextures[i]} />
-        </mesh>
-      ))}
+      {positions.map((pos, i) => {
+        const texSet = texturesPerCube[i % texturesPerCube.length];
+        const materials = [
+          new THREE.MeshBasicMaterial({ map: texSet.sides[0] }), // right
+          new THREE.MeshBasicMaterial({ map: texSet.sides[1] }), // left
+          new THREE.MeshBasicMaterial({ map: texSet.sides[2] }), // front
+          new THREE.MeshBasicMaterial({ map: texSet.sides[3] }), // back
+          new THREE.MeshBasicMaterial({ map: texSet.bottom }),   // bottom
+          new THREE.MeshBasicMaterial({ map: texSet.top }),      // top
+        ];
+        return (
+          <mesh key={i} position={pos} geometry={geometry} material={materials} />
+        );
+      })}
     </group>
   );
 };
