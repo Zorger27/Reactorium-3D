@@ -202,8 +202,8 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
         makeMat(sideTexs[1], DEFAULT_SIDE_ROTATIONS.left),
         makeMat(sideTexs[2], DEFAULT_SIDE_ROTATIONS.front),
         makeMat(sideTexs[3], DEFAULT_SIDE_ROTATIONS.back),
-        makeMat(topTex, DEFAULT_SIDE_ROTATIONS.top),
         makeMat(bottomTex, DEFAULT_SIDE_ROTATIONS.bottom),
+        makeMat(topTex, DEFAULT_SIDE_ROTATIONS.top),
       ];
     });
   }, [textureByPath]);
