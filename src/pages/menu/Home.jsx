@@ -39,6 +39,10 @@ const Home = () => {
           { property: "twitter:description", content: t('home.disc') },
           { property: "twitter:image", content: `${siteUrl}/ogimage/home.jpg` },
           { name: "twitter:card", content: "summary_large_image" },
+
+          // SEO-теги
+          { name: "author", content: "Anatolii Zorin" },
+          { name: "robots", content: "index,follow" },
         ]}
       />
 

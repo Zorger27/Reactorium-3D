@@ -32,6 +32,10 @@ const PageNotFound = () => {
           { property: "twitter:description", content: t('page404.disc') },
           { property: "twitter:image", content: `${siteUrl}/ogimage/404.jpg` },
           { name: "twitter:card", content: "summary_large_image" },
+
+          // SEO-теги
+          { name: "author", content: "Anatolii Zorin" },
+          { name: "robots", content: "index,follow" },
         ]}
       />
 

@@ -59,6 +59,10 @@ export const About = () => {
           { property: "twitter:description", content: t('about.disc') },
           { property: "twitter:image", content: `${siteUrl}/ogimage/about.jpg` },
           { name: "twitter:card", content: "summary_large_image" },
+
+          // SEO-теги
+          { name: "author", content: "Anatolii Zorin" },
+          { name: "robots", content: "index,follow" },
         ]}
       />
 

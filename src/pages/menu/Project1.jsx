@@ -87,6 +87,10 @@ export const Project1 = () => {
           { property: "twitter:description", content: t('project1.disc') },
           { property: "twitter:image", content: `${siteUrl}/ogimage/project1.jpg` },
           { name: "twitter:card", content: "summary_large_image" },
+
+          // SEO-теги
+          { name: "author", content: "Anatolii Zorin" },
+          { name: "robots", content: "index,follow" },
         ]}
       />
 
