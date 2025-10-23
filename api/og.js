@@ -145,6 +145,8 @@ export default function handler(req, res) {
 <meta name="twitter:image" content="${image}" />
 <meta name="twitter:creator" content="@Regroz" />
 <meta name="twitter:site" content="@Regroz" />
+<meta name="author" content="Anatolii Zorin" />
+<meta name="robots" content="index,follow" />
 </head>
 <body>
 <h1>${title}</h1>
