@@ -250,7 +250,7 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
 
   // === загрузка и сохранение в localStorage ===
   const [gap, setGap] = useLocalStorage("pictoCube2xGap", 0.15, parseFloat);
-  const [smallCubeScale, setSmallCubeScale] = useLocalStorage("pictoCube2xSmallCubeScale", 1, parseFloat);
+  const [smallCubeScale, setSmallCubeScale] = useLocalStorage("pictoCube2xSmallCubeScale", 0.85, parseFloat);
   const [rotationX, setRotationX] = useLocalStorage("pictoCube2xRotX", 90, parseFloat);
   const [rotationY, setRotationY] = useLocalStorage("pictoCube2xRotY", 0, parseFloat);
   const [rotationZ, setRotationZ] = useLocalStorage("pictoCube2xRotZ", 0, parseFloat);
@@ -292,7 +292,7 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
   // Кнопки управления
   const speedHandlers = makeHandlers(setSpeed, 0.01, 0, 0.05, 0.01);
   const gapHandlers = makeHandlers(setGap, 0.15, 0, 0.5, 0.01);
-  const smallCubeScaleHandlers = makeHandlers(setSmallCubeScale, 1, 0.5, 1, 0.05);
+  const smallCubeScaleHandlers = makeHandlers(setSmallCubeScale, 0.85, 0.5, 1, 0.05);
   const rotXHandlers = makeHandlers(setRotationX, 90, -180, 180);
   const rotYHandlers = makeHandlers(setRotationY, 0, -180, 180);
   const rotZHandlers = makeHandlers(setRotationZ, 0, -180, 180);
