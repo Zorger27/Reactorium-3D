@@ -192,7 +192,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
   useFrame((_, delta) => {
     if (!groupRef.current) return;
 
-    const smoothSpeed = 2.5; // скорость инерции
+    const smoothSpeed = 3.0; // скорость инерции
 
     groupRef.current.children.forEach((mesh, i) => {
       const t = targets[i];
