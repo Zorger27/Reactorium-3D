@@ -60,13 +60,13 @@ const DEFAULT_SIDE_ROTATIONS = {
   bottom: 0
 };
 
-const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating, direction, speed, resetTrigger, flipTrigger }) => {
+const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating, direction, speed, resetTrigger, flipTrigger, smallCubeScale }) => {
   const groupRef = useRef(null);
   const cubeSize = groupSize / 2;
 
   const geometry = useMemo(
-    () => new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize),
-    [cubeSize]
+    () => new THREE.BoxGeometry(cubeSize * smallCubeScale, cubeSize * smallCubeScale, cubeSize * smallCubeScale),
+    [cubeSize, smallCubeScale]
   );
 
   const texturePathList = useMemo(() => {
@@ -250,8 +250,9 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
 
   // === загрузка и сохранение в localStorage ===
   const [gap, setGap] = useLocalStorage("pictoCube2xGap", 0.15, parseFloat);
+  const [smallCubeScale, setSmallCubeScale] = useLocalStorage("pictoCube2xSmallCubeScale", 1, parseFloat);
   const [rotationX, setRotationX] = useLocalStorage("pictoCube2xRotX", 90, parseFloat);
-  const [rotationY, setRotationY] = useLocalStorage("pictoCube2xRotY", 20, parseFloat);
+  const [rotationY, setRotationY] = useLocalStorage("pictoCube2xRotY", 0, parseFloat);
   const [rotationZ, setRotationZ] = useLocalStorage("pictoCube2xRotZ", 0, parseFloat);
   const [speed, setSpeed] = useLocalStorage("pictoCube2xSpeed", 0.01, parseFloat);
   const [direction, setDirection] = useLocalStorage("pictoCube2xDirection", -1, v => parseInt(v, 10));
@@ -291,8 +292,9 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
   // Кнопки управления
   const speedHandlers = makeHandlers(setSpeed, 0.01, 0, 0.05, 0.01);
   const gapHandlers = makeHandlers(setGap, 0.15, 0, 0.5, 0.01);
+  const smallCubeScaleHandlers = makeHandlers(setSmallCubeScale, 1, 0.5, 1, 0.05);
   const rotXHandlers = makeHandlers(setRotationX, 90, -180, 180);
-  const rotYHandlers = makeHandlers(setRotationY, 20, -180, 180);
+  const rotYHandlers = makeHandlers(setRotationY, 0, -180, 180);
   const rotZHandlers = makeHandlers(setRotationZ, 0, -180, 180);
 
   return (
@@ -307,6 +309,10 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
             />
             <ControlBlock label={t("control.gap")} isOpen={false} onToggle={() => setOpenBlock("gap")}
                           gapConfig={{value: gap, min: 0, max: 0.5, step: 0.01, onChange: setGap, ...gapHandlers}}
+            />
+
+            <ControlBlock label={t("control.small-cube-size")} isOpen={false} onToggle={() => setOpenBlock("smallCubeSize")}
+              gapConfig={{value: smallCubeScale, min: 0.5, max: 1.0, step: 0.05, onChange: setSmallCubeScale, ...smallCubeScaleHandlers,}}
             />
 
             <ControlBlock label={t("control.incline")} isOpen={false} onToggle={() => setOpenBlock("rotation")}
@@ -330,6 +336,12 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
         {openBlock === "gap" && (
           <ControlBlock label={t("control.gap")} isOpen={true} onToggle={() => setOpenBlock(null)}
                         gapConfig={{value: gap, min: 0, max: 0.5, step: 0.01, onChange: setGap, ...gapHandlers}}
+          />
+        )}
+
+        {openBlock === "smallCubeSize" && (
+          <ControlBlock label={t("control.small-cube-size")} isOpen={true} onToggle={() => setOpenBlock(null)}
+                        gapConfig={{value: smallCubeScale, min: 0.5, max: 1.0, step: 0.05, onChange: setSmallCubeScale, ...smallCubeScaleHandlers,}}
           />
         )}
 
@@ -372,6 +384,7 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
             speed={speed}
             resetTrigger={resetTrigger}
             flipTrigger={flipTrigger}
+            smallCubeScale={smallCubeScale}
           />
           <CameraControls />
         </Canvas>
