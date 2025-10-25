@@ -192,33 +192,28 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
   useFrame((_, delta) => {
     if (!groupRef.current) return;
 
-    // === Логика вращения ===
+    const smoothSpeed = 2.5; // скорость инерции
+
+    groupRef.current.children.forEach((mesh, i) => {
+      const t = targets[i];
+      if (!t) return;
+      const targetVec = new THREE.Vector3(t[0], t[1], t[2]);
+      mesh.position.lerp(targetVec, 1 - Math.exp(-smoothSpeed * delta));
+    });
+
+    // вращение группы
     if (targetRotationZ === null && isRotating) {
       groupRef.current.rotation.z += direction * speed;
     }
-
     if (targetRotationZ !== null) {
-      const currentZ = groupRef.current.rotation.z;
-      const diff = targetRotationZ - currentZ;
+      const diff = targetRotationZ - groupRef.current.rotation.z;
       const normalizedDiff = ((diff + Math.PI) % (2 * Math.PI)) - Math.PI;
-
       groupRef.current.rotation.z += normalizedDiff * Math.min(10 * delta, 1);
-
       if (Math.abs(normalizedDiff) < 0.01) {
         groupRef.current.rotation.z = targetRotationZ;
         setTargetRotationZ(null);
       }
     }
-
-    // === плавное перемещение кубиков к target-позициям ===
-    // проходим по детям-группы (mesh-ы в том же порядке, что и targets)
-    groupRef.current.children.forEach((mesh, i) => {
-      const t = targets[i];
-      if (!t) return;
-      // создаём вектор без spread — чтобы не было ошибок
-      const targetVec = new THREE.Vector3(t[0], t[1], t[2]);
-      mesh.position.lerp(targetVec, Math.min(1, 5 * delta));
-    });
   });
 
   // === Сброс ===
@@ -279,11 +274,9 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     });
   }, [textureByPath]);
 
-  // --- Рендер: используем targets (массивы [x, y, z]) как начальные позиции ---
   return (
     <group ref={groupRef}>
-      {targets.map((pos, i) => (
-        // position принимает массив [x,y,z], это корректно для r3f
+      {basePositions.map((pos, i) => (
         <mesh key={i} position={pos} geometry={geometry} material={cubeMaterials[i]} />
       ))}
     </group>
