@@ -255,8 +255,8 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
   const [rotationY, setRotationY] = useLocalStorage("pictoCube2xRotY", 0, parseFloat);
   const [rotationZ, setRotationZ] = useLocalStorage("pictoCube2xRotZ", 0, parseFloat);
   const [speed, setSpeed] = useLocalStorage("pictoCube2xSpeed", 0.01, parseFloat);
-  const [direction, setDirection] = useLocalStorage("pictoCube2xDirection", -1, v => parseInt(v, 10));
-  const [isRotating, setIsRotating] = useLocalStorage("pictoCube2xIsRotating", false, v => v === "true");
+  const [direction, setDirection] = useLocalStorage("pictoCube2xDirection", 1, v => parseInt(v, 10));
+  const [isRotating, setIsRotating] = useLocalStorage("pictoCube2xIsRotating", true, v => v === "true");
 
   // --- кнопки вращения ---
   const handleClockwise = () => {
