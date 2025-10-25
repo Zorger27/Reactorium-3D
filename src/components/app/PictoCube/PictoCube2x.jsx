@@ -201,7 +201,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
       mesh.position.lerp(targetVec, 1 - Math.exp(-smoothSpeed * delta));
     });
 
-    // вращение группы
+    // Вращение группы
     if (targetRotationZ === null && isRotating) {
       groupRef.current.rotation.z += direction * speed;
     }
