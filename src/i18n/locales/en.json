@@ -95,7 +95,9 @@
     "pause": "Pause rotation",
     "continue": "Continue rotating",
     "stop": "Stop rotation",
-    "180": "Rotate 180°"
+    "180": "Rotate 180°",
+    "shuffle": "Shuffle",
+    "resetPositions": "Reset positions"
   },
   "extra": {
     "loading": "Loading...",
