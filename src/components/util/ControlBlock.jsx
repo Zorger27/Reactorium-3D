@@ -70,7 +70,7 @@ function ControlBlock({
                   <ControlButton
                     icon="fa-solid fa-undo"
                     onClick={gapConfig.reset}
-                    title={t("control.reset-gap")}
+                    title={t("control.reset")}
                     variant="reset"
                   />
 

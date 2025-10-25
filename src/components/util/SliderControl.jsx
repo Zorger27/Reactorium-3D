@@ -35,7 +35,7 @@ function SliderControl({ label, value, handlers, min, max, defaultValue, formatV
         <ControlButton
           icon="fa-solid fa-undo"
           onClick={() => handlers.reset(defaultValue)}
-          title={t("control.reset-incline")}
+          title={t("control.reset")}
           variant="reset"
         />
         <div className="scale-value">
