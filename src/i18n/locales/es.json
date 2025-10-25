@@ -82,6 +82,7 @@
   "control": {
     "speed": "Velocidad",
     "gap": "Brecha",
+    "small-cube-size": "Tamaño",
     "incline": "Inclinar",
     "decrease": "Disminuir",
     "increase": "Incrementar",

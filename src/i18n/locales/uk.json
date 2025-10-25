@@ -82,6 +82,7 @@
   "control": {
     "speed": "Швидкість",
     "gap": "Зазор",
+    "small-cube-size": "Розмір",
     "incline": "Нахил",
     "decrease": "Зменшити",
     "increase": "Збільшити",

@@ -82,6 +82,7 @@
   "control": {
     "speed": "Speed",
     "gap": "Gap",
+    "small-cube-size": "Size",
     "incline": "Incline",
     "decrease": "Decrease",
     "increase": "Increase",
