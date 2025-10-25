@@ -60,7 +60,7 @@ const DEFAULT_SIDE_ROTATIONS = {
   bottom: 0
 };
 
-const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating, direction, speed, resetTrigger, flipTrigger, smallCubeScale }) => {
+const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating, direction, speed, resetTrigger, flipTrigger, smallCubeScale, shuffleTrigger, positionsResetTrigger }) => {
   const groupRef = useRef(null);
   const cubeSize = groupSize / 2;
 
@@ -99,8 +99,8 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     return map;
   }, [loaded, texturePathList]);
 
-  // === Позиции для 2×2×2 (8 кубиков) ===
-  const positions = useMemo(() => {
+  // === Базовые упорядоченные позиции для 2×2×2 (8 кубиков) ===
+  const basePositions = useMemo(() => {
     const step = cubeSize + gap;
     const coords = [-step / 2, step / 2];
     const result = [];
@@ -113,6 +113,67 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     }
     return result;
   }, [cubeSize, gap]);
+
+// --- order (массив индексов 0..7). Если null — значит упорядочено.
+  const STORAGE_KEY = 'pictoCube2xPositionsOrder';
+  const [order, setOrder] = useState(null);
+
+  // при монтировании читаем сохранённый order (если есть)
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length === basePositions.length) {
+          setOrder(parsed);
+          return;
+        }
+      }
+    } catch (e) {
+      // ignore parse errors
+    }
+    setOrder(null);
+  }, []); // только на монтирование
+
+  // если basePositions изменились (gap/scale), мы не сбрасываем order:
+  // targets будут пересчитаны из order.map(i => basePositions[i]) — это позволяет
+  // сохранять "слоты" при изменении gap/scale.
+
+  // === targets — реальные координаты, к которым идут кубики ===
+  const targets = useMemo(() => {
+    if (Array.isArray(order)) {
+      return order.map(idx => basePositions[idx]);
+    }
+    return basePositions;
+  }, [basePositions, order]);
+
+  // При shuffleTrigger — создаём новую случайную перестановку индексов и сохраняем
+  useEffect(() => {
+    // создаём массив индексов [0,1,...,n-1]
+    const n = basePositions.length;
+    const arr = Array.from({ length: n }, (_, i) => i);
+
+    // Fisher–Yates shuffle
+    for (let i = n - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+
+    setOrder(arr);
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+    } catch (e) {
+      // ignore storage errors
+    }
+  }, [shuffleTrigger]); // вызывается только при клике shuffle
+
+  // При positionsResetTrigger — очищаем order (возвращаем упорядоченные) и удаляем из localStorage
+  useEffect(() => {
+    setOrder(null);
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (e) { }
+  }, [positionsResetTrigger]);
 
   // === Первоначальная ориентация - Наклон по Эйлеру ===
   useEffect(() => {
@@ -131,7 +192,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
   useFrame((_, delta) => {
     if (!groupRef.current) return;
 
-    // Если идёт плавный поворот, ручное вращение не применяем
+    // === Логика вращения ===
     if (targetRotationZ === null && isRotating) {
       groupRef.current.rotation.z += direction * speed;
     }
@@ -148,6 +209,16 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
         setTargetRotationZ(null);
       }
     }
+
+    // === плавное перемещение кубиков к target-позициям ===
+    // проходим по детям-группы (mesh-ы в том же порядке, что и targets)
+    groupRef.current.children.forEach((mesh, i) => {
+      const t = targets[i];
+      if (!t) return;
+      // создаём вектор без spread — чтобы не было ошибок
+      const targetVec = new THREE.Vector3(t[0], t[1], t[2]);
+      mesh.position.lerp(targetVec, Math.min(1, 5 * delta));
+    });
   });
 
   // === Сброс ===
@@ -208,9 +279,11 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     });
   }, [textureByPath]);
 
+  // --- Рендер: используем targets (массивы [x, y, z]) как начальные позиции ---
   return (
     <group ref={groupRef}>
-      {positions.map((pos, i) => (
+      {targets.map((pos, i) => (
+        // position принимает массив [x,y,z], это корректно для r3f
         <mesh key={i} position={pos} geometry={geometry} material={cubeMaterials[i]} />
       ))}
     </group>
@@ -243,6 +316,8 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
 
   // states
   const [openBlock, setOpenBlock] = useState(null);
+  const [shuffleTrigger, setShuffleTrigger] = useState(0);
+  const [positionsResetTrigger, setPositionsResetTrigger] = useState(0);
 
   // управление вращением
   const [resetTrigger, setResetTrigger] = useState(false);
@@ -369,6 +444,17 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
         <button onClick={handleCounterClockwise} title={t('control.counterclockwise')}><i className="fas fa-rotate-left"></i></button>
       </div>
 
+      {/* === Панель специальных кнопок === */}
+      <div className="special-buttons">
+        <button onClick={() => setShuffleTrigger(prev => prev + 1)} title={t('control.shuffle')}>
+          <i className="fas fa-random"></i>
+        </button>
+        <button onClick={() => setPositionsResetTrigger(prev => prev + 1)} title={t('control.resetPositions')}>
+          <i className="fas fa-undo"></i>
+        </button>
+      </div>
+
+
       <div ref={ref}>
         <Canvas style={canvasStyle} camera={{ fov: 75 }} gl={{ antialias: true, toneMapping: THREE.NoToneMapping }}>
           <perspectiveCamera makeDefault position={[0, 0, 2.5]} />
@@ -385,6 +471,8 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
             resetTrigger={resetTrigger}
             flipTrigger={flipTrigger}
             smallCubeScale={smallCubeScale}
+            shuffleTrigger={shuffleTrigger}
+            positionsResetTrigger={positionsResetTrigger}
           />
           <CameraControls />
         </Canvas>

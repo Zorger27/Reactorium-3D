@@ -40,6 +40,40 @@
       }
     }
   }
+
+  .special-buttons {
+    position: absolute;
+    top: 50%;
+    right: 40px; /* Кнопка справа */
+    transform: translateY(-50%);
+    z-index: 10;
+    display: flex;
+    flex-direction: column; // Вертикальное расположение
+    gap: 20px; // Отступ между кнопками
+
+    button {
+      color: white;
+      text-shadow: 0 2px 4px black;
+      background-color: purple;
+      height: 3rem;
+      width: 3rem;
+      font-size: 1.8rem;
+      border-radius: 5px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
+      transition:  background-color .2s ease-in-out, box-shadow .2s ease-in-out;
+
+      &:hover {
+        background-color: mediumpurple; /* Более яркий цвет при наведении */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .fas.fa-undo {
+        color: white;
+        justify-content: center;
+        align-content: center;
+      }
+    }
+  }
 }
 
 @media(max-width: 1020px) {
@@ -53,6 +87,17 @@
       button {
         height: 2.6rem;
         width: 3.6rem;
+        font-size: 1.4rem;
+      }
+    }
+
+    .special-buttons {
+      right: 20px; /* Кнопка справа */
+      gap: 15px; // Отступ между кнопками
+
+      button, .fas.fa-undo {
+        height: 2.6rem;
+        width: 2.6rem;
         font-size: 1.4rem;
       }
     }
@@ -70,6 +115,17 @@
       button {
         height: 2.4rem;
         width: 3.4rem;
+        font-size: 1.2rem;
+      }
+    }
+
+    .special-buttons {
+      right: 10px; /* Кнопка справа */
+      gap: 12px; // Отступ между кнопками
+
+      button, .fas.fa-undo {
+        height: 2.4rem;
+        width: 2.4rem;
         font-size: 1.2rem;
       }
     }
