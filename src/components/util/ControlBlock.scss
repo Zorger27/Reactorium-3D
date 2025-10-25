@@ -63,6 +63,10 @@
       gap: 0.25rem;
 
       .gap-block {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
         .gap-control {
           display: flex;
           align-items: center;
