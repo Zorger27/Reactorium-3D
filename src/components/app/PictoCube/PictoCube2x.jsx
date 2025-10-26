@@ -117,6 +117,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
 // --- order (массив индексов 0..7). Если null — значит упорядочено.
   const STORAGE_KEY = 'pictoCube2xPositionsOrder';
   const [order, setOrder] = useState(null);
+  // const [order, setOrder] = useState([...Array(basePositions.length).keys()]);
 
   // при монтировании читаем сохранённый order (если есть)
   useEffect(() => {
@@ -251,7 +252,12 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
       t.colorSpace = THREE.SRGBColorSpace;
       t.rotation = degreesToRadians(rotateDeg || 0);
       t.needsUpdate = true;
-      return new THREE.MeshBasicMaterial({ map: t });
+      return new THREE.MeshBasicMaterial({
+        map: t,
+        depthTest: true,
+        depthWrite: true,
+        transparent: false
+      });
     };
 
     return Array.from({ length: 8 }, (_, i) => {
@@ -449,7 +455,7 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
 
 
       <div ref={ref}>
-        <Canvas style={canvasStyle} camera={{ fov: 75 }} gl={{ antialias: true, toneMapping: THREE.NoToneMapping }}>
+        <Canvas style={canvasStyle} camera={{ fov: 75 }} gl={{ antialias: true, toneMapping: THREE.NoToneMapping, logarithmicDepthBuffer: true }}>
           <perspectiveCamera makeDefault position={[0, 0, 2.5]} />
           <ambientLight intensity={0.6} />
           <CubeGroup
