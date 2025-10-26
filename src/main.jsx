@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '@/App.jsx';
 import '@/index.scss';
-import '@/assets/style/fontawesome-free-6.5.1/css/all.min.css';
+import '@/assets/style/fontawesome-free-7.1.0/css/all.min.css';
 import '@/i18n';
 
 import { Provider } from 'react-redux';
