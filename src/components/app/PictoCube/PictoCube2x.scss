@@ -107,6 +107,7 @@
         }
 
         .fas {
+          font-size: 1.8rem;
           color: white;
           text-shadow: 0 2px 4px black;
           display: flex;
@@ -139,13 +140,30 @@
     }
 
     .special-buttons {
-      right: 20px; /* Кнопка справа */
-      gap: 15px; // Отступ между кнопками
+      right: 20px;
 
-      button, .fas.fa-undo {
+      .main-shuffle-button {
         height: 2.6rem;
         width: 2.6rem;
         font-size: 1.4rem;
+        border-radius: 5px;
+      }
+      .special-submenu {
+        button {
+          margin-right: 0.8rem; /* Расстояние между кнопками */
+          height: 2.6rem;
+          width: 2.6rem;
+          font-size: 1.4rem;
+          border-radius: 5px;
+
+          &:hover {
+            background: lightgoldenrodyellow;
+            border: 1px solid green;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+          }
+
+          .fas {font-size: 1.4rem;}
+        }
       }
     }
   }
@@ -167,13 +185,30 @@
     }
 
     .special-buttons {
-      right: 10px; /* Кнопка справа */
-      gap: 12px; // Отступ между кнопками
+      right: 10px;
 
-      button, .fas.fa-undo {
+      .main-shuffle-button {
         height: 2.4rem;
         width: 2.4rem;
         font-size: 1.2rem;
+        border-radius: 4px;
+      }
+      .special-submenu {
+        button {
+          margin-right: 0.5rem; /* Расстояние между кнопками */
+          height: 2.4rem;
+          width: 2.4rem;
+          font-size: 1.2rem;
+          border-radius: 4px;
+
+          &:hover {
+            background: lightgoldenrodyellow;
+            border: 1px solid green;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+          }
+
+          .fas {font-size: 1.2rem;}
+        }
       }
     }
   }
