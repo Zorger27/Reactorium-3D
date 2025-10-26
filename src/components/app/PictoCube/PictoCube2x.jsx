@@ -495,13 +495,13 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
 
       {/* === Панель кнопок управления вращением === */}
       <div className="rotation-buttons">
-        <button onClick={handleClockwise} title={t('control.clockwise')}><i className="fas fa-rotate-right"></i></button>
+        <button onClick={handleClockwise} title={t('control.clockwise')}><i className="fa-solid fa-left-long"></i></button>
         <button onClick={handlePause} title={ isRotating ? t('control.pause') : t('control.continue') }>
           <i className={`fas ${isRotating ? "fa-pause" : "fa-play"}`}></i>
         </button>
         <button onClick={handleStop} title={t('control.stop')}><i className="fas fa-stop"></i></button>
         <button onClick={handleFlip} title={t('control.180')}><i className="fas fa-sync-alt"></i></button>
-        <button onClick={handleCounterClockwise} title={t('control.counterclockwise')}><i className="fas fa-rotate-left"></i></button>
+        <button onClick={handleCounterClockwise} title={t('control.counterclockwise')}><i className="fa-solid fa-right-long"></i></button>
       </div>
 
       {/* === Панель специальных кнопок === */}
