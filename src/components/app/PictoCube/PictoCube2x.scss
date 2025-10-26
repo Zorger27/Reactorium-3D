@@ -88,6 +88,9 @@
       }
 
       button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
         color: white;
         margin-right: 0.8rem; /* Расстояние между кнопками */
         background-color: #c2f2fa;
@@ -97,7 +100,7 @@
         border: 1px solid transparent;
         border-radius: 5px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
-        transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+        transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
         cursor: pointer;
 
         &:hover {
