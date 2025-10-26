@@ -377,6 +377,7 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
   const [openBlock, setOpenBlock] = useState(null);
   const [shuffleTrigger, setShuffleTrigger] = useState(0);
   const [positionsResetTrigger, setPositionsResetTrigger] = useState(0);
+  const [isSpecialMenuOpen, setIsSpecialMenuOpen] = useState(false);
 
   // управление вращением
   const [resetTrigger, setResetTrigger] = useState(false);
@@ -393,28 +394,11 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
   const [isRotating, setIsRotating] = useLocalStorage("pictoCube2xIsRotating", true, v => v === "true");
 
   // --- кнопки вращения ---
-  const handleClockwise = () => {
-    setDirection(1);
-    setIsRotating(true);
-  };
-
-  const handleCounterClockwise = () => {
-    setDirection(-1);
-    setIsRotating(true);
-  };
-
-  const handlePause = () => {
-    setIsRotating(prev => !prev);
-  };
-
-  const handleStop = () => {
-    setIsRotating(false);
-    setResetTrigger(prev => !prev);
-  };
-
-  const handleFlip = () => {
-    setFlipTrigger(prev => !prev);
-  };
+  const handleClockwise = () => {setDirection(1);setIsRotating(true);};
+  const handleCounterClockwise = () => {setDirection(-1);setIsRotating(true);};
+  const handlePause = () => {setIsRotating(prev => !prev);};
+  const handleStop = () => {setIsRotating(false);setResetTrigger(prev => !prev);};
+  const handleFlip = () => {setFlipTrigger(prev => !prev);};
 
   // --- фабрика хэндлеров для ControlBlock ---
   const makeHandlers = (setter, defaultValue, min, max, step = 1) => ({
@@ -430,6 +414,23 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
   const rotXHandlers = makeHandlers(setRotationX, 90, -180, 180);
   const rotYHandlers = makeHandlers(setRotationY, 0, -180, 180);
   const rotZHandlers = makeHandlers(setRotationZ, 0, -180, 180);
+
+  // useEffect для закрытия при клике вне меню
+  useEffect(() => {
+    if (!isSpecialMenuOpen) return;
+
+    const handleClickOutside = (event) => {
+      // Проверяем, что клик был НЕ по кнопкам меню
+      if (!event.target.closest('.special-buttons')) {
+        setIsSpecialMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isSpecialMenuOpen]);
 
   return (
     <div className="picto-cube2x-container">
@@ -505,14 +506,21 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
 
       {/* === Панель специальных кнопок === */}
       <div className="special-buttons">
-        <button onClick={() => setShuffleTrigger(prev => prev + 1)} title={t('control.shuffle')}>
-          <i className="fas fa-random"></i>
+        {/* Главная кнопка */}
+        <button className={`main-shuffle-button ${isSpecialMenuOpen ? 'open' : ''}`} onClick={() => setIsSpecialMenuOpen(prev => !prev)} title={t('control.shuffle-menu')}>
+          <i className={`fas ${isSpecialMenuOpen ? 'fa-times' : 'fa-bars'}`}></i>
         </button>
-        <button onClick={() => setPositionsResetTrigger(prev => prev + 1)} title={t('control.resetPositions')}>
-          <i className="fas fa-undo"></i>
-        </button>
-      </div>
 
+        {/* Подменю с кнопками */}
+        <div className={`special-submenu ${isSpecialMenuOpen ? 'open' : ''}`}>
+          <button onClick={() => {setShuffleTrigger(prev => prev + 1);setIsSpecialMenuOpen(true);}} title={t('control.shuffle')}>
+            <i className="fas fa-random"></i>
+          </button>
+          <button onClick={() => {setPositionsResetTrigger(prev => prev + 1);setIsSpecialMenuOpen(true);}} title={t('control.resetPositions')}>
+            <i className="fas fa-undo"></i>
+          </button>
+        </div>
+      </div>
 
       <div ref={ref}>
         <Canvas style={canvasStyle} camera={{ fov: 75 }} gl={{ antialias: true, toneMapping: THREE.NoToneMapping, logarithmicDepthBuffer: true }}>
