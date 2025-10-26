@@ -117,7 +117,17 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
 // --- order (массив индексов 0..7). Если null — значит упорядочено.
   const STORAGE_KEY = 'pictoCube2xPositionsOrder';
   const [order, setOrder] = useState(null);
-  // const [order, setOrder] = useState([...Array(basePositions.length).keys()]);
+
+  // Храним текущие позиции кубиков (куда они реально должны идти)
+  const currentTargetsRef = useRef([]);
+
+  // Флаг - двигаются ли кубики сейчас (только при shuffle)
+  const isMovingRef = useRef(false);
+
+  // Инициализация при первом рендере
+  if (currentTargetsRef.current.length === 0) {
+    currentTargetsRef.current = basePositions.map(pos => [...pos]);
+  }
 
   // при монтировании читаем сохранённый order (если есть)
   useEffect(() => {
@@ -148,6 +158,24 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     return basePositions;
   }, [basePositions, order]);
 
+  // При изменении gap - синхронно обновляем currentTargets БЕЗ анимации
+  useEffect(() => {
+    if (!isMovingRef.current && currentTargetsRef.current.length > 0) {
+      // Если кубики НЕ двигаются, просто обновляем их целевые позиции мгновенно
+      currentTargetsRef.current = targets.map(pos => [...pos]);
+
+      // И мгновенно применяем к mesh-ам
+      if (groupRef.current) {
+        groupRef.current.children.forEach((mesh, i) => {
+          const t = currentTargetsRef.current[i];
+          if (t) {
+            mesh.position.set(t[0], t[1], t[2]);
+          }
+        });
+      }
+    }
+  }, [targets, gap]); // ← При изменении gap - мгновенное обновление
+
   // При shuffleTrigger — создаём новую случайную перестановку индексов и сохраняем
   useEffect(() => {
     // создаём массив индексов [0,1,...,n-1]
@@ -161,20 +189,30 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     }
 
     setOrder(arr);
+
+    // Включаем режим движения
+    isMovingRef.current = true;
+
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
     } catch (e) {
       // ignore storage errors
     }
-  }, [shuffleTrigger]); // вызывается только при клике shuffle
+  }, [shuffleTrigger]);
 
   // При positionsResetTrigger — очищаем order (возвращаем упорядоченные) и удаляем из localStorage
   useEffect(() => {
     setOrder(null);
+
+    // ← Включаем режим движения
+    isMovingRef.current = true;
+
     try {
       localStorage.removeItem(STORAGE_KEY);
-    } catch (e) { }
-  }, [positionsResetTrigger]);
+    } catch (e) {
+      // ignore storage errors
+    }
+  }, [positionsResetTrigger]); // ← И зависимость должна быть positionsResetTrigger, а не shuffleTrigger!
 
   // === Первоначальная ориентация - Наклон по Эйлеру ===
   useEffect(() => {
@@ -193,14 +231,43 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
   useFrame((_, delta) => {
     if (!groupRef.current) return;
 
-    const smoothSpeed = 3.0; // скорость инерции
+    const smoothSpeed = 3.0;
 
-    groupRef.current.children.forEach((mesh, i) => {
-      const t = targets[i];
-      if (!t) return;
-      const targetVec = new THREE.Vector3(t[0], t[1], t[2]);
-      mesh.position.lerp(targetVec, 1 - Math.exp(-smoothSpeed * delta));
-    });
+    // Анимация позиций ТОЛЬКО если isMovingRef.current === true
+    if (isMovingRef.current) {
+      let allReached = true;
+
+      groupRef.current.children.forEach((mesh, i) => {
+        const t = targets[i];
+        if (!t) return;
+
+        if (!currentTargetsRef.current[i]) {
+          currentTargetsRef.current[i] = [...t];
+        }
+
+        const current = currentTargetsRef.current[i];
+
+        // Плавно обновляем currentTarget к target
+        current[0] += (t[0] - current[0]) * (1 - Math.exp(-smoothSpeed * delta));
+        current[1] += (t[1] - current[1]) * (1 - Math.exp(-smoothSpeed * delta));
+        current[2] += (t[2] - current[2]) * (1 - Math.exp(-smoothSpeed * delta));
+
+        // Двигаем mesh к currentTarget
+        const targetVec = new THREE.Vector3(current[0], current[1], current[2]);
+        mesh.position.lerp(targetVec, 1 - Math.exp(-smoothSpeed * delta));
+
+        // Проверяем достигли ли цели
+        const distance = mesh.position.distanceTo(targetVec);
+        if (distance > 0.001) {
+          allReached = false;
+        }
+      });
+
+      // Если все кубики достигли своих позиций - выключаем режим движения
+      if (allReached) {
+        isMovingRef.current = false;
+      }
+    }
 
     // Вращение группы
     if (targetRotationZ === null && isRotating) {
