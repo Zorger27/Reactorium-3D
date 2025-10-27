@@ -169,13 +169,13 @@
         z-index: 10;
         padding: 0.4rem 0.6rem;
         border-radius: 10px;
-        gap: 4px;
+        gap: 2px;
         font-size: 1.3rem;
         font-weight: normal;
 
         .slider-button {font-size: 1.3rem;}
 
-        .reset {margin: 0 0.3rem;}
+        .reset {margin: 0;}
 
         input[type="range"] {
           display: initial;
