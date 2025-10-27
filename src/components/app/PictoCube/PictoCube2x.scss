@@ -60,15 +60,27 @@
       height: 3rem;
       width: 3rem;
       font-size: 1.8rem;
+      border: 1px solid transparent;
       border-radius: 5px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
-      transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+      transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border 0.3s ease-in-out, transform 0.2s ease-in-out;
       cursor: pointer;
       z-index: 12;
       position: relative;
 
-      &:hover {box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);}
-      &.open {background-color: #5ba8d1;}
+      &:hover {
+        &:hover {
+          background: linear-gradient(to bottom, rgb(255, 255, 255), rgb(152, 152, 255));
+          color: darkblue;
+          box-shadow: none;
+          text-shadow: 0 2px 4px white;
+          border: 1px solid darkslateblue;
+        }
+      }
+      &.open {
+        background-color: #5ba8d1;
+        border: 1px solid transparent;
+      }
     }
 
     // Подменю с кнопками
@@ -80,7 +92,7 @@
       top: 0;
       opacity: 0;
       transform: translateX(40px); // Начинаем справа за экраном
-      transition: opacity 0.4s ease, transform 0.4s ease;
+      transition: opacity 0.2s ease, transform 0.2s ease;
 
       &.open {
         opacity: 1;
@@ -97,16 +109,16 @@
         height: 3rem;
         width: 3rem;
         font-size: 1.8rem;
-        border: 1px solid transparent;
+        border: 1px solid #92cae8;
         border-radius: 5px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
-        transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
+        transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out, border 0.3s ease-in-out, transform 0.3s ease-in-out;
         cursor: pointer;
 
         &:hover {
           background: lightgoldenrodyellow;
           border: 1px solid #5ba8d1;
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+          box-shadow: none;
         }
 
         .fas {
@@ -189,6 +201,7 @@
         width: 2.4rem;
         font-size: 1.2rem;
         border-radius: 4px;
+        box-shadow: none;
       }
       .special-submenu {
         button {
@@ -197,6 +210,11 @@
           width: 2.4rem;
           font-size: 1.2rem;
           border-radius: 4px;
+          box-shadow: none;
+
+          &:hover {
+            box-shadow: none;
+          }
 
           .fas {font-size: 1.2rem;}
         }
