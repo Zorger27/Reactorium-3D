@@ -508,7 +508,7 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
       <div className="special-buttons">
         {/* Главная кнопка */}
         <button className={`main-shuffle-button ${isSpecialMenuOpen ? 'open' : ''}`} onClick={() => setIsSpecialMenuOpen(prev => !prev)} title={t('control.shuffle-menu')}>
-          <i className={`fas ${isSpecialMenuOpen ? 'fa-times' : 'fa-bars'}`}></i>
+          <i className={`fas ${isSpecialMenuOpen ? 'fa-times' : 'fa-cubes'}`}></i>
         </button>
 
         {/* Подменю с кнопками */}

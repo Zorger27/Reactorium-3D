@@ -68,7 +68,7 @@
       position: relative;
 
       &:hover {box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);}
-      &.open {background-color: darkgreen;}
+      &.open {background-color: #5ba8d1;}
     }
 
     // Подменю с кнопками
@@ -105,7 +105,7 @@
 
         &:hover {
           background: lightgoldenrodyellow;
-          border: 1px solid green;
+          border: 1px solid #5ba8d1;
           box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
