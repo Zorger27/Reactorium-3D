@@ -96,7 +96,8 @@
     "continue": "Continue rotating",
     "stop": "Stop rotation",
     "180": "Rotate 180°",
-    "shuffle-menu": "Cube Shuffle Menu",
+    "shuffle-menu-open": "Open cube shuffle menu",
+    "shuffle-menu-close": "Close cube shuffle menu",
     "shuffle": "Shuffle",
     "resetPositions": "Reset positions"
   },

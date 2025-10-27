@@ -507,7 +507,7 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
       {/* === Панель специальных кнопок === */}
       <div className="special-buttons">
         {/* Главная кнопка */}
-        <button className={`main-shuffle-button ${isSpecialMenuOpen ? 'open' : ''}`} onClick={() => setIsSpecialMenuOpen(prev => !prev)} title={t('control.shuffle-menu')}>
+        <button className={`main-shuffle-button ${isSpecialMenuOpen ? 'open' : ''}`} onClick={() => setIsSpecialMenuOpen(prev => !prev)} title={isSpecialMenuOpen ? t('control.shuffle-menu-close') : t('control.shuffle-menu-open')}>
           <i className={`fas ${isSpecialMenuOpen ? 'fa-times' : 'fa-globe'}`}></i>
         </button>
 
