@@ -92,7 +92,7 @@
       top: 0;
       opacity: 0;
       transform: translateX(40px); // Начинаем справа за экраном
-      transition: opacity 0.2s ease, transform 0.2s ease;
+      transition: opacity 0.3s ease, transform 0.3s ease;
 
       &.open {
         opacity: 1;
@@ -212,9 +212,7 @@
           border-radius: 4px;
           box-shadow: none;
 
-          &:hover {
-            box-shadow: none;
-          }
+          &:hover {box-shadow: none;}
 
           .fas {font-size: 1.2rem;}
         }
