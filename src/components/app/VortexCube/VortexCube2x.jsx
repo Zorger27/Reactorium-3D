@@ -178,11 +178,11 @@ const VortexCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
         {/* Состояние: ничего не открыто → показываем ВСЕ блоки (закрытые) */}
         {openBlock === null && (
           <>
-            <ControlBlock label={t("control.gap")} isOpen={false} onToggle={() => setOpenBlock("gap")}
+            <ControlBlock label={t("control.gap")} icon="fa-solid fa-arrows-left-right" isOpen={false} onToggle={() => setOpenBlock("gap")}
               gapConfig={{value: gap, min: 0, max: 0.5, step: 0.01, onChange: setGap, ...gapHandlers}}
             />
 
-            <ControlBlock label={t("control.incline")} isOpen={false} onToggle={() => setOpenBlock("rotation")}
+            <ControlBlock label={t("control.incline")} icon="fa-solid fa-compass" isOpen={false} onToggle={() => setOpenBlock("rotation")}
               sliders={[
                 { label: t("control.x-axis"), value: rotationX, min: -180, max: 180, handlers: { ...rotXHandlers, onChange: (v) => setRotationX(v) } },
                 { label: t("control.y-axis"), value: rotationY, min: -180, max: 180, handlers: { ...rotYHandlers, onChange: (v) => setRotationY(v) } },
@@ -194,14 +194,14 @@ const VortexCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
 
         {/* Состояние: открыт gap → показываем только его */}
         {openBlock === "gap" && (
-          <ControlBlock label={t("control.gap")} isOpen={true} onToggle={() => setOpenBlock(null)}
+          <ControlBlock label={t("control.gap")} icon="fa-solid fa-arrows-left-right" isOpen={true} onToggle={() => setOpenBlock(null)}
             gapConfig={{value: gap, min: 0, max: 0.5, step: 0.01, onChange: setGap, ...gapHandlers}}
           />
         )}
 
         {/* Состояние: открыт rotation → показываем только его */}
         {openBlock === "rotation" && (
-          <ControlBlock label={t("control.incline")} isOpen={true} onToggle={() => setOpenBlock(null)}
+          <ControlBlock label={t("control.incline")} icon="fa-solid fa-compass" isOpen={true} onToggle={() => setOpenBlock(null)}
             sliders={[
               { label: t("control.x-axis"), value: rotationX, min: -180, max: 180, handlers: { ...rotXHandlers, onChange: (v) => setRotationX(v) } },
               { label: t("control.y-axis"), value: rotationY, min: -180, max: 180, handlers: { ...rotYHandlers, onChange: (v) => setRotationY(v) } },

@@ -439,18 +439,18 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
         {/* Состояние: ничего не открыто → показываем ВСЕ блоки (закрытые) */}
         {openBlock === null && (
           <>
-            <ControlBlock label={t("control.speed")} isOpen={false} onToggle={() => setOpenBlock("speed")}
+            <ControlBlock label={t("control.speed")} icon="fa-solid fa-gauge-simple-high" isOpen={false} onToggle={() => setOpenBlock("speed")}
                           gapConfig={{value: speed, min: 0, max: 0.05, step: 0.01, onChange: setSpeed, ...speedHandlers,}}
             />
-            <ControlBlock label={t("control.gap")} isOpen={false} onToggle={() => setOpenBlock("gap")}
+            <ControlBlock label={t("control.gap")} icon="fa-solid fa-arrows-left-right" isOpen={false} onToggle={() => setOpenBlock("gap")}
                           gapConfig={{value: gap, min: 0, max: 0.5, step: 0.01, onChange: setGap, ...gapHandlers}}
             />
 
-            <ControlBlock label={t("control.small-cube-size")} isOpen={false} onToggle={() => setOpenBlock("smallCubeSize")}
+            <ControlBlock label={t("control.small-cube-size")} icon="fa-solid fa-up-right-and-down-left-from-center" isOpen={false} onToggle={() => setOpenBlock("smallCubeSize")}
               gapConfig={{value: smallCubeScale, min: 0.5, max: 1.0, step: 0.05, onChange: setSmallCubeScale, ...smallCubeScaleHandlers,}}
             />
 
-            <ControlBlock label={t("control.incline")} isOpen={false} onToggle={() => setOpenBlock("rotation")}
+            <ControlBlock label={t("control.incline")} icon="fa-solid fa-compass" isOpen={false} onToggle={() => setOpenBlock("rotation")}
                           sliders={[
                             { label: t("control.x-axis"), value: rotationX, min: -180, max: 180, handlers: { ...rotXHandlers, onChange: (v) => setRotationX(v) } },
                             { label: t("control.y-axis"), value: rotationY, min: -180, max: 180, handlers: { ...rotYHandlers, onChange: (v) => setRotationY(v) } },
@@ -462,27 +462,27 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
 
         {/* Состояние: открыт speed → показываем только его */}
         {openBlock === "speed" && (
-          <ControlBlock label={t("control.speed")} isOpen={true} onToggle={() => setOpenBlock(null)}
+          <ControlBlock label={t("control.speed")} icon="fa-solid fa-gauge-simple-high" isOpen={true} onToggle={() => setOpenBlock(null)}
                         gapConfig={{value: speed, min: 0, max: 0.05, step: 0.01, onChange: setSpeed, ...speedHandlers,}}
           />
         )}
 
         {/* Состояние: открыт gap → показываем только его */}
         {openBlock === "gap" && (
-          <ControlBlock label={t("control.gap")} isOpen={true} onToggle={() => setOpenBlock(null)}
+          <ControlBlock label={t("control.gap")} icon="fa-solid fa-arrows-left-right" isOpen={true} onToggle={() => setOpenBlock(null)}
                         gapConfig={{value: gap, min: 0, max: 0.5, step: 0.01, onChange: setGap, ...gapHandlers}}
           />
         )}
 
         {openBlock === "smallCubeSize" && (
-          <ControlBlock label={t("control.small-cube-size")} isOpen={true} onToggle={() => setOpenBlock(null)}
+          <ControlBlock label={t("control.small-cube-size")} icon="fa-solid fa-up-right-and-down-left-from-center" isOpen={true} onToggle={() => setOpenBlock(null)}
                         gapConfig={{value: smallCubeScale, min: 0.5, max: 1.0, step: 0.05, onChange: setSmallCubeScale, ...smallCubeScaleHandlers,}}
           />
         )}
 
         {/* Состояние: открыт rotation → показываем только его */}
         {openBlock === "rotation" && (
-          <ControlBlock label={t("control.incline")} isOpen={true} onToggle={() => setOpenBlock(null)}
+          <ControlBlock label={t("control.incline")} icon="fa-solid fa-compass" isOpen={true} onToggle={() => setOpenBlock(null)}
                         sliders={[
                           { label: t("control.x-axis"), value: rotationX, min: -180, max: 180, handlers: { ...rotXHandlers, onChange: (v) => setRotationX(v) } },
                           { label: t("control.y-axis"), value: rotationY, min: -180, max: 180, handlers: { ...rotYHandlers, onChange: (v) => setRotationY(v) } },
@@ -508,7 +508,7 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
       <div className="special-buttons">
         {/* Главная кнопка */}
         <button className={`main-shuffle-button ${isSpecialMenuOpen ? 'open' : ''}`} onClick={() => setIsSpecialMenuOpen(prev => !prev)} title={t('control.shuffle-menu')}>
-          <i className={`fas ${isSpecialMenuOpen ? 'fa-times' : 'fa-cubes'}`}></i>
+          <i className={`fas ${isSpecialMenuOpen ? 'fa-times' : 'fa-globe'}`}></i>
         </button>
 
         {/* Подменю с кнопками */}

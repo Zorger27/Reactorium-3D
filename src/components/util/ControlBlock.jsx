@@ -7,6 +7,7 @@ import "@/components/util/ControlBlock.scss";
 
 function ControlBlock({
                         label,
+                        icon = null, // пропс для иконки
                         sliders = [],
                         gapConfig = null,
                         isOpen = false,
@@ -33,7 +34,8 @@ function ControlBlock({
           className={`control-label ${isOpen ? "open" : "closed"}`}
           onClick={onToggle}
         >
-          {label}
+          {icon && <i className={`label-icon ${icon}`}></i>}
+          <span className="label-text">{label}</span>
         </div>
 
         {isOpen && (
