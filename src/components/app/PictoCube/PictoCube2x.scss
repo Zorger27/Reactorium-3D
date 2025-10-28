@@ -247,23 +247,46 @@
     .special-buttons {
       right: 20px;
 
-      .main-shuffle-button {
-        height: 2.6rem;
-        width: 2.6rem;
-        font-size: 1.4rem;
-        border-radius: 5px;
-      }
-      .special-submenu {
-        button {
-          margin-right: 0.8rem; /* Расстояние между кнопками */
+      .clear-buttons {
+        .main-clear-button {
           height: 2.6rem;
           width: 2.6rem;
           font-size: 1.4rem;
           border-radius: 5px;
+        }
+        .clear-submenu {
+          button {
+            margin-right: 0.8rem; /* Расстояние между кнопками */
+            height: 2.6rem;
+            width: 2.6rem;
+            font-size: 1.4rem;
+            border-radius: 5px;
 
-          .fas {font-size: 1.4rem;}
+            .fas {font-size: 1.4rem;}
+          }
         }
       }
+
+      .shuffle-buttons {
+        .main-shuffle-button {
+          height: 2.6rem;
+          width: 2.6rem;
+          font-size: 1.4rem;
+          border-radius: 5px;
+        }
+        .shuffle-submenu {
+          button {
+            margin-right: 0.8rem; /* Расстояние между кнопками */
+            height: 2.6rem;
+            width: 2.6rem;
+            font-size: 1.4rem;
+            border-radius: 5px;
+
+            .fas {font-size: 1.4rem;}
+          }
+        }
+      }
+
     }
   }
 }
@@ -286,27 +309,56 @@
     .special-buttons {
       right: 10px;
 
-      .main-shuffle-button {
-        height: 2.4rem;
-        width: 2.4rem;
-        font-size: 1.2rem;
-        border-radius: 4px;
-        box-shadow: none;
-      }
-      .special-submenu {
-        button {
-          margin-right: 0.5rem; /* Расстояние между кнопками */
+      .clear-buttons {
+        .main-clear-button {
           height: 2.4rem;
           width: 2.4rem;
           font-size: 1.2rem;
           border-radius: 4px;
           box-shadow: none;
+        }
 
-          &:hover {box-shadow: none;}
+        .clear-submenu {
+          button {
+            margin-right: 0.5rem; /* Расстояние между кнопками */
+            height: 2.4rem;
+            width: 2.4rem;
+            font-size: 1.2rem;
+            border-radius: 4px;
+            box-shadow: none;
 
-          .fas {font-size: 1.2rem;}
+            &:hover {box-shadow: none;}
+
+            .fas {font-size: 1.2rem;}
+          }
         }
       }
+
+      .shuffle-buttons {
+        .main-shuffle-button {
+          height: 2.4rem;
+          width: 2.4rem;
+          font-size: 1.2rem;
+          border-radius: 4px;
+          box-shadow: none;
+        }
+
+        .shuffle-submenu {
+          button {
+            margin-right: 0.5rem; /* Расстояние между кнопками */
+            height: 2.4rem;
+            width: 2.4rem;
+            font-size: 1.2rem;
+            border-radius: 4px;
+            box-shadow: none;
+
+            &:hover {box-shadow: none;}
+
+            .fas {font-size: 1.2rem;}
+          }
+        }
+      }
+
     }
   }
 }
