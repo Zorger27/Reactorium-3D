@@ -93,36 +93,42 @@ const initialState = [
   },
   {
     id: 16,
+    title: "Font Awesome",
+    version: "7.1.0",
+    url: "https://fontawesome.com"
+  },
+  {
+    id: 17,
     title: "Google Search Console",
     version: "",
     url: "https://search.google.com/search-console"
   },
   {
-    id: 17,
+    id: 18,
     title: "Google Analytics",
     version: "4.0",
     url: "https://analytics.google.com"
   },
   {
-    id: 18,
+    id: 19,
     title: "Open Graph protocol",
     version: "",
     url: "https://ogp.me"
   },
   {
-    id: 19,
+    id: 20,
     title: "Favicon",
     version: "",
     url: "https://developer.mozilla.org/en-US/docs/Glossary/Favicon"
   },
   {
-    id: 20,
+    id: 21,
     title: "Sitemap",
     version: "",
     url: "https://www.sitemaps.org"
   },
   {
-    id: 21,
+    id: 22,
     title: "Robots.txt",
     version: "",
     url: "https://developers.google.com/search/docs/crawling-indexing/robots/intro"
