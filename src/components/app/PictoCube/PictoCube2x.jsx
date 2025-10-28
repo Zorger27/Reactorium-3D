@@ -298,6 +298,27 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     }
   }, [flipTrigger]);
 
+  // Очистка. При размонтировании CubeGroup все текстуры и материалы будут освобождены и память не утечёт!
+  useEffect(() => {
+    return () => {
+      if (!groupRef.current) return;
+      groupRef.current.children.forEach(mesh => {
+        if (mesh.material) {
+          if (Array.isArray(mesh.material)) {
+            mesh.material.forEach(mat => {
+              if (mat.map) mat.map.dispose(); // освобождаем текстуру
+              mat.dispose(); // освобождаем материал
+            });
+          } else {
+            if (mesh.material.map) mesh.material.map.dispose();
+            mesh.material.dispose();
+          }
+        }
+        if (mesh.geometry) mesh.geometry.dispose(); // освобождаем геометрию
+      });
+    };
+  }, []);
+
   // Мемоизируем создание материалов
   const cubeMaterials = useMemo(() => {
 
@@ -377,7 +398,8 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
   const [openBlock, setOpenBlock] = useState(null);
   const [shuffleTrigger, setShuffleTrigger] = useState(0);
   const [positionsResetTrigger, setPositionsResetTrigger] = useState(0);
-  const [isSpecialMenuOpen, setIsSpecialMenuOpen] = useState(false);
+  const [isShuffleMenuOpen, setIsShuffleMenuOpen] = useState(false);
+  const [isClearMenuOpen, setIsClearMenuOpen] = useState(false);
 
   // управление вращением
   const [resetTrigger, setResetTrigger] = useState(false);
@@ -417,12 +439,13 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
 
   // useEffect для закрытия при клике вне меню
   useEffect(() => {
-    if (!isSpecialMenuOpen) return;
+    if (!isShuffleMenuOpen && !isClearMenuOpen) return;
 
     const handleClickOutside = (event) => {
-      // Проверяем, что клик был НЕ по кнопкам меню
+      // Если клик не внутри панели кнопок
       if (!event.target.closest('.special-buttons')) {
-        setIsSpecialMenuOpen(false);
+        setIsShuffleMenuOpen(false);
+        setIsClearMenuOpen(false);
       }
     };
 
@@ -430,7 +453,89 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isSpecialMenuOpen]);
+  }, [isShuffleMenuOpen, isClearMenuOpen]);
+
+  // Когда открывается меню перемешивания — закрываем меню очистки
+  useEffect(() => {
+    if (isShuffleMenuOpen) {
+      setIsClearMenuOpen(false);
+    }
+  }, [isShuffleMenuOpen]);
+
+// Когда открывается меню очистки — закрываем меню перемешивания
+  useEffect(() => {
+    if (isClearMenuOpen) {
+      setIsShuffleMenuOpen(false);
+    }
+  }, [isClearMenuOpen]);
+
+  // === Очистка ТЕКУЩЕГО localStorage (только PictoCube2x) ===
+  const handleClearCurrentStorage = () => {
+    const confirmed = window.confirm(t('storage.confirm-clear-current')); // "Вы действительно хотите очистить настройки кубика?"
+    if (!confirmed) {
+      alert(t('storage.alertNo')); // "Спасибо, что передумали"
+      return;
+    }
+
+    try {
+      // Удаляем все ключи, относящиеся к текущему кубику
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('pictoCube2x')) {
+          localStorage.removeItem(key);
+        }
+      });
+
+      // Сбрасываем состояния к дефолтным
+      setGap(0.15);
+      setSmallCubeScale(0.85);
+      setRotationX(90);
+      setRotationY(0);
+      setRotationZ(0);
+      setSpeed(0.01);
+      setDirection(1);
+      setIsRotating(true);
+
+      setPositionsResetTrigger(prev => prev + 1);
+      setResetTrigger(prev => !prev);
+
+      alert(t('storage.alertYes')); // "Хранилище очищено"
+    } catch (e) {
+      console.error('Ошибка при очистке localStorage:', e);
+    }
+
+    setIsClearMenuOpen(false);
+  };
+
+  // === Полная очистка localStorage ===
+  const handleClearAllStorage = () => {
+    const confirmed = window.confirm(t('storage.confirm-clear-all')); // "Вы действительно хотите очистить всё локальное хранилище?"
+    if (!confirmed) {
+      alert(t('storage.alertNo'));
+      return;
+    }
+
+    try {
+      localStorage.clear();
+
+      // Сбрасываем все локальные состояния
+      setGap(0.15);
+      setSmallCubeScale(0.85);
+      setRotationX(90);
+      setRotationY(0);
+      setRotationZ(0);
+      setSpeed(0.01);
+      setDirection(1);
+      setIsRotating(true);
+      setPositionsResetTrigger(prev => prev + 1);
+      setResetTrigger(prev => !prev);
+
+      alert(t('storage.alertYes'));
+    } catch (e) {
+      console.error('Ошибка при очистке всего localStorage:', e);
+    }
+
+    setIsClearMenuOpen(false);
+  };
 
   return (
     <div className="picto-cube2x-container">
@@ -504,22 +609,48 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
         <button onClick={handleCounterClockwise} title={t('control.counterclockwise')}><i className="fa-solid fa-right-long"></i></button>
       </div>
 
-      {/* === Панель специальных кнопок === */}
       <div className="special-buttons">
-        {/* Главная кнопка */}
-        <button className={`main-shuffle-button ${isSpecialMenuOpen ? 'open' : ''}`} onClick={() => setIsSpecialMenuOpen(prev => !prev)} title={isSpecialMenuOpen ? t('control.shuffle-menu-close') : t('control.shuffle-menu-open')}>
-          <i className={`fas ${isSpecialMenuOpen ? 'fa-times' : 'fa-globe'}`}></i>
-        </button>
 
-        {/* Подменю с кнопками */}
-        <div className={`special-submenu ${isSpecialMenuOpen ? 'open' : ''}`}>
-          <button onClick={() => {setShuffleTrigger(prev => prev + 1);setIsSpecialMenuOpen(true);}} title={t('control.shuffle')}>
-            <i className="fas fa-random"></i>
+        {/* === Панель очистки localStorage === */}
+        <div className="clear-buttons">
+          {/* Главная кнопка */}
+          <button
+            className={`main-clear-button ${isClearMenuOpen ? 'open' : ''}`}
+            onClick={() => setIsClearMenuOpen(prev => !prev)}
+            title={isClearMenuOpen ? t('storage.clear-menu-close') : t('storage.clear-menu-open')}
+          >
+            <i className={`fas ${isClearMenuOpen ? 'fa-times' : 'fa-trash'}`}></i>
           </button>
-          <button onClick={() => {setPositionsResetTrigger(prev => prev + 1);setIsSpecialMenuOpen(true);}} title={t('control.resetPositions')}>
-            <i className="fas fa-undo"></i>
-          </button>
+
+          {/* Подменю */}
+          <div className={`clear-submenu ${isClearMenuOpen ? 'open' : ''}`}>
+            <button onClick={handleClearCurrentStorage} title={t('storage.clearCurrent')}>
+              <i className="fas fa-broom"></i>
+            </button>
+            <button onClick={handleClearAllStorage} title={t('storage.clearAll')}>
+              <i className="fas fa-fire"></i>
+            </button>
+          </div>
         </div>
+
+        {/* === Панель перемешивания кубов === */}
+        <div className="shuffle-buttons">
+          {/* Главная кнопка */}
+          <button className={`main-shuffle-button ${isShuffleMenuOpen ? 'open' : ''}`} onClick={() => setIsShuffleMenuOpen(prev => !prev)} title={isShuffleMenuOpen ? t('control.shuffle-menu-close') : t('control.shuffle-menu-open')}>
+            <i className={`fas ${isShuffleMenuOpen ? 'fa-times' : 'fa-globe'}`}></i>
+          </button>
+
+          {/* Подменю с кнопками */}
+          <div className={`shuffle-submenu ${isShuffleMenuOpen ? 'open' : ''}`}>
+            <button onClick={() => {setShuffleTrigger(prev => prev + 1);setIsShuffleMenuOpen(true);}} title={t('control.shuffle')}>
+              <i className="fas fa-random"></i>
+            </button>
+            <button onClick={() => {setPositionsResetTrigger(prev => prev + 1);setIsShuffleMenuOpen(true);}} title={t('control.resetPositions')}>
+              <i className="fas fa-undo"></i>
+            </button>
+          </div>
+        </div>
+
       </div>
 
       <div ref={ref}>

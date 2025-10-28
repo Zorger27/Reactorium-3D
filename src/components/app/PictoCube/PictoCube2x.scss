@@ -49,94 +49,184 @@
     z-index: 10;
     display: flex;
     flex-direction: column;
-    align-items: flex-end; // Выравнивание по правому краю
-    gap: 0;
+    align-items: flex-end;
+    gap: 1.5rem;
 
-    // Главная кнопка
-    .main-shuffle-button {
-      background: dodgerblue;
-      color: white;
-      text-shadow: 0 2px 4px black;
-      height: 3rem;
-      width: 3rem;
-      font-size: 1.8rem;
-      border: 1px solid transparent;
-      border-radius: 5px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
-      transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border 0.3s ease-in-out, transform 0.2s ease-in-out;
-      cursor: pointer;
-      z-index: 12;
+    .clear-buttons {
       position: relative;
-
-      &:hover {
-        &:hover {
-          background: linear-gradient(to bottom, rgb(255, 255, 255), rgb(152, 152, 255));
-          color: darkblue;
-          box-shadow: none;
-          text-shadow: 0 2px 4px white;
-          border: 1px solid darkslateblue;
-        }
-      }
-      &.open {
-        background-color: #5ba8d1;
-        border: 1px solid transparent;
-      }
-    }
-
-    // Подменю с кнопками
-    .special-submenu {
-      display: flex;
-      flex-direction: row; /* Меню горизонтальное */
-      position: absolute;
-      right: 100%; /* Меню появляется слева от кнопки */
-      top: 0;
-      opacity: 0;
-      transform: translateX(40px); // Начинаем справа за экраном
-      transition: opacity 0.3s ease, transform 0.3s ease;
-
-      &.open {
-        opacity: 1;
-        transform: translateX(0); // Выезжаем в нормальную позицию
-      }
-
-      button {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+      // Главная кнопка
+      .main-clear-button {
+        background: dodgerblue;
         color: white;
-        margin-right: 0.8rem; /* Расстояние между кнопками */
-        background-color: #c2f2fa;
+        text-shadow: 0 2px 4px black;
         height: 3rem;
         width: 3rem;
         font-size: 1.8rem;
-        border: 1px solid #92cae8;
+        border: 1px solid transparent;
         border-radius: 5px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
-        transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out, border 0.3s ease-in-out, transform 0.3s ease-in-out;
+        transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border 0.3s ease-in-out, transform 0.2s ease-in-out;
         cursor: pointer;
+        z-index: 12;
+        position: relative;
 
         &:hover {
-          background: lightgoldenrodyellow;
-          border: 1px solid #5ba8d1;
-          box-shadow: none;
+          &:hover {
+            background: linear-gradient(to bottom, rgb(255, 255, 255), rgb(152, 152, 255));
+            color: darkblue;
+            box-shadow: none;
+            text-shadow: 0 2px 4px white;
+            border: 1px solid darkslateblue;
+          }
         }
-
-        .fas {
-          font-size: 1.8rem;
-          color: white;
-          text-shadow: 0 2px 4px black;
-          display: flex;
-          justify-content: center;
-          align-items: center;
+        &.open {
+          background-color: #5ba8d1;
+          border: 1px solid transparent;
         }
       }
 
-      // Анимация появления кнопок с задержкой
-      button:nth-child(1) {transition-delay: 0.05s;}
-      button:nth-child(2) {transition-delay: 0.1s;}
-    }
-  }
+      // Подменю с кнопками
+      .clear-submenu {
+        display: flex;
+        flex-direction: row; /* Меню горизонтальное */
+        position: absolute;
+        right: 100%; /* Меню появляется слева от кнопки */
+        top: 0;
+        opacity: 0;
+        transform: translateX(40px); // Начинаем справа за экраном
+        transition: opacity 0.3s ease, transform 0.3s ease;
 
+        &.open {
+          opacity: 1;
+          transform: translateX(0); // Выезжаем в нормальную позицию
+        }
+
+        button {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          color: white;
+          margin-right: 0.8rem; /* Расстояние между кнопками */
+          background-color: #c2f2fa;
+          height: 3rem;
+          width: 3rem;
+          font-size: 1.8rem;
+          border: 1px solid #92cae8;
+          border-radius: 5px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
+          transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out, border 0.3s ease-in-out, transform 0.3s ease-in-out;
+          cursor: pointer;
+
+          &:hover {
+            background: lightgoldenrodyellow;
+            border: 1px solid #5ba8d1;
+            box-shadow: none;
+          }
+
+          .fas {
+            font-size: 1.8rem;
+            color: white;
+            text-shadow: 0 2px 4px black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
+        }
+
+        // Анимация появления кнопок с задержкой
+        button:nth-child(1) {transition-delay: 0.05s;}
+        button:nth-child(2) {transition-delay: 0.1s;}
+      }
+    }
+
+    .shuffle-buttons {
+      position: relative;
+      // Главная кнопка
+      .main-shuffle-button {
+        background: dodgerblue;
+        color: white;
+        text-shadow: 0 2px 4px black;
+        height: 3rem;
+        width: 3rem;
+        font-size: 1.8rem;
+        border: 1px solid transparent;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
+        transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border 0.3s ease-in-out, transform 0.2s ease-in-out;
+        cursor: pointer;
+        z-index: 12;
+        position: relative;
+
+        &:hover {
+          &:hover {
+            background: linear-gradient(to bottom, rgb(255, 255, 255), rgb(152, 152, 255));
+            color: darkblue;
+            box-shadow: none;
+            text-shadow: 0 2px 4px white;
+            border: 1px solid darkslateblue;
+          }
+        }
+        &.open {
+          background-color: #5ba8d1;
+          border: 1px solid transparent;
+        }
+      }
+
+      // Подменю с кнопками
+      .shuffle-submenu {
+        display: flex;
+        flex-direction: row; /* Меню горизонтальное */
+        position: absolute;
+        right: 100%; /* Меню появляется слева от кнопки */
+        top: 0;
+        opacity: 0;
+        transform: translateX(40px); // Начинаем справа за экраном
+        transition: opacity 0.3s ease, transform 0.3s ease;
+
+        &.open {
+          opacity: 1;
+          transform: translateX(0); // Выезжаем в нормальную позицию
+        }
+
+        button {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          color: white;
+          margin-right: 0.8rem; /* Расстояние между кнопками */
+          background-color: #c2f2fa;
+          height: 3rem;
+          width: 3rem;
+          font-size: 1.8rem;
+          border: 1px solid #92cae8;
+          border-radius: 5px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
+          transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out, border 0.3s ease-in-out, transform 0.3s ease-in-out;
+          cursor: pointer;
+
+          &:hover {
+            background: lightgoldenrodyellow;
+            border: 1px solid #5ba8d1;
+            box-shadow: none;
+          }
+
+          .fas {
+            font-size: 1.8rem;
+            color: white;
+            text-shadow: 0 2px 4px black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
+        }
+
+        // Анимация появления кнопок с задержкой
+        button:nth-child(1) {transition-delay: 0.05s;}
+        button:nth-child(2) {transition-delay: 0.1s;}
+      }
+    }
+
+  }
 }
 
 @media(max-width: 1020px) {

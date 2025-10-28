@@ -79,6 +79,17 @@
     "info404": "Página no encontrada, volver a la página principal",
     "btn404": "Volver a la página PRINCIPAL"
   },
+  "storage": {
+    "clear-menu-open": "Abrir el menú de limpieza del almacenamiento local",
+    "clear-menu-close": "Cerrar el menú de limpieza del almacenamiento local",
+    "clearCurrent": "Limpiar el almacenamiento local actual",
+    "clearAll": "Limpiar TODO el almacenamiento local",
+    "confirm-clear-current": "¿Realmente deseas limpiar el almacenamiento local actual? \uD83E\uDDD0\uD83D\uDE27",
+    "confirm-clear-all": "¿Realmente deseas limpiar TODO el almacenamiento local? \uD83D\uDE33\uD83D\uDE31\uD83E\uDD2F\uD83D\uDE09",
+    "alertYes": "¡Almacenamiento local limpiado! ☹\uFE0F\uD83D\uDE2D",
+    "alertNo": "¡Gracias por cambiar de opinión! \uD83D\uDE01\uD83D\uDE0A",
+    "noData": "No hay datos para limpiar. \uD83D\uDE44\uD83E\uDEE4"
+  },
   "control": {
     "speed": "Velocidad",
     "gap": "Brecha",

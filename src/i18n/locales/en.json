@@ -79,6 +79,17 @@
     "info404": "Page not found, back to main page",
     "btn404": "Back to MAIN page"
   },
+  "storage": {
+    "clear-menu-open": "Open local storage cleanup menu",
+    "clear-menu-close": "Close local storage cleanup menu",
+    "clearCurrent": "Clear current local storage",
+    "clearAll": "Clear ALL local storage",
+    "confirm-clear-current": "Do you really want to clear the current local storage? \uD83E\uDDD0\uD83D\uDE27",
+    "confirm-clear-all": "Do you really want to clear ALL local storage? \uD83D\uDE33\uD83D\uDE31\uD83E\uDD2F\uD83D\uDE09",
+    "alertYes": "Local storage cleared! ☹\uFE0F\uD83D\uDE2D",
+    "alertNo": "Thank you for changing your mind! \uD83D\uDE01\uD83D\uDE0A",
+    "noData": "No data to clear. \uD83D\uDE44\uD83E\uDEE4"
+  },
   "control": {
     "speed": "Speed",
     "gap": "Gap",
