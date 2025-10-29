@@ -82,10 +82,14 @@
         top: 0;
         opacity: 0;
         transform: translateX(40px); // Начинаем справа за экраном
-        transition: opacity 0.3s ease, transform 0.3s ease;
+        transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+        visibility: hidden;
+        pointer-events: none; // Нельзя кликать, пока меню скрыто
 
         &.open {
           opacity: 1;
+          visibility: visible;
+          pointer-events: auto; // Включаем клики, когда меню открыто
           transform: translateX(0); // Выезжаем в нормальную позицию
         }
 
@@ -155,10 +159,14 @@
         top: 0;
         opacity: 0;
         transform: translateX(40px); // Начинаем справа за экраном
-        transition: opacity 0.3s ease, transform 0.3s ease;
+        transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+        visibility: hidden;
+        pointer-events: none; // Нельзя кликать, пока меню скрыто
 
         &.open {
           opacity: 1;
+          visibility: visible;
+          pointer-events: auto; // Включаем клики, когда меню открыто
           transform: translateX(0); // Выезжаем в нормальную позицию
         }
 
