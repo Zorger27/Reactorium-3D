@@ -54,35 +54,23 @@
 
     .clear-buttons {
       position: relative;
+
       // Главная кнопка
       .main-clear-button {
-        background: lightcoral;
-        color: white;
-        text-shadow: 0 2px 4px black;
+        background-color: #ffea00;
+        color: black;
         height: 3rem;
         width: 3rem;
-        font-size: 1.8rem;
-        border: 1px solid transparent;
+        font-size: 1.6rem;
         border-radius: 5px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
-        transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border 0.3s ease-in-out, transform 0.2s ease-in-out;
+        transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border 0.2s ease-in-out, transform 0.2s ease-in-out;
         cursor: pointer;
         z-index: 12;
         position: relative;
 
-        &:hover {
-          &:hover {
-            background: linear-gradient(to bottom, rgb(255, 255, 255), rgb(152, 152, 255));
-            color: darkblue;
-            box-shadow: none;
-            text-shadow: 0 2px 4px white;
-            border: 1px solid darkslateblue;
-          }
-        }
-        &.open {
-          background-color: #ecaaaa;
-          border: 1px solid transparent;
-        }
+        &:hover {box-shadow: none;}
+        &.open {color: white;background-color: darkgreen;}
       }
 
       // Подменю с кнопками
@@ -105,28 +93,27 @@
           display: flex;
           justify-content: center;
           align-items: center;
-          color: white;
+          color: black;
           margin-right: 0.8rem; /* Расстояние между кнопками */
-          background-color: #f3dada;
+          background-color: lightgoldenrodyellow;
           height: 3rem;
           width: 3rem;
-          font-size: 1.8rem;
-          border: 1px solid #ecaaaa;
+          border: 2px solid transparent;
           border-radius: 5px;
+          text-shadow: none;
           box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
-          transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out, border 0.3s ease-in-out, transform 0.3s ease-in-out;
+          transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border 0.2s ease-in-out, transform 0.2s ease-in-out;
           cursor: pointer;
 
           &:hover {
-            background: floralwhite;
-            border: 1px solid lightcoral;
+            color: deeppink;
+            background-color: #ffffff;
+            border: 2px solid deeppink;
             box-shadow: none;
           }
 
           .fas {
-            font-size: 1.8rem;
-            color: white;
-            text-shadow: 0 2px 4px black;
+            font-size: 1.6rem;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -143,33 +130,20 @@
       position: relative;
       // Главная кнопка
       .main-shuffle-button {
-        background: dodgerblue;
+        background: mediumvioletred;
         color: white;
-        text-shadow: 0 2px 4px black;
         height: 3rem;
         width: 3rem;
-        font-size: 1.8rem;
-        border: 1px solid transparent;
+        font-size: 1.6rem;
         border-radius: 5px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
-        transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border 0.3s ease-in-out, transform 0.2s ease-in-out;
+        transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border 0.2s ease-in-out, transform 0.2s ease-in-out;
         cursor: pointer;
         z-index: 12;
         position: relative;
 
-        &:hover {
-          &:hover {
-            background: linear-gradient(to bottom, rgb(255, 255, 255), rgb(152, 152, 255));
-            color: darkblue;
-            box-shadow: none;
-            text-shadow: 0 2px 4px white;
-            border: 1px solid darkslateblue;
-          }
-        }
-        &.open {
-          background-color: #5ba8d1;
-          border: 1px solid transparent;
-        }
+        &:hover {box-shadow: none;}
+        &.open {color: white;background-color: darkgreen;}
       }
 
       // Подменю с кнопками
@@ -192,28 +166,34 @@
           display: flex;
           justify-content: center;
           align-items: center;
-          color: white;
+          color: black;
           margin-right: 0.8rem; /* Расстояние между кнопками */
-          background-color: #c2f2fa;
+          background-color: lightgoldenrodyellow;
           height: 3rem;
           width: 3rem;
-          font-size: 1.8rem;
-          border: 1px solid #92cae8;
+          border: 2px solid transparent;
           border-radius: 5px;
           box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
-          transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out, border 0.3s ease-in-out, transform 0.3s ease-in-out;
+          transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border 0.2s ease-in-out, transform 0.2s ease-in-out;
           cursor: pointer;
 
           &:hover {
-            background: floralwhite;
-            border: 1px solid #5ba8d1;
+            background: #ffffff;
+            color: purple;
+            border: 2px solid purple;
             box-shadow: none;
+            text-shadow: none;
+          }
+
+          .fa-undo {
+            color: black;
+            text-shadow: none;
+            transition: color 0.2s ease-in-out, transform 0.2s ease-in-out;
+            &:hover {color: purple;}
           }
 
           .fas {
-            font-size: 1.8rem;
-            color: white;
-            text-shadow: 0 2px 4px black;
+            font-size: 1.5rem;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -316,8 +296,11 @@
           height: 2.4rem;
           width: 2.4rem;
           font-size: 1.2rem;
+          border: 1px solid black;
           border-radius: 4px;
           box-shadow: none;
+
+          &.open {border: none;}
         }
 
         .clear-submenu {
@@ -327,9 +310,10 @@
             width: 2.4rem;
             font-size: 1.2rem;
             border-radius: 4px;
+            border: 1px solid black;
             box-shadow: none;
 
-            &:hover {box-shadow: none;}
+            &:hover {box-shadow: none; border: 1px solid deeppink;}
 
             .fas {font-size: 1.2rem;}
           }
@@ -352,9 +336,10 @@
             width: 2.4rem;
             font-size: 1.2rem;
             border-radius: 4px;
+            border: 1px solid black;
             box-shadow: none;
 
-            &:hover {box-shadow: none;}
+            &:hover {box-shadow: none; border: 1px solid purple;}
 
             .fas {font-size: 1.2rem;}
           }
