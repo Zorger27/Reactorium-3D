@@ -1,6 +1,8 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 
 export function useLocalStorage(key, defaultValue, parser = v => v) {
+  const skipNextWriteRef = useRef(false);
+
   const [state, setState] = useState(() => {
     try {
       const saved = localStorage.getItem(key);
@@ -12,11 +14,15 @@ export function useLocalStorage(key, defaultValue, parser = v => v) {
 
   useEffect(() => {
     try {
+      if (skipNextWriteRef.current) {
+        skipNextWriteRef.current = false;
+        return;
+      }
       localStorage.setItem(key, String(state));
     } catch {}
   }, [key, state]);
 
-  // 🔄 Синхронизация между вкладками
+  // Синхронизация между вкладками
   useEffect(() => {
     const handleStorage = (e) => {
       if (e.key === key) {
@@ -36,6 +42,9 @@ export function useLocalStorage(key, defaultValue, parser = v => v) {
     try {
       localStorage.removeItem(key);
     } catch {}
+
+    skipNextWriteRef.current = true;
+
     setState(defaultValue);
   }, [key, defaultValue]);
 
