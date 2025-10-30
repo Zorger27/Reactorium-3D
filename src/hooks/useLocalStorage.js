@@ -16,6 +16,22 @@ export function useLocalStorage(key, defaultValue, parser = v => v) {
     } catch {}
   }, [key, state]);
 
+  // 🔄 Синхронизация между вкладками
+  useEffect(() => {
+    const handleStorage = (e) => {
+      if (e.key === key) {
+        if (e.newValue === null) {
+          setState(defaultValue);
+        } else {
+          setState(parser(e.newValue));
+        }
+      }
+    };
+
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, [key, parser, defaultValue]);
+
   const reset = useCallback(() => {
     try {
       localStorage.removeItem(key);
