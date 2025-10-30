@@ -406,14 +406,14 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
   const [flipTrigger, setFlipTrigger] = useState(false);
 
   // === загрузка и сохранение в localStorage ===
-  const [gap, setGap] = useLocalStorage("pictoCube2xGap", 0.15, parseFloat);
-  const [smallCubeScale, setSmallCubeScale] = useLocalStorage("pictoCube2xSmallCubeScale", 0.85, parseFloat);
-  const [rotationX, setRotationX] = useLocalStorage("pictoCube2xRotX", 90, parseFloat);
-  const [rotationY, setRotationY] = useLocalStorage("pictoCube2xRotY", 0, parseFloat);
-  const [rotationZ, setRotationZ] = useLocalStorage("pictoCube2xRotZ", 0, parseFloat);
-  const [speed, setSpeed] = useLocalStorage("pictoCube2xSpeed", 0.01, parseFloat);
-  const [direction, setDirection] = useLocalStorage("pictoCube2xDirection", 1, v => parseInt(v, 10));
-  const [isRotating, setIsRotating] = useLocalStorage("pictoCube2xIsRotating", true, v => v === "true");
+  const [gap, setGap, resetGap] = useLocalStorage("pictoCube2xGap", 0.15, parseFloat);
+  const [smallCubeScale, setSmallCubeScale, resetSmallCubeScale] = useLocalStorage("pictoCube2xSmallCubeScale", 0.85, parseFloat);
+  const [rotationX, setRotationX, resetRotationX] = useLocalStorage("pictoCube2xRotX", 90, parseFloat);
+  const [rotationY, setRotationY, resetRotationY] = useLocalStorage("pictoCube2xRotY", 0, parseFloat);
+  const [rotationZ, setRotationZ, resetRotationZ] = useLocalStorage("pictoCube2xRotZ", 0, parseFloat);
+  const [speed, setSpeed, resetSpeed] = useLocalStorage("pictoCube2xSpeed", 0.01, parseFloat);
+  const [direction, setDirection, resetDirection] = useLocalStorage("pictoCube2xDirection", 1, v => parseInt(v, 10));
+  const [isRotating, setIsRotating, resetIsRotating] = useLocalStorage("pictoCube2xIsRotating", true, v => v === "true");
 
   // --- кнопки вращения ---
   const handleClockwise = () => {setDirection(1);setIsRotating(true);};
@@ -471,34 +471,40 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
 
   // === Очистка ТЕКУЩЕГО localStorage (только PictoCube2x) ===
   const handleClearCurrentStorage = () => {
-    const confirmed = window.confirm(t('storage.confirm-clear-current')); // "Вы действительно хотите очистить настройки кубика?"
+    // Проверяем, есть ли вообще что очищать
+    const hasData = Object.keys(localStorage).some(key => key.startsWith('pictoCube2x'));
+    if (!hasData) {
+      alert(t('storage.noData')); // "Немає даних для очищення. 🙄🫤"
+      return;
+    }
+
+    const confirmed = window.confirm(t('storage.confirm-clear-current'));
     if (!confirmed) {
-      alert(t('storage.alertNo')); // "Спасибо, что передумали"
+      alert(t('storage.alertNo'));
       return;
     }
 
     try {
-      // Удаляем все ключи, относящиеся к текущему кубику
       Object.keys(localStorage).forEach(key => {
         if (key.startsWith('pictoCube2x')) {
           localStorage.removeItem(key);
         }
       });
 
-      // Сбрасываем состояния к дефолтным
-      setGap(0.15);
-      setSmallCubeScale(0.85);
-      setRotationX(90);
-      setRotationY(0);
-      setRotationZ(0);
-      setSpeed(0.01);
-      setDirection(1);
-      setIsRotating(true);
+      // Сброс значений через reset-хуки
+      resetGap();
+      resetSmallCubeScale();
+      resetRotationX();
+      resetRotationY();
+      resetRotationZ();
+      resetSpeed();
+      resetDirection();
+      resetIsRotating();
 
       setPositionsResetTrigger(prev => prev + 1);
       setResetTrigger(prev => !prev);
 
-      alert(t('storage.alertYes')); // "Хранилище очищено"
+      alert(t('storage.alertYes'));
     } catch (e) {
       console.error('Ошибка при очистке localStorage:', e);
     }
@@ -508,7 +514,12 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
 
   // === Полная очистка localStorage ===
   const handleClearAllStorage = () => {
-    const confirmed = window.confirm(t('storage.confirm-clear-all')); // "Вы действительно хотите очистить всё локальное хранилище?"
+    if (localStorage.length === 0) {
+      alert(t('storage.noData'));
+      return;
+    }
+
+    const confirmed = window.confirm(t('storage.confirm-clear-all'));
     if (!confirmed) {
       alert(t('storage.alertNo'));
       return;
@@ -516,16 +527,16 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
 
     try {
       localStorage.clear();
+      // сброс дефолтов через reset
+      resetGap();
+      resetSmallCubeScale();
+      resetRotationX();
+      resetRotationY();
+      resetRotationZ();
+      resetSpeed();
+      resetDirection();
+      resetIsRotating();
 
-      // Сбрасываем все локальные состояния
-      setGap(0.15);
-      setSmallCubeScale(0.85);
-      setRotationX(90);
-      setRotationY(0);
-      setRotationZ(0);
-      setSpeed(0.01);
-      setDirection(1);
-      setIsRotating(true);
       setPositionsResetTrigger(prev => prev + 1);
       setResetTrigger(prev => !prev);
 

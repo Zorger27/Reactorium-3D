@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 export function useLocalStorage(key, defaultValue, parser = v => v) {
   const [state, setState] = useState(() => {
@@ -16,5 +16,12 @@ export function useLocalStorage(key, defaultValue, parser = v => v) {
     } catch {}
   }, [key, state]);
 
-  return [state, setState];
+  const reset = useCallback(() => {
+    try {
+      localStorage.removeItem(key);
+    } catch {}
+    setState(defaultValue);
+  }, [key, defaultValue]);
+
+  return [state, setState, reset];
 }
