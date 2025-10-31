@@ -57,20 +57,33 @@
 
       // Главная кнопка
       .main-clear-button {
+        display: flex;
+        position: relative;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        width: max-content;
         background-color: #ffea00;
-        color: black;
-        height: 3rem;
-        width: 3rem;
+        color: white;
+        padding: 0.5rem 1rem;
+        margin: 0.3rem auto;
         font-size: 1.6rem;
+        text-shadow: 2px 2px 4px black;
         border-radius: 5px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
         transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border 0.2s ease-in-out, transform 0.2s ease-in-out;
         cursor: pointer;
         z-index: 12;
-        position: relative;
+        gap: 0.3rem;
 
         &:hover {box-shadow: none;}
         &.open {color: white;background-color: darkgreen;}
+
+        .main-clear-icon {
+          display: inline;
+          //color: deeppink;
+        }
+        .main-clear-text {display: inline;}
       }
 
       // Подменю с кнопками
@@ -79,9 +92,9 @@
         flex-direction: row; /* Меню горизонтальное */
         position: absolute;
         right: 100%; /* Меню появляется слева от кнопки */
-        top: 0;
+        top: 50%; // Центр по вертикали
+        transform: translateY(-50%) translateX(40px); // Центрирование + исходное смещение
         opacity: 0;
-        transform: translateX(40px); // Начинаем справа за экраном
         transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
         visibility: hidden;
         pointer-events: none; // Нельзя кликать, пока меню скрыто
@@ -90,7 +103,7 @@
           opacity: 1;
           visibility: visible;
           pointer-events: auto; // Включаем клики, когда меню открыто
-          transform: translateX(0); // Выезжаем в нормальную позицию
+          transform: translateY(-50%) translateX(0); // Центрирование + финальная позиция
         }
 
         button {
@@ -134,20 +147,30 @@
       position: relative;
       // Главная кнопка
       .main-shuffle-button {
+        display: flex;
+        position: relative;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        width: max-content;
         background: mediumvioletred;
         color: white;
-        height: 3rem;
-        width: 3rem;
+        padding: 0.5rem 1rem;
+        margin: 0.3rem auto;
         font-size: 1.6rem;
+        text-shadow: 2px 2px 4px black;
         border-radius: 5px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
         transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border 0.2s ease-in-out, transform 0.2s ease-in-out;
         cursor: pointer;
         z-index: 12;
-        position: relative;
+        gap: 0.3rem;
 
         &:hover {box-shadow: none;}
         &.open {color: white;background-color: darkgreen;}
+
+        .main-shuffle-icon {display: inline;}
+        .main-shuffle-text {display: inline;}
       }
 
       // Подменю с кнопками
@@ -156,9 +179,9 @@
         flex-direction: row; /* Меню горизонтальное */
         position: absolute;
         right: 100%; /* Меню появляется слева от кнопки */
-        top: 0;
+        top: 50%; // Центр по вертикали
+        transform: translateY(-50%) translateX(40px); // Центрирование + исходное смещение
         opacity: 0;
-        transform: translateX(40px); // Начинаем справа за экраном
         transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
         visibility: hidden;
         pointer-events: none; // Нельзя кликать, пока меню скрыто
@@ -167,7 +190,7 @@
           opacity: 1;
           visibility: visible;
           pointer-events: auto; // Включаем клики, когда меню открыто
-          transform: translateX(0); // Выезжаем в нормальную позицию
+          transform: translateY(-50%) translateX(0); // Центрирование + финальная позиция
         }
 
         button {
@@ -238,10 +261,14 @@
 
       .clear-buttons {
         .main-clear-button {
-          height: 2.6rem;
-          width: 2.6rem;
+          padding: 0.4rem 0.8rem;
+          margin: 0.3rem auto;
           font-size: 1.4rem;
           border-radius: 5px;
+          gap: 0.2rem;
+
+          .main-clear-icon {display: inline;}
+          .main-clear-text {display: inline;}
         }
         .clear-submenu {
           button {
@@ -258,10 +285,14 @@
 
       .shuffle-buttons {
         .main-shuffle-button {
-          height: 2.6rem;
-          width: 2.6rem;
+          padding: 0.4rem 0.8rem;
+          margin: 0.3rem auto;
           font-size: 1.4rem;
           border-radius: 5px;
+          gap: 0.2rem;
+
+          .main-shuffle-icon {display: inline;}
+          .main-shuffle-text {display: inline;}
         }
         .shuffle-submenu {
           button {
@@ -308,7 +339,17 @@
           border-radius: 4px;
           box-shadow: none;
 
-          &.open {border: none;}
+          &.open {
+            border: none;
+            .main-clear-icon {color: white;}
+          }
+
+          .main-clear-icon {
+            display: inline;
+            text-shadow: none;
+            color: black;
+          }
+          .main-clear-text {display: none;}
         }
 
         .clear-submenu {
@@ -335,6 +376,9 @@
           font-size: 1.2rem;
           border-radius: 4px;
           box-shadow: none;
+
+          .main-shuffle-icon {display: inline;}
+          .main-shuffle-text {display: none;}
         }
 
         .shuffle-submenu {

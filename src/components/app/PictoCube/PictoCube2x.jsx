@@ -625,22 +625,14 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
         {/* === Панель очистки localStorage === */}
         <div className="clear-buttons">
           {/* Главная кнопка */}
-          <button
-            className={`main-clear-button ${isClearMenuOpen ? 'open' : ''}`}
-            onClick={() => setIsClearMenuOpen(prev => !prev)}
-            title={isClearMenuOpen ? t('storage.clear-menu-close') : t('storage.clear-menu-open')}
-          >
-            <i className={`fas ${isClearMenuOpen ? 'fa-times' : 'fa-trash'}`}></i>
+          <button className={`main-clear-button ${isClearMenuOpen ? 'open' : ''}`} onClick={() => setIsClearMenuOpen(prev => !prev)} title={isClearMenuOpen ? t('storage.clear-menu-close') : t('storage.clear-menu-open')}>
+            <i className={`main-clear-icon fas ${isClearMenuOpen ? 'fa-times' : 'fa-trash'}`}></i><span className="main-clear-text">Очистить</span>
           </button>
 
           {/* Подменю */}
           <div className={`clear-submenu ${isClearMenuOpen ? 'open' : ''}`}>
-            <button onClick={handleClearCurrentStorage} title={t('storage.clearCurrent')}>
-              <i className="fas fa-broom"></i>
-            </button>
-            <button onClick={handleClearAllStorage} title={t('storage.clearAll')}>
-              <i className="fas fa-fire"></i>
-            </button>
+            <button onClick={handleClearCurrentStorage} title={t('storage.clearCurrent')}><i className="fas fa-broom"></i></button>
+            <button onClick={handleClearAllStorage} title={t('storage.clearAll')}><i className="fas fa-fire"></i></button>
           </div>
         </div>
 
@@ -648,7 +640,7 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
         <div className="shuffle-buttons">
           {/* Главная кнопка */}
           <button className={`main-shuffle-button ${isShuffleMenuOpen ? 'open' : ''}`} onClick={() => setIsShuffleMenuOpen(prev => !prev)} title={isShuffleMenuOpen ? t('control.shuffle-menu-close') : t('control.shuffle-menu-open')}>
-            <i className={`fas ${isShuffleMenuOpen ? 'fa-times' : 'fa-globe'}`}></i>
+            <i className={`main-shuffle-icon fas ${isShuffleMenuOpen ? 'fa-times' : 'fa-globe'}`}></i><span className="main-shuffle-text">Перемешать</span>
           </button>
 
           {/* Подменю с кнопками */}
