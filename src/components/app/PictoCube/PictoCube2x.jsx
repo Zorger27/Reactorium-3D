@@ -627,7 +627,7 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
         <div className="clear-buttons">
           {/* Главная кнопка */}
           <button className={`main-clear-button ${isClearMenuOpen ? 'open' : ''}`} onClick={() => setIsClearMenuOpen(prev => !prev)} title={isClearMenuOpen ? t('storage.clear-menu-close') : t('storage.clear-menu-open')}>
-            <i className={`main-clear-icon fas ${isClearMenuOpen ? 'fa-times' : 'fa-trash'}`}></i><span className="main-clear-text">Очистить</span>
+            <i className={`main-clear-icon fas ${isClearMenuOpen ? 'fa-times' : 'fa-trash-alt'}`}></i><span className="main-clear-text">Очистить</span>
           </button>
 
           {/* Подменю */}
