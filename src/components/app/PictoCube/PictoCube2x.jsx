@@ -620,6 +620,7 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
         <button onClick={handleCounterClockwise} title={t('control.counterclockwise')}><i className="fa-solid fa-right-long"></i></button>
       </div>
 
+      {/* === Панель специальных кнопок === */}
       <div className="special-buttons">
 
         {/* === Панель очистки localStorage === */}
