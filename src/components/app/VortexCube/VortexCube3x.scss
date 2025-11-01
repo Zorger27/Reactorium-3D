@@ -10,7 +10,8 @@
     transform: translateY(-50%);
     z-index: 10;
     justify-content: center;
-    align-items: center;
+    //align-items: center;
+    align-items: flex-start;
   }
 
   .rotation-buttons {

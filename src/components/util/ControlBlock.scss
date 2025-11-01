@@ -1,7 +1,6 @@
 @use "sass:color";
 
 .control-block {
-  margin: 0.5rem 0;
 
   .label-all {
 
@@ -27,7 +26,6 @@
       gap: 8px;
       cursor: pointer;
       font-size: 1.5rem;
-      //font-weight: bold;
       transition: color 0.3s, text-shadow 0.3s, background 0.3s;
 
       &.open {
@@ -43,8 +41,6 @@
         width: max-content;
         border: 1px solid darkgreen;
         padding: 0.5rem 1rem;
-        margin: 0.3rem 0;
-        //margin: 0.3rem auto;
         align-self: flex-start;
         border-radius: 5px;
         background-color: seagreen;
@@ -123,7 +119,6 @@
 
 @media(max-width: 1020px) {
   .control-block {
-    margin: 0.4rem 0;
 
     .label-all {
 
@@ -148,7 +143,6 @@
         }
         &.closed {
           padding: 0.4rem 0.8rem;
-          margin: 0.3rem 0;
           border-radius: 5px;
 
           &:hover {
@@ -196,7 +190,6 @@
 
 @media (max-width: 768px) {
   .control-block {
-    margin: 0.3rem 0;
 
     .label-all {
 
@@ -217,11 +210,11 @@
 
         &.closed {
           //padding: 0.4rem 0.8rem;
-          //margin: 0.3rem auto;
           height: 2.6rem;
           width: 2.6rem;
           font-size: 1.4rem;
           border-radius: 5px;
+          box-shadow: none;
 
           &:hover {
             box-shadow: none;

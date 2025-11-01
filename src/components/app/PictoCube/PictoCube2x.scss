@@ -5,13 +5,13 @@
     display: flex;
     flex-direction: column;
     position: absolute;
-    left: 1rem;
+    left: 1.5rem;
     top: 50%;
     transform: translateY(-50%);
     z-index: 10;
     justify-content: center;
-    //align-items: center;
     align-items: flex-start;
+    gap: 2rem;
   }
 
   .rotation-buttons {
@@ -31,6 +31,7 @@
       height: 3rem;
       width: 4rem;
       font-size: 1.8rem;
+      border: 1px solid transparent;
       border-radius: 5px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
       transition:  background-color .2s ease-in-out, box-shadow .2s ease-in-out;
@@ -45,13 +46,13 @@
   .special-buttons {
     position: absolute;
     top: 50%;
-    right: 40px;
+    right: 1.5rem;
     transform: translateY(-50%);
     z-index: 10;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    gap: 1.5rem;
+    gap: 2rem;
 
     .clear-buttons {
       position: relative;
@@ -67,7 +68,6 @@
         background-color: #ffea00;
         color: white;
         padding: 0.5rem 1rem;
-        margin: 0.3rem auto;
         height: 3rem;
         font-size: 1.6rem;
         text-shadow: 2px 2px 4px black;
@@ -158,7 +158,6 @@
         background: mediumvioletred;
         color: white;
         padding: 0.5rem 1rem;
-        margin: 0.3rem auto;
         height: 3rem;
         font-size: 1.6rem;
         text-shadow: 2px 2px 4px black;
@@ -246,11 +245,14 @@
 
 @media(max-width: 1020px) {
   .picto-cube2x-container {
-    .cube-controls {left: 0.7rem;}
+    .cube-controls {
+      left: 0.7rem;
+      gap: 1.6rem;
+    }
 
     .rotation-buttons {
       bottom: 85px; // Перемещаем вниз
-      gap: 15px; // Отступ между кнопками
+      gap: 1.2rem; // Отступ между кнопками
 
       button {
         height: 2.6rem;
@@ -260,13 +262,12 @@
     }
 
     .special-buttons {
-      right: 20px;
-      gap: 1.3rem;
+      right: 0.7rem;
+      gap: 1.6rem;
 
       .clear-buttons {
         .main-clear-button {
           padding: 0.4rem 0.8rem;
-          margin: 0.3rem auto;
           height: 2.6rem;
           font-size: 1.4rem;
           border-radius: 5px;
@@ -291,7 +292,6 @@
       .shuffle-buttons {
         .main-shuffle-button {
           padding: 0.4rem 0.8rem;
-          margin: 0.3rem auto;
           height: 2.6rem;
           font-size: 1.4rem;
           border-radius: 5px;
@@ -319,30 +319,35 @@
 
 @media (max-width: 768px) {
   .picto-cube2x-container {
-    .cube-controls {left: 0.5rem; top: 53%;}
+    .cube-controls {
+      left: 0.5rem;
+      gap: 1.3rem;
+    }
 
     .rotation-buttons {
       bottom: 50px; // Перемещаем вниз
-      gap: 12px; // Отступ между кнопками
+      gap: 1rem; // Отступ между кнопками
 
       button {
-        height: 2.4rem;
-        width: 3.4rem;
-        font-size: 1.2rem;
+        height: 2.6rem;
+        width: 3rem;
+        font-size: 1.4rem;
+        border: 1px solid dodgerblue;
+        box-shadow: none;
       }
     }
 
     .special-buttons {
-      right: 10px;
-      gap: 1.1rem;
+      right: 0.5rem;
+      gap: 1.3rem;
 
       .clear-buttons {
         .main-clear-button {
-          height: 2.4rem;
-          width: 2.4rem;
-          font-size: 1.2rem;
+          height: 2.6rem;
+          width: 2.6rem;
+          font-size: 1.4rem;
           border: 1px solid black;
-          border-radius: 4px;
+          border-radius: 5px;
           box-shadow: none;
 
           &.open {
@@ -361,10 +366,10 @@
         .clear-submenu {
           button {
             margin-right: 0.5rem; /* Расстояние между кнопками */
-            height: 2.4rem;
-            width: 2.4rem;
-            font-size: 1.2rem;
-            border-radius: 4px;
+            height: 2.6rem;
+            width: 2.6rem;
+            font-size: 1.4rem;
+            border-radius: 5px;
             border: 1px solid black;
             box-shadow: none;
 
@@ -377,10 +382,10 @@
 
       .shuffle-buttons {
         .main-shuffle-button {
-          height: 2.4rem;
-          width: 2.4rem;
-          font-size: 1.2rem;
-          border-radius: 4px;
+          height: 2.6rem;
+          width: 2.6rem;
+          font-size: 1.4rem;
+          border-radius: 5px;
           box-shadow: none;
 
           .main-shuffle-icon {display: inline;}
@@ -390,10 +395,10 @@
         .shuffle-submenu {
           button {
             margin-right: 0.5rem; /* Расстояние между кнопками */
-            height: 2.4rem;
-            width: 2.4rem;
-            font-size: 1.2rem;
-            border-radius: 4px;
+            height: 2.6rem;
+            width: 2.6rem;
+            font-size: 1.4rem;
+            border-radius: 5px;
             border: 1px solid black;
             box-shadow: none;
 
