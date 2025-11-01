@@ -392,16 +392,9 @@
           border-radius: 5px;
           //box-shadow: none;
 
-          &.open {
-            //border: none;
-            .main-clear-icon {color: white;}
-          }
+          &.open {.main-clear-icon {color: orangered;}}
 
-          .main-clear-icon {
-            display: inline;
-            text-shadow: none;
-            color: black;
-          }
+          .main-clear-icon {display: inline;}
           .main-clear-text {display: none;}
         }
 

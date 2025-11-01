@@ -6,9 +6,16 @@
 
     &.open {
       padding: 0.5rem;
-      background: linear-gradient(to bottom, rgb(229, 251, 255), rgb(255, 240, 244)) no-repeat center;
-      border: 1px solid lightskyblue;
-      border-radius: 10px;
+      //background: linear-gradient(to bottom, rgb(229, 251, 255), rgb(255, 240, 244)) no-repeat center;
+      //background-color: lightgoldenrodyellow;
+      //background-image: url("@/assets/app/VortexCube/cube2/cube2-08.webp");
+      background-image: url("@/assets/background/background06.webp");
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      //border: 1px solid lightskyblue;
+      border: 1px solid lightslategray;
+      border-radius: 5px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
     }
 
@@ -124,7 +131,7 @@
 
       &.open {
         padding: 0.4rem;
-        border-radius: 8px;
+        border-radius: 5px;
       }
 
       &.closed {
@@ -195,7 +202,7 @@
 
       &.open {
         padding: 0.4rem;
-        border-radius: 8px;
+        border-radius: 5px;
       }
 
       &.closed {
