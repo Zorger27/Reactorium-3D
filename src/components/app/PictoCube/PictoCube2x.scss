@@ -96,7 +96,7 @@
         position: absolute;
         right: 100%; /* Меню появляется слева от кнопки */
         top: 50%; // Центр по вертикали
-        transform: translateY(-50%) translateX(40px); // Центрирование + исходное смещение
+        transform: translateY(-50%) translateX(1rem); // Центрирование + исходное смещение
         opacity: 0;
         transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
         visibility: hidden;
@@ -184,7 +184,7 @@
         position: absolute;
         right: 100%; /* Меню появляется слева от кнопки */
         top: 50%; // Центр по вертикали
-        transform: translateY(-50%) translateX(40px); // Центрирование + исходное смещение
+        transform: translateY(-50%) translateX(1rem); // Центрирование + исходное смещение
         opacity: 0;
         transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
         //transition: opacity 0.3s ease-out, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.3s ease-out;
@@ -279,6 +279,7 @@
           .main-clear-text {display: inline;}
         }
         .clear-submenu {
+          transform: translateY(-50%) translateX(0.7rem);
           button {
             margin-right: 0.8rem; /* Расстояние между кнопками */
             height: 2.6rem;
@@ -303,6 +304,7 @@
           .main-shuffle-text {display: inline;}
         }
         .shuffle-submenu {
+          transform: translateY(-50%) translateX(0.7rem);
           button {
             margin-right: 0.8rem; /* Расстояние между кнопками */
             height: 2.6rem;
@@ -366,6 +368,7 @@
         }
 
         .clear-submenu {
+          transform: translateY(-50%) translateX(0.5rem);
           button {
             margin-right: 0.5rem; /* Расстояние между кнопками */
             height: 2.6rem;
@@ -395,6 +398,7 @@
         }
 
         .shuffle-submenu {
+          transform: translateY(-50%) translateX(0.5rem);
           button {
             margin-right: 0.5rem; /* Расстояние между кнопками */
             height: 2.6rem;
