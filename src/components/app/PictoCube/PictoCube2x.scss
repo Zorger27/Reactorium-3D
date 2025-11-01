@@ -79,13 +79,31 @@
         z-index: 12;
         gap: 0.3rem;
 
-        &:hover {box-shadow: none;}
-        &.open {color: white;background-color: seagreen;border: 1px solid darkgreen;}
-
-        .main-clear-icon {
-          display: inline;
-          //color: deeppink;
+        &:hover {
+          background: linear-gradient(to bottom, rgb(255, 255, 255), rgb(152, 152, 255));
+          color: darkblue;
+          box-shadow: none;
+          text-shadow: none;
+          border: 1px solid darkslateblue;
         }
+
+        &.open {
+          color: white;
+          background-color: seagreen;
+          border: 1px solid darkgreen;
+
+          .main-clear-icon {color: orangered;}
+
+          &:hover {
+            background: linear-gradient(to bottom, rgb(255, 255, 255), rgb(152, 152, 255));
+            color: darkblue;
+            box-shadow: none;
+            text-shadow: none;
+            border: 1px solid darkslateblue;
+          }
+        }
+
+        .main-clear-icon {display: inline;}
         .main-clear-text {display: inline;}
       }
 
@@ -170,8 +188,28 @@
         z-index: 12;
         gap: 0.3rem;
 
-        &:hover {box-shadow: none;}
-        &.open {color: white;background-color: seagreen; border: 1px solid darkgreen;}
+        &:hover {
+          background: linear-gradient(to bottom, rgb(255, 255, 255), rgb(152, 152, 255));
+          color: darkblue;
+          box-shadow: none;
+          text-shadow: none;
+          border: 1px solid darkslateblue;
+        }
+        &.open {
+          color: white;
+          background-color: seagreen;
+          border: 1px solid darkgreen;
+
+          .main-shuffle-icon {color: orangered;}
+
+          &:hover {
+            background: linear-gradient(to bottom, rgb(255, 255, 255), rgb(152, 152, 255));
+            color: darkblue;
+            box-shadow: none;
+            text-shadow: none;
+            border: 1px solid darkslateblue;
+          }
+        }
 
         .main-shuffle-icon {display: inline;}
         .main-shuffle-text {display: inline;}
