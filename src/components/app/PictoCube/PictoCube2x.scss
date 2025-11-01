@@ -71,6 +71,7 @@
         height: 3rem;
         font-size: 1.6rem;
         text-shadow: 2px 2px 4px black;
+        border: 1px solid transparent;
         border-radius: 5px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
         transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border 0.2s ease-in-out, transform 0.2s ease-in-out;
@@ -79,7 +80,7 @@
         gap: 0.3rem;
 
         &:hover {box-shadow: none;}
-        &.open {color: white;background-color: darkgreen;}
+        &.open {color: white;background-color: seagreen;border: 1px solid darkgreen;}
 
         .main-clear-icon {
           display: inline;
@@ -161,6 +162,7 @@
         height: 3rem;
         font-size: 1.6rem;
         text-shadow: 2px 2px 4px black;
+        border: 1px solid transparent;
         border-radius: 5px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
         transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border 0.2s ease-in-out, transform 0.2s ease-in-out;
@@ -169,7 +171,7 @@
         gap: 0.3rem;
 
         &:hover {box-shadow: none;}
-        &.open {color: white;background-color: darkgreen;}
+        &.open {color: white;background-color: seagreen; border: 1px solid darkgreen;}
 
         .main-shuffle-icon {display: inline;}
         .main-shuffle-text {display: inline;}
@@ -346,12 +348,12 @@
           height: 2.6rem;
           width: 2.6rem;
           font-size: 1.4rem;
-          border: 1px solid black;
+          border: 1px solid slategrey;
           border-radius: 5px;
           //box-shadow: none;
 
           &.open {
-            border: none;
+            //border: none;
             .main-clear-icon {color: white;}
           }
 
@@ -370,7 +372,7 @@
             width: 2.6rem;
             font-size: 1.4rem;
             border-radius: 5px;
-            border: 1px solid black;
+            border: 1px solid slategrey;
             //box-shadow: none;
 
             &:hover {box-shadow: none; border: 1px solid deeppink;}
@@ -399,7 +401,7 @@
             width: 2.6rem;
             font-size: 1.4rem;
             border-radius: 5px;
-            border: 1px solid black;
+            border: 1px solid slategrey;
             //box-shadow: none;
 
             &:hover {box-shadow: none; border: 1px solid purple;}
