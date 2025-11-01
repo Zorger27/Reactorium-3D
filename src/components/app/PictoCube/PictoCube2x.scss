@@ -74,7 +74,7 @@
         border: 1px solid transparent;
         border-radius: 5px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
-        transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border 0.2s ease-in-out, transform 0.2s ease-in-out;
+        transition: background 0.2s ease-in-out, box-shadow 0.2s ease-in-out, text-shadow 0.2s ease-in-out, border 0.2s ease-in-out, color 0.2s ease-in-out, transform 0.2s ease-in-out;
         cursor: pointer;
         z-index: 12;
         gap: 0.3rem;
@@ -183,7 +183,7 @@
         border: 1px solid transparent;
         border-radius: 5px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
-        transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border 0.2s ease-in-out, transform 0.2s ease-in-out;
+        transition: background 0.2s ease-in-out, box-shadow 0.2s ease-in-out, text-shadow 0.2s ease-in-out, border 0.2s ease-in-out, color 0.2s ease-in-out, transform 0.2s ease-in-out;
         cursor: pointer;
         z-index: 12;
         gap: 0.3rem;
