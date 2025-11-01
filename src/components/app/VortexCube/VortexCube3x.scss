@@ -12,6 +12,7 @@
     justify-content: center;
     //align-items: center;
     align-items: flex-start;
+    gap: 2rem;
   }
 
   .rotation-buttons {
@@ -45,7 +46,10 @@
 
 @media(max-width: 1020px) {
   .cube3x-inner-container {
-    .cube-controls {left: 0.7rem;}
+    .cube-controls {
+      left: 0.7rem;
+      gap: 1.6rem;
+    }
 
     .rotation-buttons {
       bottom: 85px; // Перемещаем вниз
@@ -62,7 +66,10 @@
 
 @media (max-width: 768px) {
   .cube3x-inner-container {
-    .cube-controls {left: 0.5rem; top: 53%;}
+    .cube-controls {
+      left: 0.5rem;
+      gap: 1.3rem;
+    }
 
     .rotation-buttons {
       bottom: 50px; // Перемещаем вниз

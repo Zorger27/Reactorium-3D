@@ -13,17 +13,24 @@
     justify-content: center;
     //align-items: center;
     align-items: flex-start;
+    gap: 2rem;
   }
 }
 
 @media(max-width: 1020px) {
   .cube2x-inner-container {
-    .cube-controls {left: 0.7rem;}
+    .cube-controls {
+      left: 0.7rem;
+      gap: 1.6rem;
+    }
   }
 }
 
 @media (max-width: 768px) {
   .cube2x-inner-container {
-    .cube-controls {left: 0.5rem; top: 53%;}
+    .cube-controls {
+      left: 0.5rem;
+      gap: 1.3rem;
+    }
   }
 }
