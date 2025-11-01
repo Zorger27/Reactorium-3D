@@ -626,8 +626,8 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
         {/* === Панель очистки localStorage === */}
         <div className="clear-buttons">
           {/* Главная кнопка */}
-          <button className={`main-clear-button ${isClearMenuOpen ? 'open' : ''}`} onClick={() => setIsClearMenuOpen(prev => !prev)} title={isClearMenuOpen ? t('storage.clear-menu-close') : t('storage.clear-menu-open')}>
-            <i className={`main-clear-icon fas ${isClearMenuOpen ? 'fa-times' : 'fa-trash-alt'}`}></i><span className="main-clear-text">Очистить</span>
+          <button className={`main-clear-button ${isClearMenuOpen ? 'open' : ''}`} onClick={() => setIsClearMenuOpen(prev => !prev)} title={isClearMenuOpen ? t('storage.menu-close') : t('storage.menu-open')}>
+            <i className={`main-clear-icon fas ${isClearMenuOpen ? 'fa-times' : 'fa-trash-alt'}`}></i><span className="main-clear-text">{t('storage.title')}</span>
           </button>
 
           {/* Подменю */}
@@ -640,16 +640,16 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
         {/* === Панель перемешивания кубов === */}
         <div className="shuffle-buttons">
           {/* Главная кнопка */}
-          <button className={`main-shuffle-button ${isShuffleMenuOpen ? 'open' : ''}`} onClick={() => setIsShuffleMenuOpen(prev => !prev)} title={isShuffleMenuOpen ? t('control.shuffle-menu-close') : t('control.shuffle-menu-open')}>
-            <i className={`main-shuffle-icon fas ${isShuffleMenuOpen ? 'fa-times' : 'fa-globe'}`}></i><span className="main-shuffle-text">Перемешать</span>
+          <button className={`main-shuffle-button ${isShuffleMenuOpen ? 'open' : ''}`} onClick={() => setIsShuffleMenuOpen(prev => !prev)} title={isShuffleMenuOpen ? t('shuffle.menu-close') : t('shuffle.menu-open')}>
+            <i className={`main-shuffle-icon fas ${isShuffleMenuOpen ? 'fa-times' : 'fa-globe'}`}></i><span className="main-shuffle-text">{t('shuffle.title')}</span>
           </button>
 
           {/* Подменю с кнопками */}
           <div className={`shuffle-submenu ${isShuffleMenuOpen ? 'open' : ''}`}>
-            <button onClick={() => {setShuffleTrigger(prev => prev + 1);setIsShuffleMenuOpen(true);}} title={t('control.shuffle')}>
+            <button onClick={() => {setShuffleTrigger(prev => prev + 1);setIsShuffleMenuOpen(true);}} title={t('shuffle.begin')}>
               <i className="fas fa-random"></i>
             </button>
-            <button onClick={() => {setPositionsResetTrigger(prev => prev + 1);setIsShuffleMenuOpen(true);}} title={t('control.resetPositions')}>
+            <button onClick={() => {setPositionsResetTrigger(prev => prev + 1);setIsShuffleMenuOpen(true);}} title={t('shuffle.reset')}>
               <i className="fas fa-undo"></i>
             </button>
           </div>

@@ -80,8 +80,9 @@
     "btn404": "Volver a la página PRINCIPAL"
   },
   "storage": {
-    "clear-menu-open": "Abrir el menú de limpieza del almacenamiento local",
-    "clear-menu-close": "Cerrar el menú de limpieza del almacenamiento local",
+    "title": "Limpiar",
+    "menu-open": "Abrir el menú de limpieza del almacenamiento local",
+    "menu-close": "Cerrar el menú de limpieza del almacenamiento local",
     "clearCurrent": "Limpiar el almacenamiento local actual",
     "clearAll": "Limpiar TODO el almacenamiento local",
     "confirm-clear-current": "¿Realmente deseas limpiar el almacenamiento local actual? \uD83E\uDDD0\uD83D\uDE27",
@@ -89,6 +90,13 @@
     "alertYes": "¡Almacenamiento local limpiado! ☹\uFE0F\uD83D\uDE2D",
     "alertNo": "¡Gracias por cambiar de opinión! \uD83D\uDE01\uD83D\uDE0A",
     "noData": "No hay datos para limpiar. \uD83D\uDE44\uD83E\uDEE4"
+  },
+  "shuffle": {
+    "title": "Barajar",
+    "menu-open": "Abrir el menú de Cube Shuffle",
+    "menu-close": "Cerrar el menú de Cube Shuffle",
+    "begin": "Barajar",
+    "reset": "Restablecer posiciones"
   },
   "control": {
     "speed": "Velocidad",
@@ -106,11 +114,7 @@
     "pause": "Pausa la rotación",
     "continue": "Continuar girando",
     "stop": "Dejar de rotar",
-    "180": "Girar 180°",
-    "shuffle-menu-open": "Abrir el menú de Cube Shuffle",
-    "shuffle-menu-close": "Cerrar el menú de Cube Shuffle",
-    "shuffle": "Barajar",
-    "resetPositions": "Restablecer posiciones"
+    "180": "Girar 180°"
   },
   "extra": {
     "loading": "Cargando...",

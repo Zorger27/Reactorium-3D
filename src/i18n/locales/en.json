@@ -80,8 +80,9 @@
     "btn404": "Back to MAIN page"
   },
   "storage": {
-    "clear-menu-open": "Open local storage cleanup menu",
-    "clear-menu-close": "Close local storage cleanup menu",
+    "title": "Clear",
+    "menu-open": "Open local storage cleanup menu",
+    "menu-close": "Close local storage cleanup menu",
     "clearCurrent": "Clear current local storage",
     "clearAll": "Clear ALL local storage",
     "confirm-clear-current": "Do you really want to clear the current local storage? \uD83E\uDDD0\uD83D\uDE27",
@@ -89,6 +90,13 @@
     "alertYes": "Local storage cleared! ☹\uFE0F\uD83D\uDE2D",
     "alertNo": "Thank you for changing your mind! \uD83D\uDE01\uD83D\uDE0A",
     "noData": "No data to clear. \uD83D\uDE44\uD83E\uDEE4"
+  },
+  "shuffle": {
+    "title": "Shuffle",
+    "menu-open": "Open cube shuffle menu",
+    "menu-close": "Close cube shuffle menu",
+    "begin": "Shuffle",
+    "reset": "Reset positions"
   },
   "control": {
     "speed": "Speed",
@@ -106,11 +114,7 @@
     "pause": "Pause rotation",
     "continue": "Continue rotating",
     "stop": "Stop rotation",
-    "180": "Rotate 180°",
-    "shuffle-menu-open": "Open cube shuffle menu",
-    "shuffle-menu-close": "Close cube shuffle menu",
-    "shuffle": "Shuffle",
-    "resetPositions": "Reset positions"
+    "180": "Rotate 180°"
   },
   "extra": {
     "loading": "Loading...",
