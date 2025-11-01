@@ -43,12 +43,17 @@
         width: max-content;
         border: 1px solid darkgreen;
         padding: 0.5rem 1rem;
-        margin: 0.3rem auto;
+        margin: 0.3rem 0;
+        //margin: 0.3rem auto;
+        align-self: flex-start;
         border-radius: 5px;
-        background-image: url("@/assets/app/VortexCube/cube3/cube3-17.webp");
-        background-position: center;
-        background-size: cover;
-        background-repeat: no-repeat;
+        background-color: seagreen;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
+        transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border 0.2s ease-in-out, transform 0.2s ease-in-out;
+        //background-image: url("@/assets/app/VortexCube/cube3/cube3-17.webp");
+        //background-position: center;
+        //background-size: cover;
+        //background-repeat: no-repeat;
 
         &:hover {
           background: linear-gradient(to bottom, rgb(255, 255, 255), rgb(152, 152, 255));
@@ -143,7 +148,7 @@
         }
         &.closed {
           padding: 0.4rem 0.8rem;
-          margin: 0.3rem auto;
+          margin: 0.3rem 0;
           border-radius: 5px;
 
           &:hover {
