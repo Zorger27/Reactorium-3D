@@ -8,16 +8,16 @@ import {Canvas, useFrame, useThree, extend, useLoader} from '@react-three/fiber'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import * as THREE from "three";
 
-import topSmallCube from "@/assets/app/PictoCube/cube2/top01.webp"
-import bottomSmallCube from "@/assets/app/PictoCube/cube2/bottom01.webp"
-import sideSmallCube01 from "@/assets/app/PictoCube/cube2/cube01.webp"
-import sideSmallCube02 from "@/assets/app/PictoCube/cube2/cube02.webp"
-import sideSmallCube03 from "@/assets/app/PictoCube/cube2/cube03.webp"
-import sideSmallCube04 from "@/assets/app/PictoCube/cube2/cube04.webp"
-import sideSmallCube05 from "@/assets/app/PictoCube/cube2/cube05.webp"
-import sideSmallCube06 from "@/assets/app/PictoCube/cube2/cube06.webp"
-import sideSmallCube07 from "@/assets/app/PictoCube/cube2/cube07.webp"
-import sideSmallCube08 from "@/assets/app/PictoCube/cube2/cube08.webp"
+import topSmallCube from "@/assets/app/PictoCube/cube3/top02.webp"
+import bottomSmallCube from "@/assets/app/PictoCube/cube3/bottom02.webp"
+import sideSmallCube01 from "@/assets/app/PictoCube/cube3/cube01.webp"
+import sideSmallCube02 from "@/assets/app/PictoCube/cube3/cube02.webp"
+import sideSmallCube03 from "@/assets/app/PictoCube/cube3/cube03.webp"
+import sideSmallCube04 from "@/assets/app/PictoCube/cube3/cube04.webp"
+import sideSmallCube05 from "@/assets/app/PictoCube/cube3/cube05.webp"
+import sideSmallCube06 from "@/assets/app/PictoCube/cube3/cube06.webp"
+import sideSmallCube07 from "@/assets/app/PictoCube/cube3/cube07.webp"
+import sideSmallCube08 from "@/assets/app/PictoCube/cube3/cube08.webp"
 
 extend({ OrbitControls });
 const degreesToRadians = (degrees) => degrees * (Math.PI / 180);
@@ -38,7 +38,7 @@ const CameraControls = () => {
   );
 };
 
-// Конфигурации кубиков
+// Конфигурации 27 кубиков
 const CUBE_CONFIGS = [
   { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube01, sideSmallCube01, sideSmallCube01, sideSmallCube01] },
   { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube02, sideSmallCube02, sideSmallCube02, sideSmallCube02] },
@@ -62,7 +62,7 @@ const DEFAULT_SIDE_ROTATIONS = {
 
 const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating, direction, speed, resetTrigger, flipTrigger, smallCubeScale, shuffleTrigger, positionsResetTrigger }) => {
   const groupRef = useRef(null);
-  const cubeSize = groupSize / 2;
+  const cubeSize = groupSize / 3;
 
   const geometry = useMemo(
     () => new THREE.BoxGeometry(cubeSize * smallCubeScale, cubeSize * smallCubeScale, cubeSize * smallCubeScale),
@@ -99,10 +99,10 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     return map;
   }, [loaded, texturePathList]);
 
-  // === Базовые упорядоченные позиции для 2×2×2 (8 кубиков) ===
+  // === Базовые упорядоченные позиции для 3×3×3 (27 кубиков) ===
   const basePositions = useMemo(() => {
     const step = cubeSize + gap;
-    const coords = [-step / 2, step / 2];
+    const coords = [-step, 0, step];
     const result = [];
     for (let x of coords) {
       for (let y of coords) {
