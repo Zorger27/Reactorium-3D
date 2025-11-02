@@ -8,8 +8,8 @@ import {Canvas, useFrame, useThree, extend, useLoader} from '@react-three/fiber'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import * as THREE from "three";
 
-import topSmallCube from "@/assets/app/PictoCube/cube3/top02.webp"
-import bottomSmallCube from "@/assets/app/PictoCube/cube3/bottom02.webp"
+import topSmallCube from "@/assets/app/PictoCube/cube3/top01.webp"
+import bottomSmallCube from "@/assets/app/PictoCube/cube3/bottom03.webp"
 import sideSmallCube01 from "@/assets/app/PictoCube/cube3/cube01.webp"
 import sideSmallCube02 from "@/assets/app/PictoCube/cube3/cube02.webp"
 import sideSmallCube03 from "@/assets/app/PictoCube/cube3/cube03.webp"
@@ -18,6 +18,26 @@ import sideSmallCube05 from "@/assets/app/PictoCube/cube3/cube05.webp"
 import sideSmallCube06 from "@/assets/app/PictoCube/cube3/cube06.webp"
 import sideSmallCube07 from "@/assets/app/PictoCube/cube3/cube07.webp"
 import sideSmallCube08 from "@/assets/app/PictoCube/cube3/cube08.webp"
+import sideSmallCube09 from "@/assets/app/PictoCube/cube3/cube09.webp"
+import sideSmallCube10 from "@/assets/app/PictoCube/cube3/cube10.webp"
+import sideSmallCube11 from "@/assets/app/PictoCube/cube3/cube11.webp"
+import sideSmallCube12 from "@/assets/app/PictoCube/cube3/cube12.webp"
+import sideSmallCube13 from "@/assets/app/PictoCube/cube3/cube13.webp"
+import sideSmallCube14 from "@/assets/app/PictoCube/cube3/cube14.webp"
+import sideSmallCube15 from "@/assets/app/PictoCube/cube3/cube15.webp"
+import sideSmallCube16 from "@/assets/app/PictoCube/cube3/cube16.webp"
+import sideSmallCube17 from "@/assets/app/PictoCube/cube3/cube17.webp"
+import sideSmallCube18 from "@/assets/app/PictoCube/cube3/cube18.webp"
+import sideSmallCube19 from "@/assets/app/PictoCube/cube3/cube19.webp"
+import sideSmallCube20 from "@/assets/app/PictoCube/cube3/cube20.webp"
+import sideSmallCube21 from "@/assets/app/PictoCube/cube3/cube21.webp"
+import sideSmallCube22 from "@/assets/app/PictoCube/cube3/cube22.webp"
+import sideSmallCube23 from "@/assets/app/PictoCube/cube3/cube23.webp"
+import sideSmallCube24 from "@/assets/app/PictoCube/cube3/cube24.webp"
+import sideSmallCube25 from "@/assets/app/PictoCube/cube3/cube25.webp"
+import sideSmallCube26 from "@/assets/app/PictoCube/cube3/cube26.webp"
+import sideSmallCube27 from "@/assets/app/PictoCube/cube3/cube27.webp"
+
 
 extend({ OrbitControls });
 const degreesToRadians = (degrees) => degrees * (Math.PI / 180);
@@ -48,6 +68,25 @@ const CUBE_CONFIGS = [
   { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube06, sideSmallCube06, sideSmallCube06, sideSmallCube06] },
   { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube07, sideSmallCube07, sideSmallCube07, sideSmallCube07] },
   { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube08, sideSmallCube08, sideSmallCube08, sideSmallCube08] },
+  { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube09, sideSmallCube09, sideSmallCube09, sideSmallCube09] },
+  { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube10, sideSmallCube10, sideSmallCube10, sideSmallCube10] },
+  { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube11, sideSmallCube11, sideSmallCube11, sideSmallCube11] },
+  { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube12, sideSmallCube12, sideSmallCube12, sideSmallCube12] },
+  { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube13, sideSmallCube13, sideSmallCube13, sideSmallCube13] },
+  { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube14, sideSmallCube14, sideSmallCube14, sideSmallCube14] },
+  { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube15, sideSmallCube15, sideSmallCube15, sideSmallCube15] },
+  { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube16, sideSmallCube16, sideSmallCube16, sideSmallCube16] },
+  { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube17, sideSmallCube17, sideSmallCube17, sideSmallCube17] },
+  { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube18, sideSmallCube18, sideSmallCube18, sideSmallCube18] },
+  { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube19, sideSmallCube19, sideSmallCube19, sideSmallCube19] },
+  { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube20, sideSmallCube20, sideSmallCube20, sideSmallCube20] },
+  { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube21, sideSmallCube21, sideSmallCube21, sideSmallCube21] },
+  { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube22, sideSmallCube22, sideSmallCube22, sideSmallCube22] },
+  { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube23, sideSmallCube23, sideSmallCube23, sideSmallCube23] },
+  { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube24, sideSmallCube24, sideSmallCube24, sideSmallCube24] },
+  { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube25, sideSmallCube25, sideSmallCube25, sideSmallCube25] },
+  { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube26, sideSmallCube26, sideSmallCube26, sideSmallCube26] },
+  { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube27, sideSmallCube27, sideSmallCube27, sideSmallCube27] },
 ];
 
 // ---- Настройка поворотов по умолчанию для граней (можно расширить/перенастроить) ----
@@ -341,7 +380,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
       });
     };
 
-    return Array.from({ length: 8 }, (_, i) => {
+    return Array.from({ length: 27 }, (_, i) => {
       const cfg = CUBE_CONFIGS[i % CUBE_CONFIGS.length];
       const topTex = getTex(cfg.top);
       const bottomTex = getTex(cfg.bottom);
