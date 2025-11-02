@@ -162,7 +162,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed) && parsed.length === 8) {
+        if (Array.isArray(parsed) && parsed.length === 27) {
           return parsed;
         }
       }
