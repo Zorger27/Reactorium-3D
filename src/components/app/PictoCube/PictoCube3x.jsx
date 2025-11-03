@@ -629,6 +629,7 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
           />
         )}
 
+        {/* Состояние: открыт smallCubeSize → показываем только его */}
         {openBlock === "smallCubeSize" && (
           <ControlBlock label={t("control.small-cube-size")} icon="fa-solid fa-up-right-and-down-left-from-center" isOpen={true} onToggle={() => setOpenBlock(null)}
                         gapConfig={{value: smallCubeScale, min: 0.5, max: 1.0, step: 0.05, onChange: setSmallCubeScale, ...smallCubeScaleHandlers,}}
