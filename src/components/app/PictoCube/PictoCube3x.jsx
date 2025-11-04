@@ -844,7 +844,13 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
 
       </div>
 
-      <div ref={ref}>
+      <div ref={(node) => {
+        internalRef.current = node;
+        if (ref) {
+          if (typeof ref === 'function') ref(node);
+          else ref.current = node;
+        }
+      }}>
         <Canvas style={canvasStyle} camera={{ fov: 75 }} gl={{ antialias: true, toneMapping: THREE.NoToneMapping, logarithmicDepthBuffer: true }}>
           <perspectiveCamera makeDefault position={[0, 0, 2.5]} />
           <ambientLight intensity={0.6} />
