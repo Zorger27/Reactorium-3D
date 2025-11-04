@@ -598,6 +598,9 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
     setIsClearMenuOpen(false);
   };
 
+  // Внутренний ref для доступа к Canvas
+  const internalRef = useRef(null);
+
   // Функция получения данных для сохранения
   const getSaveMetadata = () => {
     const title = PictoCube3x.displayName;
@@ -610,13 +613,20 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
 
   // Сохранение сцены как JPG (белый фон)
   const saveAsJPG = () => {
-    if (!renderer || !scene || !camera) {
-      console.error("Ошибка: renderer, scene или camera не инициализированы");
+    const containerRef = ref?.current || internalRef.current;
+
+    if (!containerRef) {
+      console.error("Ошибка: Canvas контейнер не инициализирован");
       return;
     }
 
-    render(scene, camera);
-    const canvas = renderer.domElement;
+    // Получаем canvas element из react-three-fiber
+    const canvas = containerRef.querySelector('canvas');
+    if (!canvas) {
+      console.error("Ошибка: Canvas element не найден");
+      return;
+    }
+
     const tempCanvas = document.createElement("canvas");
     const tempCtx = tempCanvas.getContext("2d");
 
@@ -814,9 +824,8 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
 
           {/* Подменю с кнопками */}
           <div className={`save-submenu ${isSaveMenuOpen ? 'open' : ''}`}>
-            <button onClick={() => {
-              saveAsJPG(); // Сохранение сцены как JPG (белый фон)
-              setIsSaveMenuOpen(false);}} title={t('save.saveJPG')}>
+            {/* Сохранение сцены как JPG (белый фон) */}
+            <button onClick={saveAsJPG} title={t('save.saveJPG')}>
               <i className="fas fa-camera"></i>
             </button>
             {/*<button onClick={() => {*/}
