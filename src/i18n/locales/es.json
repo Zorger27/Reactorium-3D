@@ -98,6 +98,16 @@
     "begin": "Barajar",
     "reset": "Restablecer posiciones"
   },
+  "save": {
+    "title": "Guardar",
+    "saveData": "Abra el menú de guardar datos en el disco",
+    "closeSaveData": "Cerrar el menú de guardar datos en el disco",
+    "saveJPG": "Guardar como archivo .jpg",
+    "savePNG": "Guardar como archivo .png",
+    "savePDF": "Guardar como archivo .pdf",
+    "startVideo": "Iniciar grabación de vídeo",
+    "stopVideo": "Detener la grabación de vídeo"
+  },
   "control": {
     "speed": "Velocidad",
     "gap": "Brecha",

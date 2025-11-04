@@ -439,6 +439,7 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
   const [positionsResetTrigger, setPositionsResetTrigger] = useState(0);
   const [isShuffleMenuOpen, setIsShuffleMenuOpen] = useState(false);
   const [isClearMenuOpen, setIsClearMenuOpen] = useState(false);
+  const [isSaveMenuOpen, setIsSaveMenuOpen] = useState(false);
 
   // управление вращением
   const [resetTrigger, setResetTrigger] = useState(false);
@@ -691,6 +692,33 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
             </button>
             <button onClick={() => {setPositionsResetTrigger(prev => prev + 1);setIsShuffleMenuOpen(true);}} title={t('shuffle.reset')}>
               <i className="fas fa-undo"></i>
+            </button>
+          </div>
+        </div>
+
+        {/* === Панель сохранения === */}
+        <div className="save-buttons">
+          {/* Главная кнопка */}
+          <button className={`main-save-button ${isSaveMenuOpen ? 'open' : ''}`} onClick={() => setIsSaveMenuOpen(prev => !prev)} title={isSaveMenuOpen ? t('save.closeSaveData') : t('save.saveData')}>
+            <i className={`main-save-icon fas ${isSaveMenuOpen ? 'fa-times' : 'fa-save'}`}></i><span className="main-save-text">{t('save.title')}</span>
+          </button>
+
+          {/* Подменю с кнопками */}
+          <div className={`save-submenu ${isSaveMenuOpen ? 'open' : ''}`}>
+            <button onClick={() => {
+              // setShuffleTrigger(prev => prev + 1);
+              setIsSaveMenuOpen(false);}} title={t('save.saveJPG')}>
+              <i className="fas fa-camera"></i>
+            </button>
+            <button onClick={() => {
+              // setPositionsResetTrigger(prev => prev + 1);
+              setIsSaveMenuOpen(false);}} title={t('save.savePNG')}>
+              <i className="fas fa-file-image"></i>
+            </button>
+            <button onClick={() => {
+              // setPositionsResetTrigger(prev => prev + 1);
+              setIsSaveMenuOpen(false);}} title={t('save.savePDF')}>
+              <i className="fas fa-file-pdf"></i>
             </button>
           </div>
         </div>

@@ -98,6 +98,16 @@
     "begin": "Shuffle",
     "reset": "Reset positions"
   },
+  "save": {
+    "title": "Save",
+    "saveData": "Open the save data menu to the disk",
+    "closeSaveData": "Close the save data menu to the disk",
+    "saveJPG": "Save as .jpg file",
+    "savePNG": "Save as .png file",
+    "savePDF": "Save as .pdf file",
+    "startVideo": "Start video recording",
+    "stopVideo": "Stop video recording"
+  },
   "control": {
     "speed": "Speed",
     "gap": "Gap",
