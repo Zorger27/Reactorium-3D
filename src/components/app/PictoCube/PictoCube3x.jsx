@@ -4,6 +4,7 @@ import { useResponsiveStyle } from "@/hooks/useResponsiveStyle";
 import { useLocalStorage } from "@/hooks/useLocalStorage.js";
 import ControlBlock from "@/components/util/ControlBlock.jsx";
 import { useTranslation } from 'react-i18next';
+import jsPDF from "jspdf";
 import {Canvas, useFrame, useThree, extend, useLoader} from '@react-three/fiber';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import * as THREE from "three";
@@ -819,6 +820,93 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
     });
   };
 
+  // Сохранение сцены как PDF
+  const saveAsPDF = () => {
+    const containerRef = ref?.current || internalRef.current;
+
+    if (!containerRef) {
+      console.error("Ошибка: Canvas контейнер не инициализирован");
+      return;
+    }
+
+    // Получаем canvas element из react-three-fiber
+    const canvas = containerRef.querySelector('canvas');
+    if (!canvas) {
+      console.error("Ошибка: Canvas element не найден");
+      return;
+    }
+
+    // Ждём следующий кадр, чтобы canvas точно отрендерился
+    requestAnimationFrame(() => {
+      const tempCanvas = document.createElement("canvas");
+      const ctx = tempCanvas.getContext("2d");
+      const { width, height } = canvas;
+
+      tempCanvas.width = width;
+      tempCanvas.height = height;
+
+      // Заливаем фон белым
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, 0, width, height);
+
+      // Копируем canvas поверх белого фона
+      ctx.drawImage(canvas, 0, 0);
+
+      // Конвертируем в JPEG (99% качество)
+      const image = tempCanvas.toDataURL("image/jpeg", 0.99);
+
+      const pdf = new jsPDF("landscape", "mm", "a4");
+
+      // Используем стандартный шрифт helvetica с поддержкой кириллицы
+      pdf.setFont('helvetica');
+
+      const { title, dateTime, footer, site } = getSaveMetadata();
+
+      // Расчёт масштабирования
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const canvasRatio = width / height;
+      const pdfRatio = pageWidth / pageHeight;
+
+      let imgWidth, imgHeight;
+      if (canvasRatio > pdfRatio) {
+        imgWidth = pageWidth;
+        imgHeight = pageWidth / canvasRatio;
+      } else {
+        imgHeight = pageHeight;
+        imgWidth = pageHeight * canvasRatio;
+      }
+
+      // Расчёт центровки
+      const xOffset = (pageWidth - imgWidth) / 2;
+      const yOffset = (pageHeight - imgHeight) / 2 + 10; // Добавляем отступ вниз
+
+      pdf.addImage(image, "JPEG", xOffset, yOffset, imgWidth, imgHeight);
+
+      // Добавляем текст
+      pdf.setFontSize(22);
+      pdf.setTextColor(0, 128, 0);
+      pdf.text(title, pageWidth / 2, 15, { align: "center" });
+
+      pdf.setFontSize(16);
+      pdf.setTextColor(30, 144, 255);
+      pdf.text(dateTime, pageWidth / 2, 25, { align: "center" });
+
+      pdf.setFontSize(14);
+      pdf.setTextColor(255, 105, 180);
+      pdf.text(footer, pageWidth / 2, pageHeight - 12, { align: "center" });
+
+      pdf.setFont("helvetica", "italic");
+      pdf.setTextColor(0, 0, 255);
+      pdf.setFontSize(14);
+      pdf.text(site, pageWidth / 2, pageHeight - 5, { align: "center" });
+
+      pdf.save("CubePDF.pdf");
+
+      setIsSaveMenuOpen(false);
+    });
+  };
+
   return (
     <div className="picto-cube3x-container">
       <div className="cube-controls">
@@ -937,15 +1025,11 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
           {/* Подменю с кнопками */}
           <div className={`save-submenu ${isSaveMenuOpen ? 'open' : ''}`}>
             {/* Сохранение сцены как JPG (белый фон) */}
-            <button onClick={saveAsJPG} title={t('save.saveJPG')}><i className="fas fa-camera"></i></button>
+            <button onClick={ saveAsJPG } title={t('save.saveJPG')}><i className="fas fa-camera"></i></button>
             {/* Сохранение сцены как PNG (прозрачный фон) */}
-            <button onClick={saveAsPNG} title={t('save.savePNG')}><i className="fas fa-file-image"></i></button>
-
-            {/*<button onClick={() => {*/}
-            {/*  // saveAsPDF(); // Сохранение сцены как PDF*/}
-            {/*  setIsSaveMenuOpen(false);}} title={t('save.savePDF')}>*/}
-            {/*  <i className="fas fa-file-pdf"></i>*/}
-            {/*</button>*/}
+            <button onClick={ saveAsPNG } title={t('save.savePNG')}><i className="fas fa-file-image"></i></button>
+            {/* Сохранение сцены как PDF */}
+            <button onClick={ saveAsPDF } title={t('save.savePDF')}><i className="fas fa-file-pdf"></i></button>
 
           </div>
         </div>
