@@ -601,6 +601,15 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
   // Внутренний ref для доступа к Canvas
   const internalRef = useRef(null);
 
+  // Callback для объединения внешнего и внутреннего ref
+  const setRefs = (node) => {
+    internalRef.current = node;
+    if (ref) {
+      if (typeof ref === 'function') ref(node);
+      else ref.current = node;
+    }
+  };
+
   // Функция получения данных для сохранения
   const getSaveMetadata = () => {
     const title = PictoCube3x.displayName;
@@ -844,13 +853,7 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
 
       </div>
 
-      <div ref={(node) => {
-        internalRef.current = node;
-        if (ref) {
-          if (typeof ref === 'function') ref(node);
-          else ref.current = node;
-        }
-      }}>
+      <div ref={setRefs}>
         <Canvas style={canvasStyle} camera={{ fov: 75 }} gl={{ antialias: true, toneMapping: THREE.NoToneMapping, logarithmicDepthBuffer: true }}>
           <perspectiveCamera makeDefault position={[0, 0, 2.5]} />
           <ambientLight intensity={0.6} />
