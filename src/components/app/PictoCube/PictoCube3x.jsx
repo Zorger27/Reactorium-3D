@@ -479,13 +479,14 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
 
   // useEffect для закрытия при клике вне меню
   useEffect(() => {
-    if (!isShuffleMenuOpen && !isClearMenuOpen) return;
+    if (!isShuffleMenuOpen && !isClearMenuOpen && !isSaveMenuOpen) return;
 
     const handleClickOutside = (event) => {
       // Если клик не внутри панели кнопок
       if (!event.target.closest('.special-buttons')) {
         setIsShuffleMenuOpen(false);
         setIsClearMenuOpen(false);
+        setIsSaveMenuOpen(false);
       }
     };
 
@@ -493,24 +494,34 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isShuffleMenuOpen, isClearMenuOpen]);
+  }, [isShuffleMenuOpen, isClearMenuOpen, isSaveMenuOpen]);
 
-  // Когда открывается меню перемешивания — закрываем меню очистки
+  // Когда открывается меню перемешивания — закрываем меню очистки и меню сохранения
   useEffect(() => {
     if (isShuffleMenuOpen) {
       setIsClearMenuOpen(false);
+      setIsSaveMenuOpen(false);
     }
   }, [isShuffleMenuOpen]);
 
-  // Когда открывается меню очистки — закрываем меню перемешивания
+  // Когда открывается меню очистки — закрываем меню перемешивания и меню сохранения
   useEffect(() => {
     if (isClearMenuOpen) {
       setIsShuffleMenuOpen(false);
+      setIsSaveMenuOpen(false);
     }
   }, [isClearMenuOpen]);
 
+  // Когда открывается меню сохранения — закрываем меню перемешивания и меню очистки
+  useEffect(() => {
+    if (isSaveMenuOpen) {
+      setIsShuffleMenuOpen(false);
+      setIsClearMenuOpen(false);
+    }
+  }, [isSaveMenuOpen]);
+
   // === Очистка ТЕКУЩЕГО localStorage (только PictoCube3x) ===
-  const handleClearCurrentStorage = () => {
+  const clearCurrentStorage = () => {
     // Проверяем, есть ли вообще что очищать
     const hasData = Object.keys(localStorage).some(key => key.startsWith('pictoCube3x'));
     if (!hasData) {
@@ -553,7 +564,7 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
   };
 
   // === Полная очистка localStorage ===
-  const handleClearAllStorage = () => {
+  const clearAllStorage = () => {
     if (localStorage.length === 0) {
       alert(t('storage.noData'));
       return;
@@ -673,8 +684,8 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
 
           {/* Подменю */}
           <div className={`clear-submenu ${isClearMenuOpen ? 'open' : ''}`}>
-            <button onClick={handleClearCurrentStorage} title={t('storage.clearCurrent')}><i className="fas fa-broom"></i></button>
-            <button onClick={handleClearAllStorage} title={t('storage.clearAll')}><i className="fas fa-fire"></i></button>
+            <button onClick={clearCurrentStorage} title={t('storage.clearCurrent')}><i className="fas fa-broom"></i></button>
+            <button onClick={clearAllStorage} title={t('storage.clearAll')}><i className="fas fa-fire"></i></button>
           </div>
         </div>
 
@@ -720,6 +731,7 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
               setIsSaveMenuOpen(false);}} title={t('save.savePDF')}>
               <i className="fas fa-file-pdf"></i>
             </button>
+
           </div>
         </div>
 
