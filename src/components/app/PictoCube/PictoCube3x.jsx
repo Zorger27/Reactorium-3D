@@ -38,7 +38,6 @@ import sideSmallCube25 from "@/assets/app/PictoCube/cube3/cube25.webp"
 import sideSmallCube26 from "@/assets/app/PictoCube/cube3/cube26.webp"
 import sideSmallCube27 from "@/assets/app/PictoCube/cube3/cube27.webp"
 
-
 extend({ OrbitControls });
 const degreesToRadians = (degrees) => degrees * (Math.PI / 180);
 
@@ -599,6 +598,105 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
     setIsClearMenuOpen(false);
   };
 
+  // Функция получения данных для сохранения
+  const getSaveMetadata = () => {
+    const title = PictoCube3x.displayName;
+    const dateTime = new Date().toLocaleString();
+    const footer = t('save.created');
+    const site = "https://reactorium-3d.vercel.app";
+
+    return { title, dateTime, footer, site };
+  };
+
+  // Сохранение сцены как JPG (белый фон)
+  const saveAsJPG = () => {
+    if (!renderer || !scene || !camera) {
+      console.error("Ошибка: renderer, scene или camera не инициализированы");
+      return;
+    }
+
+    render(scene, camera);
+    const canvas = renderer.domElement;
+    const tempCanvas = document.createElement("canvas");
+    const tempCtx = tempCanvas.getContext("2d");
+
+    // Определение мобильного режима
+    const isMobile = window.innerWidth < 768;
+
+    // Коэффициент масштабирования
+    const scaleFactor = isMobile ? 1.2 : 1.0;
+    let baseFontSize = Math.floor(canvas.width * 0.045 * scaleFactor);
+    const smallFontSize = Math.floor(baseFontSize * 0.7);
+    let footerFontSize = Math.floor(baseFontSize * 0.6);
+    const padding = Math.floor(baseFontSize * 1.1);
+
+    // Система отступов
+    const topMargin = padding * (isMobile ? 2.0 : 1.2); // Отступ сверху
+    const titleDateSpacing = padding * (isMobile ? 1.0 : 0.9); // Пробел для заголовка-даты
+    const footerSiteSpacing = padding * (isMobile ? 0.8 : 0.7); // Пробел для footer-site
+    const bottomMargin = padding * (isMobile ? 1.0 : 0.5); // Отступ снизу
+
+    const canvasWidth = canvas.width + padding * 2;
+    const canvasHeight = canvas.height + topMargin + titleDateSpacing + footerSiteSpacing + bottomMargin;
+
+    tempCanvas.width = canvasWidth;
+    tempCanvas.height = canvasHeight;
+
+    tempCtx.fillStyle = "white";
+    tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+    tempCtx.drawImage(canvas, padding, topMargin + titleDateSpacing);
+
+    const { title, dateTime, footer, site } = getSaveMetadata();
+
+    // Функция для динамического подбора размера шрифта
+    const adjustFontSize = (text, maxWidth, initialFontSize) => {
+      let fontSize = initialFontSize;
+      do {
+        tempCtx.font = `bold ${fontSize}px Arial`;
+        if (tempCtx.measureText(text).width <= maxWidth) {
+          return fontSize;
+        }
+        fontSize--;
+      } while (fontSize > 10);
+      return fontSize;
+    };
+
+    // Подбор размера шрифта для каждого текста
+    baseFontSize = adjustFontSize(title, tempCanvas.width * 0.9, baseFontSize);
+    footerFontSize = adjustFontSize(footer, tempCanvas.width * 0.9, footerFontSize);
+    const siteFontSize = adjustFontSize(site, tempCanvas.width * 0.9, footerFontSize);
+
+    // 📌 Заголовок (зелёный)
+    tempCtx.font = `bold ${baseFontSize}px Arial`;
+    tempCtx.fillStyle = "green";
+    tempCtx.textAlign = "center";
+    tempCtx.fillText(title, tempCanvas.width / 2, topMargin);
+
+    // 📅 Дата (голубая)
+    tempCtx.font = `normal ${smallFontSize}px Arial`;
+    tempCtx.fillStyle = "dodgerblue";
+    tempCtx.fillText(dateTime, tempCanvas.width / 2, topMargin + titleDateSpacing);
+
+    // 🔽 Footer (розовый)
+    const footerY = tempCanvas.height - footerSiteSpacing - bottomMargin;
+    tempCtx.font = `normal ${footerFontSize}px Arial`;
+    tempCtx.fillStyle = "deeppink";
+    tempCtx.fillText(footer, tempCanvas.width / 2, footerY);
+
+    // 📅 Сайт (синий)
+    tempCtx.font = `italic ${siteFontSize}px Arial`;
+    tempCtx.fillStyle = "blue";
+    tempCtx.fillText(site, tempCanvas.width / 2, footerY + footerSiteSpacing);
+
+    const image = tempCanvas.toDataURL("image/jpeg", 0.99);
+    const link = document.createElement("a");
+    link.href = image;
+    link.download = "Cube.jpg";
+    link.click();
+
+    setIsSaveMenuOpen(false);
+  };
+
   return (
     <div className="picto-cube3x-container">
       <div className="cube-controls">
@@ -717,20 +815,20 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
           {/* Подменю с кнопками */}
           <div className={`save-submenu ${isSaveMenuOpen ? 'open' : ''}`}>
             <button onClick={() => {
-              // saveAsJPG(); // Сохранение сцены как JPG (белый фон)
+              saveAsJPG(); // Сохранение сцены как JPG (белый фон)
               setIsSaveMenuOpen(false);}} title={t('save.saveJPG')}>
               <i className="fas fa-camera"></i>
             </button>
-            <button onClick={() => {
-              // saveAsPNG(); // Сохранение сцены как PNG (прозрачный фон)
-              setIsSaveMenuOpen(false);}} title={t('save.savePNG')}>
-              <i className="fas fa-file-image"></i>
-            </button>
-            <button onClick={() => {
-              // saveAsPDF(); // Сохранение сцены как PDF
-              setIsSaveMenuOpen(false);}} title={t('save.savePDF')}>
-              <i className="fas fa-file-pdf"></i>
-            </button>
+            {/*<button onClick={() => {*/}
+            {/*  // saveAsPNG(); // Сохранение сцены как PNG (прозрачный фон)*/}
+            {/*  setIsSaveMenuOpen(false);}} title={t('save.savePNG')}>*/}
+            {/*  <i className="fas fa-file-image"></i>*/}
+            {/*</button>*/}
+            {/*<button onClick={() => {*/}
+            {/*  // saveAsPDF(); // Сохранение сцены как PDF*/}
+            {/*  setIsSaveMenuOpen(false);}} title={t('save.savePDF')}>*/}
+            {/*  <i className="fas fa-file-pdf"></i>*/}
+            {/*</button>*/}
 
           </div>
         </div>
