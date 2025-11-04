@@ -106,7 +106,8 @@
     "savePNG": "Зберегти як .png файл",
     "savePDF": "Зберегти як .pdf файл",
     "startVideo": "Старт відео запису",
-    "stopVideo": "Стоп відео запису"
+    "stopVideo": "Стоп відео запису",
+    "created": "Створено за допомогою Reactorium 3D"
   },
   "control": {
     "speed": "Швидкість",

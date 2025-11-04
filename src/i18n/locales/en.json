@@ -106,7 +106,8 @@
     "savePNG": "Save as .png file",
     "savePDF": "Save as .pdf file",
     "startVideo": "Start video recording",
-    "stopVideo": "Stop video recording"
+    "stopVideo": "Stop video recording",
+    "created": "Created with Reactorium 3D"
   },
   "control": {
     "speed": "Speed",
