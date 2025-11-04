@@ -717,17 +717,17 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
           {/* Подменю с кнопками */}
           <div className={`save-submenu ${isSaveMenuOpen ? 'open' : ''}`}>
             <button onClick={() => {
-              // saveAsJPG();
+              // saveAsJPG(); // Сохранение сцены как JPG (белый фон)
               setIsSaveMenuOpen(false);}} title={t('save.saveJPG')}>
               <i className="fas fa-camera"></i>
             </button>
             <button onClick={() => {
-              // saveAsPNG();
+              // saveAsPNG(); // Сохранение сцены как PNG (прозрачный фон)
               setIsSaveMenuOpen(false);}} title={t('save.savePNG')}>
               <i className="fas fa-file-image"></i>
             </button>
             <button onClick={() => {
-              // saveAsPDF();
+              // saveAsPDF(); // Сохранение сцены как PDF
               setIsSaveMenuOpen(false);}} title={t('save.savePDF')}>
               <i className="fas fa-file-pdf"></i>
             </button>
