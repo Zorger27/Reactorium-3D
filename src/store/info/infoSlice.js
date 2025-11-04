@@ -51,84 +51,90 @@ const initialState = [
   },
   {
     id: 9,
+    title: "jsPDF",
+    version: "3.0.3",
+    url: "https://www.npmjs.com/package/jspdf"
+  },
+  {
+    id: 10,
     title: "HTML5",
     version: "",
     url: "https://developer.mozilla.org/ru/docs/Learn/HTML/Introduction_to_HTML"
   },
   {
-    id: 10,
+    id: 11,
     title: "CSS3",
     version: "",
     url: "https://developer.mozilla.org/ru/docs/Learn/CSS/First_steps"
   },
   {
-    id: 11,
+    id: 12,
     title: "SASS",
     version: "1.89.2",
     url: "https://sass-lang.com"
   },
   {
-    id: 12,
+    id: 13,
     title: "FlexBox CSS",
     version: "",
     url: "https://developer.mozilla.org/ru/docs/Learn/CSS/CSS_layout/Flexbox"
   },
   {
-    id: 13,
+    id: 14,
     title: "Grid CSS",
     version: "",
     url: "https://developer.mozilla.org/ru/docs/Web/CSS/CSS_grid_layout"
   },
   {
-    id: 14,
+    id: 15,
     title: "JavaScript",
     version: "",
     url: "https://developer.mozilla.org/ru/docs/Learn/JavaScript"
   },
   {
-    id: 15,
+    id: 16,
     title: "Markdown",
     version: "",
     url: "https://www.markdownguide.org"
   },
   {
-    id: 16,
+    id: 17,
     title: "Font Awesome",
     version: "7.1.0",
     url: "https://fontawesome.com"
   },
   {
-    id: 17,
+    id: 18,
     title: "Google Search Console",
     version: "",
     url: "https://search.google.com/search-console"
   },
   {
-    id: 18,
+    id: 19,
     title: "Google Analytics",
     version: "4.0",
     url: "https://analytics.google.com"
   },
   {
-    id: 19,
+    id: 20,
     title: "Open Graph protocol",
     version: "",
     url: "https://ogp.me"
   },
   {
-    id: 20,
+    id: 21,
     title: "Favicon",
     version: "",
     url: "https://developer.mozilla.org/en-US/docs/Glossary/Favicon"
   },
   {
-    id: 21,
+    id: 22,
     title: "Sitemap",
     version: "",
     url: "https://www.sitemaps.org"
   },
   {
-    id: 22,
+    id: 23,
     title: "Robots.txt",
     version: "",
     url: "https://developers.google.com/search/docs/crawling-indexing/robots/intro"
