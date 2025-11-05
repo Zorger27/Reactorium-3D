@@ -820,96 +820,8 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
     });
   };
 
-  // // Сохранение сцены как PDF
-  // const saveAsPDF = () => {
-  //   const containerRef = ref?.current || internalRef.current;
-  //
-  //   if (!containerRef) {
-  //     console.error("Ошибка: Canvas контейнер не инициализирован");
-  //     return;
-  //   }
-  //
-  //   // Получаем canvas element из react-three-fiber
-  //   const canvas = containerRef.querySelector('canvas');
-  //   if (!canvas) {
-  //     console.error("Ошибка: Canvas element не найден");
-  //     return;
-  //   }
-  //
-  //   // Ждём следующий кадр, чтобы canvas точно отрендерился
-  //   requestAnimationFrame(() => {
-  //     const tempCanvas = document.createElement("canvas");
-  //     const ctx = tempCanvas.getContext("2d");
-  //     const { width, height } = canvas;
-  //
-  //     tempCanvas.width = width;
-  //     tempCanvas.height = height;
-  //
-  //     // Заливаем фон белым
-  //     ctx.fillStyle = "white";
-  //     ctx.fillRect(0, 0, width, height);
-  //
-  //     // Копируем canvas поверх белого фона
-  //     ctx.drawImage(canvas, 0, 0);
-  //
-  //     // Конвертируем в JPEG (99% качество)
-  //     const image = tempCanvas.toDataURL("image/jpeg", 0.99);
-  //
-  //     const pdf = new jsPDF("landscape", "mm", "a4");
-  //
-  //     // Используем стандартный шрифт helvetica с поддержкой кириллицы
-  //     pdf.setFont('helvetica');
-  //
-  //     const { title, dateTime, footer, site } = getSaveMetadata();
-  //
-  //     // Расчёт масштабирования
-  //     const pageWidth = pdf.internal.pageSize.getWidth();
-  //     const pageHeight = pdf.internal.pageSize.getHeight();
-  //     const canvasRatio = width / height;
-  //     const pdfRatio = pageWidth / pageHeight;
-  //
-  //     let imgWidth, imgHeight;
-  //     if (canvasRatio > pdfRatio) {
-  //       imgWidth = pageWidth;
-  //       imgHeight = pageWidth / canvasRatio;
-  //     } else {
-  //       imgHeight = pageHeight;
-  //       imgWidth = pageHeight * canvasRatio;
-  //     }
-  //
-  //     // Расчёт центровки
-  //     const xOffset = (pageWidth - imgWidth) / 2;
-  //     const yOffset = (pageHeight - imgHeight) / 2 + 10; // Добавляем отступ вниз
-  //
-  //     pdf.addImage(image, "JPEG", xOffset, yOffset, imgWidth, imgHeight);
-  //
-  //     // Добавляем текст
-  //     pdf.setFontSize(22);
-  //     pdf.setTextColor(0, 128, 0);
-  //     pdf.text(title, pageWidth / 2, 15, { align: "center" });
-  //
-  //     pdf.setFontSize(16);
-  //     pdf.setTextColor(30, 144, 255);
-  //     pdf.text(dateTime, pageWidth / 2, 25, { align: "center" });
-  //
-  //     pdf.setFontSize(14);
-  //     pdf.setTextColor(255, 105, 180);
-  //     pdf.text(footer, pageWidth / 2, pageHeight - 12, { align: "center" });
-  //
-  //     pdf.setFont("helvetica", "italic");
-  //     pdf.setTextColor(0, 0, 255);
-  //     pdf.setFontSize(14);
-  //     pdf.text(site, pageWidth / 2, pageHeight - 5, { align: "center" });
-  //
-  //     pdf.save("CubePDF.pdf");
-  //
-  //     setIsSaveMenuOpen(false);
-  //   });
-  // };
-
-  // 📄 Сохранение сцены как PDF через промежуточное JPG-изображение
-  const saveAsPDF = () => {
-    // Получаем ссылку на контейнер, в котором лежит <canvas> от React Three Fiber
+  // Сохранение сцены как PDF
+  const saveAsPDF = async () => {
     const containerRef = ref?.current || internalRef.current;
 
     if (!containerRef) {
@@ -917,114 +829,106 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
       return;
     }
 
-    // Ищем сам <canvas> внутри контейнера
-    const canvas = containerRef.querySelector("canvas");
+    // Получаем canvas element из react-three-fiber
+    const canvas = containerRef.querySelector('canvas');
     if (!canvas) {
       console.error("Ошибка: Canvas element не найден");
       return;
     }
 
-    // Ждём следующий кадр, чтобы гарантировать, что WebGL-рендер завершён
+    // Функция для загрузки шрифта
+    const loadFont = async (url) => {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Не удалось загрузить шрифт: ${response.statusText}`);
+      }
+      return await response.arrayBuffer();
+    };
+
+    // Загрузка шрифта - используем CDN с обычным Roboto
+    let fontArrayBuffer;
+    try {
+      fontArrayBuffer = await loadFont('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/fonts/Roboto/Roboto-Regular.ttf');
+    } catch (error) {
+      console.error("Ошибка загрузки шрифта:", error);
+      alert("Не удалось загрузить шрифт для PDF");
+      return;
+    }
+
+    const fontBase64 = btoa(
+      new Uint8Array(fontArrayBuffer)
+        .reduce((data, byte) => data + String.fromCharCode(byte), '')
+    );
+
+    // Ждём следующий кадр, чтобы canvas точно отрендерился
     requestAnimationFrame(() => {
-      // Создаём временный canvas, куда будем рендерить белый фон, текст и сам куб
       const tempCanvas = document.createElement("canvas");
-      const tempCtx = tempCanvas.getContext("2d");
+      const ctx = tempCanvas.getContext("2d");
+      const { width, height } = canvas;
 
-      // 📱 Проверяем, мобильное ли устройство
-      const isMobile = window.innerWidth < 768;
+      tempCanvas.width = width;
+      tempCanvas.height = height;
 
-      // Коэффициент масштабирования для адаптации под размер экрана
-      const scaleFactor = isMobile ? 1.2 : 1.0;
+      // ⚪ 1️⃣ Заливаем фон белым
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, 0, width, height);
 
-      // Базовые размеры шрифтов и отступов
-      let baseFontSize = Math.floor(canvas.width * 0.045 * scaleFactor);
-      const smallFontSize = Math.floor(baseFontSize * 0.7);
-      let footerFontSize = Math.floor(baseFontSize * 0.6);
-      const padding = Math.floor(baseFontSize * 1.1);
+      // 🖼️ 2️⃣ Копируем canvas поверх белого фона
+      ctx.drawImage(canvas, 0, 0);
 
-      // Система отступов (верх, низ, интервалы между элементами)
-      const topMargin = padding * (isMobile ? 2.0 : 1.2);
-      const titleDateSpacing = padding * (isMobile ? 1.0 : 0.9);
-      const footerSiteSpacing = padding * (isMobile ? 0.8 : 0.7);
-      const bottomMargin = padding * (isMobile ? 1.0 : 0.5);
+      // 📸 3️⃣ Конвертируем в JPEG (99% качество)
+      const image = tempCanvas.toDataURL("image/jpeg", 0.99);
 
-      // Размер итогового изображения (чуть больше исходного canvas)
-      const canvasWidth = canvas.width + padding * 2;
-      const canvasHeight =
-        canvas.height + topMargin + titleDateSpacing + footerSiteSpacing + bottomMargin;
+      const pdf = new jsPDF("landscape", "mm", "a4");
 
-      // Настраиваем размеры временного canvas
-      tempCanvas.width = canvasWidth;
-      tempCanvas.height = canvasHeight;
+      // Добавление кастомного шрифта в jsPDF
+      pdf.addFileToVFS('Roboto-Regular.ttf', fontBase64);
+      pdf.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
+      pdf.setFont('Roboto');
 
-      // Заливаем фон белым цветом
-      tempCtx.fillStyle = "white";
-      tempCtx.fillRect(0, 0, canvasWidth, canvasHeight);
-
-      // Копируем WebGL-рендер из оригинального canvas на временный canvas
-      tempCtx.drawImage(canvas, padding, topMargin + titleDateSpacing);
-
-      // Берём текстовые данные (заголовок, дата, подпись и т.д.)
       const { title, dateTime, footer, site } = getSaveMetadata();
 
-      // 🧩 Вспомогательная функция для динамической подгонки размера шрифта под ширину canvas
-      const adjustFontSize = (text, maxWidth, initialFontSize) => {
-        let fontSize = initialFontSize;
-        do {
-          tempCtx.font = `bold ${fontSize}px Arial`;
-          if (tempCtx.measureText(text).width <= maxWidth) return fontSize;
-          fontSize--;
-        } while (fontSize > 10);
-        return fontSize;
-      };
+      // 📌 Расчёт масштабирования
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const canvasRatio = width / height;
+      const pdfRatio = pageWidth / pageHeight;
 
-      // Подгоняем шрифты под ширину итогового изображения
-      baseFontSize = adjustFontSize(title, tempCanvas.width * 0.9, baseFontSize);
-      footerFontSize = adjustFontSize(footer, tempCanvas.width * 0.9, footerFontSize);
-      const siteFontSize = adjustFontSize(site, tempCanvas.width * 0.9, footerFontSize);
+      let imgWidth, imgHeight;
+      if (canvasRatio > pdfRatio) {
+        imgWidth = pageWidth;
+        imgHeight = pageWidth / canvasRatio;
+      } else {
+        imgHeight = pageHeight;
+        imgWidth = pageHeight * canvasRatio;
+      }
 
-      // === 🖋️ Рендер текста ===
+      // 📌 Расчёт центровки
+      const xOffset = (pageWidth - imgWidth) / 2;
+      const yOffset = (pageHeight - imgHeight) / 2 + 10; // Добавляем отступ вниз
 
-      // Заголовок (зелёный)
-      tempCtx.font = `bold ${baseFontSize}px Arial`;
-      tempCtx.fillStyle = "green";
-      tempCtx.textAlign = "center";
-      tempCtx.fillText(title, tempCanvas.width / 2, topMargin);
+      pdf.addImage(image, "JPEG", xOffset, yOffset, imgWidth, imgHeight);
 
-      // Дата (голубая)
-      tempCtx.font = `normal ${smallFontSize}px Arial`;
-      tempCtx.fillStyle = "dodgerblue";
-      tempCtx.fillText(dateTime, tempCanvas.width / 2, topMargin + titleDateSpacing);
+      // 📝 4️⃣ Добавляем текст
+      pdf.setFontSize(22);
+      pdf.setTextColor(0, 128, 0);
+      pdf.text(title, pageWidth / 2, 15, { align: "center" });
 
-      // Подвал (розовый)
-      const footerY = tempCanvas.height - footerSiteSpacing - bottomMargin;
-      tempCtx.font = `normal ${footerFontSize}px Arial`;
-      tempCtx.fillStyle = "deeppink";
-      tempCtx.fillText(footer, tempCanvas.width / 2, footerY);
+      pdf.setFontSize(16);
+      pdf.setTextColor(30, 144, 255);
+      pdf.text(dateTime, pageWidth / 2, 25, { align: "center" });
 
-      // Сайт (синий, курсив)
-      tempCtx.font = `italic ${siteFontSize}px Arial`;
-      tempCtx.fillStyle = "blue";
-      tempCtx.fillText(site, tempCanvas.width / 2, footerY + footerSiteSpacing);
+      pdf.setFontSize(14);
+      pdf.setTextColor(255, 105, 180);
+      pdf.text(footer, pageWidth / 2, pageHeight - 12, { align: "center" });
 
-      // 📸 Преобразуем итоговое изображение в base64 (JPG)
-      const imageData = tempCanvas.toDataURL("image/jpeg", 0.99);
+      pdf.setFont("Roboto", "normal");
+      pdf.setTextColor(0, 0, 255);
+      pdf.setFontSize(14);
+      pdf.text(site, pageWidth / 2, pageHeight - 5, { align: "center" });
 
-      // === 📕 Создание PDF через jsPDF ===
-      const pdf = new jsPDF({
-        orientation: canvasWidth > canvasHeight ? "landscape" : "portrait",
-        unit: "px", // единицы измерения — пиксели
-        format: [canvasWidth, canvasHeight], // подгоняем размер PDF под размер изображения
-        compress: true, // включаем сжатие
-      });
+      pdf.save("Cube.pdf");
 
-      // Вставляем изображение в PDF (на всю страницу)
-      pdf.addImage(imageData, "JPEG", 0, 0, canvasWidth, canvasHeight);
-
-      // Сохраняем PDF-файл пользователю
-      pdf.save("CubePDF.pdf");
-
-      // Закрываем меню сохранения
       setIsSaveMenuOpen(false);
     });
   };
