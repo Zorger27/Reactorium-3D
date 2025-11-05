@@ -987,6 +987,7 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
 
   return (
     <div className="picto-cube3x-container">
+      {/* === Панели управления кубом === */}
       <div className="cube-controls">
 
         {/* Состояние: ничего не открыто → показываем ВСЕ блоки (закрытые) */}
