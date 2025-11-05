@@ -845,7 +845,7 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
       return await response.arrayBuffer();
     };
 
-    // Загрузка шрифта - используем CDN с обычным Roboto
+    // Загрузка шрифта - используем CDN
     let fontArrayBuffer;
     try {
       fontArrayBuffer = await loadFont('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/fonts/Roboto/Roboto-Regular.ttf');
@@ -869,14 +869,14 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
       tempCanvas.width = width;
       tempCanvas.height = height;
 
-      // ⚪ 1️⃣ Заливаем фон белым
+      // Заливаем фон белым
       ctx.fillStyle = "white";
       ctx.fillRect(0, 0, width, height);
 
-      // 🖼️ 2️⃣ Копируем canvas поверх белого фона
+      // Копируем canvas поверх белого фона
       ctx.drawImage(canvas, 0, 0);
 
-      // 📸 3️⃣ Конвертируем в JPEG (99% качество)
+      // Конвертируем в JPEG (99% качество)
       const image = tempCanvas.toDataURL("image/jpeg", 0.99);
 
       const pdf = new jsPDF("landscape", "mm", "a4");
@@ -888,7 +888,7 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
 
       const { title, dateTime, footer, site } = getSaveMetadata();
 
-      // 📌 Расчёт масштабирования
+      // Расчёт масштабирования
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
       const canvasRatio = width / height;
@@ -903,13 +903,13 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
         imgWidth = pageHeight * canvasRatio;
       }
 
-      // 📌 Расчёт центровки
+      // Расчёт центровки
       const xOffset = (pageWidth - imgWidth) / 2;
       const yOffset = (pageHeight - imgHeight) / 2 + 10; // Добавляем отступ вниз
 
       pdf.addImage(image, "JPEG", xOffset, yOffset, imgWidth, imgHeight);
 
-      // 📝 4️⃣ Добавляем текст
+      // Добавляем текст
       pdf.setFontSize(22);
       pdf.setTextColor(0, 128, 0);
       pdf.text(title, pageWidth / 2, 15, { align: "center" });
