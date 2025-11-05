@@ -872,20 +872,48 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
       const ctx = tempCanvas.getContext("2d");
       const { width, height } = canvas;
 
-      tempCanvas.width = width;
-      tempCanvas.height = height;
+      // Определение мобильного режима
+      const isMobile = window.innerWidth < 768;
+
+      // Коэффициент масштабирования
+      const scaleFactor = isMobile ? 1.2 : 1.0;
+      let baseFontSize = Math.floor(width * 0.045 * scaleFactor);
+      const smallFontSize = Math.floor(baseFontSize * 0.7);
+      let footerFontSize = Math.floor(baseFontSize * 0.6);
+      const padding = Math.floor(baseFontSize * 1.1);
+
+      // Система отступов
+      const topMargin = padding * (isMobile ? 2.0 : 1.2);
+      const titleDateSpacing = padding * (isMobile ? 1.0 : 0.9);
+      const footerSiteSpacing = padding * (isMobile ? 0.8 : 0.7);
+      const bottomMargin = padding * (isMobile ? 1.0 : 0.5);
+
+      const canvasWidth = width + padding * 2;
+      const canvasHeight = height + topMargin + titleDateSpacing + footerSiteSpacing + bottomMargin;
+
+      tempCanvas.width = canvasWidth;
+      tempCanvas.height = canvasHeight;
 
       // Заливаем фон белым
       ctx.fillStyle = "white";
-      ctx.fillRect(0, 0, width, height);
+      ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
 
       // Копируем canvas поверх белого фона
-      ctx.drawImage(canvas, 0, 0);
+      ctx.drawImage(canvas, padding, topMargin + titleDateSpacing);
 
       // Конвертируем в JPEG (99% качество)
       const image = tempCanvas.toDataURL("image/jpeg", 0.99);
 
-      const pdf = new jsPDF("landscape", "mm", "a4");
+      // Создаём PDF с размерами canvas (в мм, переводим пиксели в мм: 1px ≈ 0.264583mm)
+      const pxToMm = 0.264583;
+      const pdfWidth = canvasWidth * pxToMm;
+      const pdfHeight = canvasHeight * pxToMm;
+
+      const pdf = new jsPDF({
+        orientation: pdfWidth > pdfHeight ? 'landscape' : 'portrait',
+        unit: 'mm',
+        format: [pdfWidth, pdfHeight]
+      });
 
       // Добавление обоих шрифтов в jsPDF
       pdf.addFileToVFS('Roboto-Regular.ttf', fontRegularBase64);
@@ -898,44 +926,58 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
 
       const { title, dateTime, footer, site } = getSaveMetadata();
 
-      // Расчёт масштабирования
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
-      const canvasRatio = width / height;
-      const pdfRatio = pageWidth / pageHeight;
 
-      let imgWidth, imgHeight;
-      if (canvasRatio > pdfRatio) {
-        imgWidth = pageWidth;
-        imgHeight = pageWidth / canvasRatio;
-      } else {
-        imgHeight = pageHeight;
-        imgWidth = pageHeight * canvasRatio;
-      }
+      // Изображение занимает всю страницу
+      pdf.addImage(image, "JPEG", 0, 0, pageWidth, pageHeight);
 
-      // Расчёт центровки
-      const xOffset = (pageWidth - imgWidth) / 2;
-      const yOffset = (pageHeight - imgHeight) / 2 + 10; // Добавляем отступ вниз
+      // Функция для динамического подбора размера шрифта
+      const adjustFontSize = (text, maxWidth, initialFontSize) => {
+        let fontSize = initialFontSize;
+        do {
+          pdf.setFontSize(fontSize);
+          if (pdf.getTextWidth(text) <= maxWidth) {
+            return fontSize;
+          }
+          fontSize--;
+        } while (fontSize > 10);
+        return fontSize;
+      };
 
-      pdf.addImage(image, "JPEG", xOffset, yOffset, imgWidth, imgHeight);
+      // Подбор размера шрифта для каждого текста (конвертируем в единицы PDF)
+      const pdfBaseFontSize = baseFontSize * pxToMm * 2.83465; // коэффициент для конвертации px в pt
+      const pdfSmallFontSize = smallFontSize * pxToMm * 2.83465;
+      const pdfFooterFontSize = footerFontSize * pxToMm * 2.83465;
+
+      const finalBaseFontSize = adjustFontSize(title, pageWidth * 0.9, pdfBaseFontSize);
+      const finalSmallFontSize = pdfSmallFontSize;
+      const finalFooterFontSize = adjustFontSize(footer, pageWidth * 0.9, pdfFooterFontSize);
+      const finalSiteFontSize = adjustFontSize(site, pageWidth * 0.9, pdfFooterFontSize);
+
+      const topMarginMm = topMargin * pxToMm;
+      const titleDateSpacingMm = titleDateSpacing * pxToMm;
+      const footerSiteSpacingMm = footerSiteSpacing * pxToMm;
+      const bottomMarginMm = bottomMargin * pxToMm;
 
       // Добавляем текст
-      pdf.setFontSize(22);
+      pdf.setFontSize(finalBaseFontSize);
       pdf.setTextColor(0, 128, 0);
-      pdf.text(title, pageWidth / 2, 15, { align: "center" });
+      pdf.text(title, pageWidth / 2, topMarginMm, { align: "center" });
 
-      pdf.setFontSize(16);
+      pdf.setFontSize(finalSmallFontSize);
       pdf.setTextColor(30, 144, 255);
-      pdf.text(dateTime, pageWidth / 2, 25, { align: "center" });
+      pdf.text(dateTime, pageWidth / 2, topMarginMm + titleDateSpacingMm, { align: "center" });
 
-      pdf.setFontSize(14);
+      const footerY = pageHeight - footerSiteSpacingMm - bottomMarginMm;
+      pdf.setFontSize(finalFooterFontSize);
       pdf.setTextColor(255, 105, 180);
-      pdf.text(footer, pageWidth / 2, pageHeight - 12, { align: "center" });
+      pdf.text(footer, pageWidth / 2, footerY, { align: "center" });
 
-      pdf.setFont("Roboto", "italic");  // ✅ Теперь italic работает!
+      pdf.setFont("Roboto", "italic");
       pdf.setTextColor(0, 0, 255);
-      pdf.setFontSize(14);
-      pdf.text(site, pageWidth / 2, pageHeight - 5, { align: "center" });
+      pdf.setFontSize(finalSiteFontSize);
+      pdf.text(site, pageWidth / 2, footerY + footerSiteSpacingMm, { align: "center" });
 
       pdf.save("CubePDF.pdf");
 
