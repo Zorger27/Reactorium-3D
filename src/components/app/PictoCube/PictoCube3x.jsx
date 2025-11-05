@@ -927,7 +927,7 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
       pdf.setFontSize(14);
       pdf.text(site, pageWidth / 2, pageHeight - 5, { align: "center" });
 
-      pdf.save("Cube.pdf");
+      pdf.save("CubePDF.pdf");
 
       setIsSaveMenuOpen(false);
     });
