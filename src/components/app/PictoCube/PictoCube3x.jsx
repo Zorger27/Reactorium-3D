@@ -845,18 +845,24 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
       return await response.arrayBuffer();
     };
 
-    // Загрузка шрифта - используем CDN
-    let fontArrayBuffer;
+    // Загрузка обоих шрифтов - Regular и Italic
+    let fontRegularBuffer, fontItalicBuffer;
     try {
-      fontArrayBuffer = await loadFont('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/fonts/Roboto/Roboto-Regular.ttf');
+      fontRegularBuffer = await loadFont('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/fonts/Roboto/Roboto-Regular.ttf');
+      fontItalicBuffer = await loadFont('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/fonts/Roboto/Roboto-Italic.ttf');
     } catch (error) {
       console.error("Ошибка загрузки шрифта:", error);
       alert("Не удалось загрузить шрифт для PDF");
       return;
     }
 
-    const fontBase64 = btoa(
-      new Uint8Array(fontArrayBuffer)
+    const fontRegularBase64 = btoa(
+      new Uint8Array(fontRegularBuffer)
+        .reduce((data, byte) => data + String.fromCharCode(byte), '')
+    );
+
+    const fontItalicBase64 = btoa(
+      new Uint8Array(fontItalicBuffer)
         .reduce((data, byte) => data + String.fromCharCode(byte), '')
     );
 
@@ -881,9 +887,13 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
 
       const pdf = new jsPDF("landscape", "mm", "a4");
 
-      // Добавление кастомного шрифта в jsPDF
-      pdf.addFileToVFS('Roboto-Regular.ttf', fontBase64);
+      // Добавление обоих шрифтов в jsPDF
+      pdf.addFileToVFS('Roboto-Regular.ttf', fontRegularBase64);
       pdf.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
+
+      pdf.addFileToVFS('Roboto-Italic.ttf', fontItalicBase64);
+      pdf.addFont('Roboto-Italic.ttf', 'Roboto', 'italic');
+
       pdf.setFont('Roboto');
 
       const { title, dateTime, footer, site } = getSaveMetadata();
@@ -922,7 +932,7 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
       pdf.setTextColor(255, 105, 180);
       pdf.text(footer, pageWidth / 2, pageHeight - 12, { align: "center" });
 
-      pdf.setFont("Roboto", "normal");
+      pdf.setFont("Roboto", "italic");  // ✅ Теперь italic работает!
       pdf.setTextColor(0, 0, 255);
       pdf.setFontSize(14);
       pdf.text(site, pageWidth / 2, pageHeight - 5, { align: "center" });
