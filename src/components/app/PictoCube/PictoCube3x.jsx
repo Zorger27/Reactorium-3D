@@ -471,12 +471,12 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
   // --- фабрика хэндлеров для ControlBlock ---
   const makeHandlers = (setter, defaultValue, min, max, step = 1) => ({
     reset: () => setter(defaultValue),
-    increase: () => setter(prev => Math.min(max, +(prev + step).toFixed(3))),
-    decrease: () => setter(prev => Math.max(min, +(prev - step).toFixed(3))),
+    increase: () => setter(prev => Math.min(max, +(prev + step).toFixed(2))),
+    decrease: () => setter(prev => Math.max(min, +(prev - step).toFixed(2))),
   });
 
   // Кнопки управления
-  const speedHandlers = makeHandlers(setSpeed, 0.01, 0, 0.05, 0.002);
+  const speedHandlers = makeHandlers(setSpeed, 0.01, 0, 0.05, 0.01);
   const gapHandlers = makeHandlers(setGap, 0.15, 0, 0.5, 0.01);
   const smallCubeScaleHandlers = makeHandlers(setSmallCubeScale, 0.85, 0.5, 1, 0.05);
   const rotXHandlers = makeHandlers(setRotationX, 90, -180, 180);
@@ -1246,7 +1246,7 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
         {openBlock === null && (
           <>
             <ControlBlock label={t("control.speed")} icon="fa-solid fa-gauge-simple-high" isOpen={false} onToggle={() => setOpenBlock("speed")}
-                          gapConfig={{value: speed, min: 0, max: 0.05, step: 0.002, onChange: setSpeed, ...speedHandlers,}}
+                          gapConfig={{value: speed, min: 0, max: 0.05, step: 0.01, onChange: setSpeed, ...speedHandlers,}}
             />
             <ControlBlock label={t("control.gap")} icon="fa-solid fa-arrows-left-right" isOpen={false} onToggle={() => setOpenBlock("gap")}
                           gapConfig={{value: gap, min: 0, max: 0.5, step: 0.01, onChange: setGap, ...gapHandlers}}
@@ -1269,7 +1269,7 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
         {/* Состояние: открыт speed → показываем только его */}
         {openBlock === "speed" && (
           <ControlBlock label={t("control.speed")} icon="fa-solid fa-gauge-simple-high" isOpen={true} onToggle={() => setOpenBlock(null)}
-                        gapConfig={{value: speed, min: 0, max: 0.05, step: 0.002, onChange: setSpeed, ...speedHandlers,}}
+                        gapConfig={{value: speed, min: 0, max: 0.05, step: 0.01, onChange: setSpeed, ...speedHandlers,}}
           />
         )}
 
