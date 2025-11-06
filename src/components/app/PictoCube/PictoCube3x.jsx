@@ -267,55 +267,82 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
   const [targetRotationZ, setTargetRotationZ] = useState(null);
 
   useFrame((_, delta) => {
+    // Проверка: если группа кубиков не инициализирована — выходим
     if (!groupRef.current) return;
 
+    // Скорость плавной анимации перемещения кубиков (выше = быстрее)
     const smoothSpeed = 3.0;
 
+    // === БЛОК 1: Анимация перемещения кубиков (shuffle/reset) ===
     if (isMovingRef.current) {
+      // Флаг: все ли кубики достигли своих целевых позиций
       let allReached = true;
 
+      // Проходим по каждому кубику в группе
       groupRef.current.children.forEach((mesh, i) => {
+        // Получаем целевую позицию для текущего кубика
         const t = targets[i];
         if (!t) return;
 
+        // Инициализируем текущую позицию, если её ещё нет
         if (!currentTargetsRef.current[i]) {
           currentTargetsRef.current[i] = [...t];
         }
 
         const current = currentTargetsRef.current[i];
 
+        // Плавное движение по каждой оси (X, Y, Z) с экспоненциальным затуханием
+        // Формула: новое значение += (целевое - текущее) * фактор_скорости
+        // Фактор скорости: (1 - Math.exp(-smoothSpeed * delta)) даёт плавное замедление
         current[0] += (t[0] - current[0]) * (1 - Math.exp(-smoothSpeed * delta));
         current[1] += (t[1] - current[1]) * (1 - Math.exp(-smoothSpeed * delta));
         current[2] += (t[2] - current[2]) * (1 - Math.exp(-smoothSpeed * delta));
 
+        // Создаём вектор целевой позиции для интерполяции
         const targetVec = new THREE.Vector3(current[0], current[1], current[2]);
+
+        // Применяем линейную интерполяцию (lerp) к реальной позиции меша
         mesh.position.lerp(targetVec, 1 - Math.exp(-smoothSpeed * delta));
 
+        // Проверяем расстояние до цели (если больше 0.001 — кубик ещё движется)
         const distance = mesh.position.distanceTo(targetVec);
         if (distance > 0.001) {
-          allReached = false;
+          allReached = false; // Ещё не достигли цели
         }
       });
 
+      // Если все кубики достигли своих позиций — останавливаем анимацию перемещения
       if (allReached) {
         isMovingRef.current = false;
       }
     }
 
-    // Преобразуем скорость из диапазона 0-10 в 0-0.025 для плавного вращения (значение 4 даёт комфортную скорость ~0.01)
+    // === БЛОК 2: Постоянное вращение группы кубиков ===
+    // Преобразуем пользовательскую скорость (0-10) в реальную скорость вращения (0-0.025)
+    // При значении 4 получаем комфортную скорость ~0.01 радиан/кадр
     const actualSpeed = (speed / 10) * 0.025;
 
+    // Если нет целевого угла поворота И вращение включено — крутим постоянно
     if (targetRotationZ === null && isRotating) {
       groupRef.current.rotation.z += direction * actualSpeed;
     }
 
+    // === БЛОК 3: Плавный поворот на заданный угол (например, 180°) ===
     if (targetRotationZ !== null) {
+      // Вычисляем разницу между текущим и целевым углом
       const diff = targetRotationZ - groupRef.current.rotation.z;
+
+      // Нормализуем угол в диапазон [-π, π] (кратчайший путь поворота)
+      // Формула убирает "лишние обороты" и находит оптимальное направление
       const normalizedDiff = ((diff + Math.PI) % (2 * Math.PI)) - Math.PI;
+
+      // Плавно приближаемся к целевому углу (ограничиваем скорость поворота)
       groupRef.current.rotation.z += normalizedDiff * Math.min(10 * delta, 1);
+
+      // Если угол почти достигнут (погрешность < 0.01 радиан) — фиксируем и сбрасываем цель
       if (Math.abs(normalizedDiff) < 0.01) {
         groupRef.current.rotation.z = targetRotationZ;
-        setTargetRotationZ(null);
+        setTargetRotationZ(null); // Возвращаемся к обычному вращению
       }
     }
   });
