@@ -120,9 +120,11 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
   useFrame((_, delta) => {
     if (!groupRef.current) return;
 
-    // Если идёт плавный поворот, ручное вращение не применяем
+    // Преобразуем скорость из диапазона 0-10 в 0-0.025 для плавного вращения (значение 4 даёт комфортную скорость ~0.01)
+    const actualSpeed = (speed / 10) * 0.025;
+
     if (targetRotationZ === null && isRotating) {
-      groupRef.current.rotation.z += direction * speed;
+      groupRef.current.rotation.z += direction * actualSpeed;
     }
 
     if (targetRotationZ !== null) {
@@ -207,9 +209,9 @@ const VortexCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
   const [rotationX, setRotationX] = useLocalStorage("vortexCube3xRotX", 90, parseFloat);
   const [rotationY, setRotationY] = useLocalStorage("vortexCube3xRotY", 20, parseFloat);
   const [rotationZ, setRotationZ] = useLocalStorage("vortexCube3xRotZ", 0, parseFloat);
-  const [speed, setSpeed] = useLocalStorage("vortexCube3xSpeed", 0.01, parseFloat);
+  const [speed, setSpeed] = useLocalStorage("vortexCube3xSpeed", 4, parseFloat);
   const [direction, setDirection] = useLocalStorage("vortexCube3xDirection", -1, v => parseInt(v, 10));
-  const [isRotating, setIsRotating] = useLocalStorage("vortexCube3xIsRotating", false, v => v === "true");
+  const [isRotating, setIsRotating] = useLocalStorage("vortexCube3xIsRotating", true, v => v === "true");
 
   // --- кнопки вращения ---
   const handleClockwise = () => {
@@ -243,7 +245,7 @@ const VortexCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
   });
 
   // Кнопки управления
-  const speedHandlers = makeHandlers(setSpeed, 0.01, 0, 0.05, 0.01);
+  const speedHandlers = makeHandlers(setSpeed, 4, 0, 10, 1);
   const gapHandlers = makeHandlers(setGap, 0.15, 0, 0.5, 0.01);
   const rotXHandlers = makeHandlers(setRotationX, 90, -180, 180);
   const rotYHandlers = makeHandlers(setRotationY, 20, -180, 180);
@@ -251,13 +253,14 @@ const VortexCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
 
   return (
     <div className="cube3x-inner-container">
+      {/* === Панели управления кубом === */}
       <div className="cube-controls">
 
         {/* Состояние: ничего не открыто → показываем ВСЕ блоки (закрытые) */}
         {openBlock === null && (
           <>
             <ControlBlock label={t("control.speed")} icon="fa-solid fa-gauge-simple-high" isOpen={false} onToggle={() => setOpenBlock("speed")}
-                          gapConfig={{value: speed, min: 0, max: 0.05, step: 0.01, onChange: setSpeed, ...speedHandlers,}}
+                          gapConfig={{value: speed, min: 0, max: 10, step: 1, onChange: setSpeed, ...speedHandlers,}}
             />
             <ControlBlock label={t("control.gap")} icon="fa-solid fa-arrows-left-right" isOpen={false} onToggle={() => setOpenBlock("gap")}
                           gapConfig={{value: gap, min: 0, max: 0.5, step: 0.01, onChange: setGap, ...gapHandlers}}
@@ -276,7 +279,7 @@ const VortexCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
         {/* Состояние: открыт speed → показываем только его */}
         {openBlock === "speed" && (
           <ControlBlock label={t("control.speed")} icon="fa-solid fa-gauge-simple-high" isOpen={true} onToggle={() => setOpenBlock(null)}
-                        gapConfig={{value: speed, min: 0, max: 0.05, step: 0.01, onChange: setSpeed, ...speedHandlers,}}
+                        gapConfig={{value: speed, min: 0, max: 10, step: 1, onChange: setSpeed, ...speedHandlers,}}
           />
         )}
 

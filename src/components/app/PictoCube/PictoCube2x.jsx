@@ -263,9 +263,13 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
       }
     }
 
+    // Преобразуем скорость из диапазона 0-10 в 0-0.025 для плавного вращения (значение 4 даёт комфортную скорость ~0.01)
+    const actualSpeed = (speed / 10) * 0.025;
+
     if (targetRotationZ === null && isRotating) {
-      groupRef.current.rotation.z += direction * speed;
+      groupRef.current.rotation.z += direction * actualSpeed;
     }
+
     if (targetRotationZ !== null) {
       const diff = targetRotationZ - groupRef.current.rotation.z;
       const normalizedDiff = ((diff + Math.PI) % (2 * Math.PI)) - Math.PI;
@@ -411,7 +415,7 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
   const [rotationX, setRotationX, resetRotationX] = useLocalStorage("pictoCube2xRotX", 90, parseFloat);
   const [rotationY, setRotationY, resetRotationY] = useLocalStorage("pictoCube2xRotY", 0, parseFloat);
   const [rotationZ, setRotationZ, resetRotationZ] = useLocalStorage("pictoCube2xRotZ", 0, parseFloat);
-  const [speed, setSpeed, resetSpeed] = useLocalStorage("pictoCube2xSpeed", 0.01, parseFloat);
+  const [speed, setSpeed, resetSpeed] = useLocalStorage("pictoCube2xSpeed", 4, parseFloat);
   const [direction, setDirection, resetDirection] = useLocalStorage("pictoCube2xDirection", 1, v => parseInt(v, 10));
   const [isRotating, setIsRotating, resetIsRotating] = useLocalStorage("pictoCube2xIsRotating", true, v => v === "true");
 
@@ -430,7 +434,7 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
   });
 
   // Кнопки управления
-  const speedHandlers = makeHandlers(setSpeed, 0.01, 0, 0.05, 0.01);
+  const speedHandlers = makeHandlers(setSpeed, 4, 0, 10, 1);
   const gapHandlers = makeHandlers(setGap, 0.15, 0, 0.5, 0.01);
   const smallCubeScaleHandlers = makeHandlers(setSmallCubeScale, 0.85, 0.5, 1, 0.05);
   const rotXHandlers = makeHandlers(setRotationX, 90, -180, 180);
@@ -556,7 +560,7 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
         {openBlock === null && (
           <>
             <ControlBlock label={t("control.speed")} icon="fa-solid fa-gauge-simple-high" isOpen={false} onToggle={() => setOpenBlock("speed")}
-                          gapConfig={{value: speed, min: 0, max: 0.05, step: 0.01, onChange: setSpeed, ...speedHandlers,}}
+                          gapConfig={{value: speed, min: 0, max: 10, step: 1, onChange: setSpeed, ...speedHandlers,}}
             />
             <ControlBlock label={t("control.gap")} icon="fa-solid fa-arrows-left-right" isOpen={false} onToggle={() => setOpenBlock("gap")}
                           gapConfig={{value: gap, min: 0, max: 0.5, step: 0.01, onChange: setGap, ...gapHandlers}}
@@ -579,7 +583,7 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
         {/* Состояние: открыт speed → показываем только его */}
         {openBlock === "speed" && (
           <ControlBlock label={t("control.speed")} icon="fa-solid fa-gauge-simple-high" isOpen={true} onToggle={() => setOpenBlock(null)}
-                        gapConfig={{value: speed, min: 0, max: 0.05, step: 0.01, onChange: setSpeed, ...speedHandlers,}}
+                        gapConfig={{value: speed, min: 0, max: 10, step: 1, onChange: setSpeed, ...speedHandlers,}}
           />
         )}
 
