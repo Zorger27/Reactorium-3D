@@ -822,6 +822,7 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
 
   // Сохранение сцены как PDF
   const saveAsPDF = async () => {
+    // === 1. Проверка доступности контейнера ===
     const containerRef = ref?.current || internalRef.current;
 
     if (!containerRef) {
@@ -829,14 +830,14 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
       return;
     }
 
-    // Получаем canvas element из react-three-fiber
+    // === 2. Получение canvas элемента из React Three Fiber ===
     const canvas = containerRef.querySelector('canvas');
     if (!canvas) {
       console.error("Ошибка: Canvas element не найден");
       return;
     }
 
-    // Функция для загрузки шрифта
+    // === 3. Функция для загрузки шрифта ===
     const loadFont = async (url) => {
       const response = await fetch(url);
       if (!response.ok) {
@@ -845,19 +846,29 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
       return await response.arrayBuffer();
     };
 
-    // Загрузка обоих шрифтов - Regular и Italic
-    let fontRegularBuffer, fontItalicBuffer;
+    // === 4. Загрузка всех необходимых шрифтов с CDN (проверенные версии) ===
+    let fontRegularBuffer, fontMediumBuffer, fontItalicBuffer;
     try {
-      fontRegularBuffer = await loadFont('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/fonts/Roboto/Roboto-Regular.ttf');
-      fontItalicBuffer = await loadFont('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/fonts/Roboto/Roboto-Italic.ttf');
+      // fontRegularBuffer = await loadFont('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/fonts/Roboto/Roboto-Regular.ttf');
+      // fontMediumBuffer = await loadFont('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/fonts/Roboto/Roboto-Medium.ttf');
+      // fontItalicBuffer = await loadFont('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/fonts/Roboto/Roboto-Italic.ttf');
+      fontRegularBuffer = await loadFont('/fonts/Roboto-Regular.ttf');
+      fontMediumBuffer  = await loadFont('/fonts/Roboto-Medium.ttf');
+      fontItalicBuffer  = await loadFont('/fonts/Roboto-Italic.ttf');
     } catch (error) {
       console.error("Ошибка загрузки шрифта:", error);
       alert("Не удалось загрузить шрифт для PDF");
       return;
     }
 
+    // === 5. Конвертация шрифтов в Base64 для jsPDF ===
     const fontRegularBase64 = btoa(
       new Uint8Array(fontRegularBuffer)
+        .reduce((data, byte) => data + String.fromCharCode(byte), '')
+    );
+
+    const fontMediumBase64 = btoa(
+      new Uint8Array(fontMediumBuffer)
         .reduce((data, byte) => data + String.fromCharCode(byte), '')
     );
 
@@ -866,23 +877,22 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
         .reduce((data, byte) => data + String.fromCharCode(byte), '')
     );
 
-    // Ждём следующий кадр, чтобы canvas точно отрендерился
+    // === 6. Ожидание рендера canvas перед копированием ===
     requestAnimationFrame(() => {
+      // === 7. Создание временного canvas для композиции ===
       const tempCanvas = document.createElement("canvas");
       const ctx = tempCanvas.getContext("2d");
       const { width, height } = canvas;
 
-      // Определение мобильного режима
+      // === 8. Расчёт размеров и отступов (как в JPG) ===
       const isMobile = window.innerWidth < 768;
-
-      // Коэффициент масштабирования
       const scaleFactor = isMobile ? 1.2 : 1.0;
+
       let baseFontSize = Math.floor(width * 0.045 * scaleFactor);
       const smallFontSize = Math.floor(baseFontSize * 0.7);
       let footerFontSize = Math.floor(baseFontSize * 0.6);
       const padding = Math.floor(baseFontSize * 1.1);
 
-      // Система отступов
       const topMargin = padding * (isMobile ? 2.0 : 1.2);
       const titleDateSpacing = padding * (isMobile ? 1.0 : 0.9);
       const footerSiteSpacing = padding * (isMobile ? 0.8 : 0.7);
@@ -894,17 +904,18 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
       tempCanvas.width = canvasWidth;
       tempCanvas.height = canvasHeight;
 
-      // Заливаем фон белым
+      // === 9. Заливка белым фоном ===
       ctx.fillStyle = "white";
       ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
 
-      // Копируем canvas поверх белого фона
+      // === 10. Копирование 3D сцены на временный canvas ===
       ctx.drawImage(canvas, padding, topMargin + titleDateSpacing);
 
-      // Конвертируем в JPEG (99% качество)
+      // === 11. Конвертация в JPEG для вставки в PDF ===
       const image = tempCanvas.toDataURL("image/jpeg", 0.99);
 
-      // Создаём PDF с размерами canvas (в мм, переводим пиксели в мм: 1px ≈ 0.264583mm)
+      // === 12. Создание PDF с размерами идентичными JPG ===
+      // Переводим пиксели в миллиметры (1px ≈ 0.264583mm при 96 DPI)
       const pxToMm = 0.264583;
       const pdfWidth = canvasWidth * pxToMm;
       const pdfHeight = canvasHeight * pxToMm;
@@ -915,24 +926,28 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
         format: [pdfWidth, pdfHeight]
       });
 
-      // Добавление обоих шрифтов в jsPDF
+      // === 13. Регистрация шрифтов в jsPDF ===
       pdf.addFileToVFS('Roboto-Regular.ttf', fontRegularBase64);
       pdf.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
+
+      pdf.addFileToVFS('Roboto-Medium.ttf', fontMediumBase64);
+      pdf.addFont('Roboto-Medium.ttf', 'Roboto', 'bold');
 
       pdf.addFileToVFS('Roboto-Italic.ttf', fontItalicBase64);
       pdf.addFont('Roboto-Italic.ttf', 'Roboto', 'italic');
 
-      pdf.setFont('Roboto');
+      pdf.setFont('Roboto', 'normal');
 
+      // === 14. Получение метаданных для текста ===
       const { title, dateTime, footer, site } = getSaveMetadata();
 
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
 
-      // Изображение занимает всю страницу
+      // === 15. Вставка изображения на всю страницу ===
       pdf.addImage(image, "JPEG", 0, 0, pageWidth, pageHeight);
 
-      // Функция для динамического подбора размера шрифта
+      // === 16. Функция для динамического подбора размера шрифта ===
       const adjustFontSize = (text, maxWidth, initialFontSize) => {
         let fontSize = initialFontSize;
         do {
@@ -945,42 +960,53 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
         return fontSize;
       };
 
-      // Подбор размера шрифта для каждого текста (конвертируем в единицы PDF)
-      const pdfBaseFontSize = baseFontSize * pxToMm * 2.83465; // коэффициент для конвертации px в pt
-      const pdfSmallFontSize = smallFontSize * pxToMm * 2.83465;
-      const pdfFooterFontSize = footerFontSize * pxToMm * 2.83465;
+      // === 17. Конвертация размеров шрифтов из пикселей в пункты ===
+      // 1px = 0.75pt (стандартное соотношение при 96 DPI)
+      const pxToPt = 0.75;
 
-      const finalBaseFontSize = adjustFontSize(title, pageWidth * 0.9, pdfBaseFontSize);
-      const finalSmallFontSize = pdfSmallFontSize;
-      const finalFooterFontSize = adjustFontSize(footer, pageWidth * 0.9, pdfFooterFontSize);
-      const finalSiteFontSize = adjustFontSize(site, pageWidth * 0.9, pdfFooterFontSize);
+      // === 18. Подбор оптимальных размеров шрифтов ===
+      const finalBaseFontSize = adjustFontSize(title, pageWidth * 0.9, baseFontSize * pxToPt);
+      const finalSmallFontSize = smallFontSize * pxToPt;
+      const finalFooterFontSize = adjustFontSize(footer, pageWidth * 0.9, footerFontSize * pxToPt);
+      const finalSiteFontSize = adjustFontSize(site, pageWidth * 0.9, footerFontSize * pxToPt);
 
+      // === 19. Конвертация отступов в миллиметры ===
       const topMarginMm = topMargin * pxToMm;
       const titleDateSpacingMm = titleDateSpacing * pxToMm;
       const footerSiteSpacingMm = footerSiteSpacing * pxToMm;
       const bottomMarginMm = bottomMargin * pxToMm;
 
-      // Добавляем текст
+      // === 20. Добавление текстовых элементов ===
+
+      // 📌 Заголовок (зелёный, жирный - Roboto Medium)
+      pdf.setFont('Roboto', 'bold'); // используем Medium как bold
       pdf.setFontSize(finalBaseFontSize);
       pdf.setTextColor(0, 128, 0);
       pdf.text(title, pageWidth / 2, topMarginMm, { align: "center" });
 
+      // 📅 Дата и время (голубая, обычная)
+      pdf.setFont('Roboto', 'normal');
       pdf.setFontSize(finalSmallFontSize);
       pdf.setTextColor(30, 144, 255);
       pdf.text(dateTime, pageWidth / 2, topMarginMm + titleDateSpacingMm, { align: "center" });
 
+      // 🔽 Footer текст (розовый, обычная)
       const footerY = pageHeight - footerSiteSpacingMm - bottomMarginMm;
+      pdf.setFont('Roboto', 'normal');
       pdf.setFontSize(finalFooterFontSize);
       pdf.setTextColor(255, 105, 180);
       pdf.text(footer, pageWidth / 2, footerY, { align: "center" });
 
+      // 🌐 Сайт (синий, курсив)
       pdf.setFont("Roboto", "italic");
       pdf.setTextColor(0, 0, 255);
       pdf.setFontSize(finalSiteFontSize);
       pdf.text(site, pageWidth / 2, footerY + footerSiteSpacingMm, { align: "center" });
 
+      // === 21. Сохранение PDF файла ===
       pdf.save("CubePDF.pdf");
 
+      // === 22. Закрытие меню сохранения ===
       setIsSaveMenuOpen(false);
     });
   };
