@@ -1124,10 +1124,7 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
       animationFrameRef.current = requestAnimationFrame(drawFrame);
     };
 
-    // 7. Запуск отрисовки кадров
-    drawFrame();
-
-    // 8. Определение поддерживаемого формата видео
+    // 7. Определение поддерживаемого формата видео
     let mimeType;
     let isMP4 = false;
 
@@ -1148,40 +1145,45 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
     } else {
       console.error("⛔ Ваш браузер не поддерживает запись видео.");
       alert("Запись видео не поддерживается в этом браузере");
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
       return;
     }
 
-    // 9. Создание MediaRecorder для записи потока
+    // 8. Создание MediaRecorder для записи потока
     try {
       mediaRecorderRef.current = new MediaRecorder(stream, { mimeType });
     } catch (error) {
       console.error("Ошибка создания MediaRecorder:", error);
       alert("Не удалось начать запись видео");
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
       return;
     }
 
-    // 10. Обработчик получения данных
+    // 9. Обработчик получения данных
     mediaRecorderRef.current.ondataavailable = (event) => {
       if (event.data.size > 0) {
         recordedChunksRef.current.push(event.data);
       }
     };
 
-    // 11. Обработчик завершения записи
+    // 10. Обработчик завершения записи
     mediaRecorderRef.current.onstop = () => saveVideo(isMP4);
 
-    // 12. Очистка буфера и запуск записи
+    // 11. Очистка буфера
     recordedChunksRef.current = [];
-    mediaRecorderRef.current.start();
-    setIsRecording(true);
 
-    console.log(`🎥 Запись видео началась! Формат: ${isMP4 ? 'MP4' : 'WebM'}`);
+    // 12. ЖДЁМ один кадр, чтобы canvas гарантированно отрендерился
+    requestAnimationFrame(() => {
+      // Отрисовываем первый кадр (с кубиком!)
+      drawFrame();
+
+      // Ждём ещё один кадр для надёжности
+      requestAnimationFrame(() => {
+        // Теперь запускаем запись - первый кадр уже готов!
+        mediaRecorderRef.current.start();
+        setIsRecording(true);
+
+        console.log(`🎥 Запись видео началась! Формат: ${isMP4 ? 'MP4' : 'WebM'}`);
+      });
+    });
   };
 
   // Остановка записи
