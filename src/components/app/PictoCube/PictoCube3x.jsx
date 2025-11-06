@@ -492,7 +492,9 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
       if (!event.target.closest('.special-buttons')) {
         setIsShuffleMenuOpen(false);
         setIsClearMenuOpen(false);
-        setIsSaveMenuOpen(false);
+        setIsSaveMenuOpen(isRecording ? 'false' : true)
+        // {isRecording ? '' : setIsSaveMenuOpen(false)}
+        // setIsSaveMenuOpen(false);
       }
     };
 
@@ -506,7 +508,7 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
   useEffect(() => {
     if (isShuffleMenuOpen) {
       setIsClearMenuOpen(false);
-      setIsSaveMenuOpen(false);
+      if (!isRecording) {setIsSaveMenuOpen(false);}
     }
   }, [isShuffleMenuOpen]);
 
@@ -514,7 +516,7 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
   useEffect(() => {
     if (isClearMenuOpen) {
       setIsShuffleMenuOpen(false);
-      setIsSaveMenuOpen(false);
+      if (!isRecording) {setIsSaveMenuOpen(false);}
     }
   }, [isClearMenuOpen]);
 
@@ -1335,7 +1337,10 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
         {/* === Панель сохранения === */}
         <div className="save-buttons">
           {/* Главная кнопка */}
-          <button className={`main-save-button ${isSaveMenuOpen ? 'open' : ''}`} onClick={() => setIsSaveMenuOpen(prev => !prev)} title={isSaveMenuOpen ? t('save.closeSaveData') : t('save.saveData')}>
+          <button className={`main-save-button ${isSaveMenuOpen ? 'open' : ''}`}
+                  onClick={isRecording ? '' : () => setIsSaveMenuOpen(prev => !prev)}
+                  title={isSaveMenuOpen ? t('save.closeSaveData') : t('save.saveData')}
+          >
             <i className={`main-save-icon fas ${isSaveMenuOpen ? 'fa-times' : 'fa-save'}`}></i><span className="main-save-text">{t('save.title')}</span>
           </button>
 
@@ -1348,7 +1353,10 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
             {/* Сохранение сцены как PDF */}
             <button onClick={ saveAsPDF } title={t('save.savePDF')}><i className="fas fa-file-pdf"></i></button>
             {/* Сохранение сцены как Video */}
-            <button className={`film-start ${isRecording ? 'film-stop' : ''}`} onClick={isRecording ? stopRecording : startRecording} title={isRecording ? t('save.stopVideo') : t('save.startVideo')}>
+            <button className={`film-start ${isRecording ? 'film-stop' : ''}`}
+                    onClick={isRecording ? stopRecording : startRecording}
+                    title={isRecording ? t('save.stopVideo') : t('save.startVideo')}
+            >
               <i className={`fas ${isRecording ? 'fa-stop-circle' : 'fa-film'}`}></i>
             </button>
           </div>
