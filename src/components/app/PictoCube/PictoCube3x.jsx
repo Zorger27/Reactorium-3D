@@ -440,7 +440,12 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
   const [isShuffleMenuOpen, setIsShuffleMenuOpen] = useState(false);
   const [isClearMenuOpen, setIsClearMenuOpen] = useState(false);
   const [isSaveMenuOpen, setIsSaveMenuOpen] = useState(false);
+
+  // Состояние для записи видео
   const [isRecording, setIsRecording] = useState(false);
+  const mediaRecorderRef = useRef(null);
+  const recordedChunksRef = useRef([]);
+  const animationFrameRef = useRef(null);
 
   // управление вращением
   const [resetTrigger, setResetTrigger] = useState(false);
@@ -1012,6 +1017,212 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
     });
   };
 
+  // Начать запись видео
+  const startRecording = () => {
+    // 1. Проверка доступности контейнера
+    const containerRef = ref?.current || internalRef.current;
+
+    if (!containerRef) {
+      console.error("Ошибка: Canvas контейнер не инициализирован");
+      return;
+    }
+
+    // 2. Получение canvas элемента из React Three Fiber
+    const canvas = containerRef.querySelector('canvas');
+    if (!canvas) {
+      console.error("Ошибка: Canvas element не найден");
+      return;
+    }
+
+    // 3. Расчёт размеров с учётом текста и отступов (как в JPG)
+    const isMobile = window.innerWidth < 768;
+    const scaleFactor = isMobile ? 1.2 : 1.0;
+
+    let baseFontSize = Math.floor(canvas.width * 0.045 * scaleFactor);
+    const smallFontSize = Math.floor(baseFontSize * 0.7);
+    let footerFontSize = Math.floor(baseFontSize * 0.6);
+    const padding = Math.floor(baseFontSize * 1.1);
+
+    const topMargin = padding * (isMobile ? 2.0 : 1.2);
+    const titleDateSpacing = padding * (isMobile ? 1.0 : 0.9);
+    const footerSiteSpacing = padding * (isMobile ? 0.8 : 0.7);
+    const bottomMargin = padding * (isMobile ? 1.0 : 0.5);
+
+    // 4. Создание canvas с правильными размерами (включая текст)
+    const streamCanvas = document.createElement("canvas");
+    const streamCtx = streamCanvas.getContext("2d");
+    streamCanvas.width = canvas.width + padding * 2;
+    streamCanvas.height = canvas.height + topMargin + titleDateSpacing + footerSiteSpacing + bottomMargin;
+
+    // 5. Создание видео-потока из canvas (60 FPS)
+    const stream = streamCanvas.captureStream(60);
+
+    // 6. Функция отрисовки каждого кадра видео
+    const drawFrame = () => {
+      // Заливка белым фоном
+      streamCtx.fillStyle = "white";
+      streamCtx.fillRect(0, 0, streamCanvas.width, streamCanvas.height);
+
+      // Копируем 3D сцену с отступами (как в JPG)
+      streamCtx.drawImage(canvas, padding, topMargin + titleDateSpacing);
+
+      const { title, dateTime, footer, site } = getSaveMetadata();
+
+      // Функция для динамического подбора размера шрифта
+      const adjustFontSize = (text, maxWidth, initialFontSize) => {
+        let fontSize = initialFontSize;
+        do {
+          streamCtx.font = `bold ${fontSize}px Arial`;
+          if (streamCtx.measureText(text).width <= maxWidth) {
+            return fontSize;
+          }
+          fontSize--;
+        } while (fontSize > 10);
+        return fontSize;
+      };
+
+      // Подбор размера шрифта для каждого текста
+      baseFontSize = adjustFontSize(title, streamCanvas.width * 0.9, baseFontSize);
+      footerFontSize = adjustFontSize(footer, streamCanvas.width * 0.9, footerFontSize);
+      const siteFontSize = adjustFontSize(site, streamCanvas.width * 0.9, footerFontSize);
+
+      // 📌 Заголовок (зелёный, жирный)
+      streamCtx.font = `bold ${baseFontSize}px Arial`;
+      streamCtx.fillStyle = "green";
+      streamCtx.textAlign = "center";
+      streamCtx.fillText(title, streamCanvas.width / 2, topMargin);
+
+      // 📅 Дата (голубая)
+      streamCtx.font = `normal ${smallFontSize}px Arial`;
+      streamCtx.fillStyle = "dodgerblue";
+      streamCtx.fillText(dateTime, streamCanvas.width / 2, topMargin + titleDateSpacing);
+
+      // 🔽 Footer (розовый)
+      const footerY = streamCanvas.height - footerSiteSpacing - bottomMargin;
+      streamCtx.font = `normal ${footerFontSize}px Arial`;
+      streamCtx.fillStyle = "deeppink";
+      streamCtx.fillText(footer, streamCanvas.width / 2, footerY);
+
+      // 🌐 Сайт (синий, курсив)
+      streamCtx.font = `italic ${siteFontSize}px Arial`;
+      streamCtx.fillStyle = "blue";
+      streamCtx.fillText(site, streamCanvas.width / 2, footerY + footerSiteSpacing);
+
+      // Продолжаем запись следующего кадра
+      animationFrameRef.current = requestAnimationFrame(drawFrame);
+    };
+
+    // 7. Запуск отрисовки кадров
+    drawFrame();
+
+    // 8. Определение поддерживаемого формата видео
+    let mimeType;
+    let isMP4 = false;
+
+    // Проверка Safari (предпочитаем MP4)
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+    if (isSafari && MediaRecorder.isTypeSupported("video/mp4")) {
+      mimeType = "video/mp4";
+      isMP4 = true;
+      console.log("🍎 Safari обнаружен! Используем MP4.");
+    } else if (MediaRecorder.isTypeSupported("video/webm; codecs=vp9")) {
+      mimeType = "video/webm; codecs=vp9";
+    } else if (MediaRecorder.isTypeSupported("video/webm; codecs=vp8")) {
+      mimeType = "video/webm; codecs=vp8";
+    } else if (MediaRecorder.isTypeSupported("video/mp4")) {
+      mimeType = "video/mp4";
+      isMP4 = true;
+    } else {
+      console.error("⛔ Ваш браузер не поддерживает запись видео.");
+      alert("Запись видео не поддерживается в этом браузере");
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+      return;
+    }
+
+    // 9. Создание MediaRecorder для записи потока
+    try {
+      mediaRecorderRef.current = new MediaRecorder(stream, { mimeType });
+    } catch (error) {
+      console.error("Ошибка создания MediaRecorder:", error);
+      alert("Не удалось начать запись видео");
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+      return;
+    }
+
+    // 10. Обработчик получения данных
+    mediaRecorderRef.current.ondataavailable = (event) => {
+      if (event.data.size > 0) {
+        recordedChunksRef.current.push(event.data);
+      }
+    };
+
+    // 11. Обработчик завершения записи
+    mediaRecorderRef.current.onstop = () => saveVideo(isMP4);
+
+    // 12. Очистка буфера и запуск записи
+    recordedChunksRef.current = [];
+    mediaRecorderRef.current.start();
+    setIsRecording(true);
+
+    console.log(`🎥 Запись видео началась! Формат: ${isMP4 ? 'MP4' : 'WebM'}`);
+  };
+
+  // Остановка записи
+  const stopRecording = () => {
+    // 1. Остановка MediaRecorder
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+      mediaRecorderRef.current.stop();
+    }
+
+    // 2. Остановка отрисовки кадров
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
+    }
+
+    // 3. Обновление состояния
+    setIsRecording(false);
+    setIsSaveMenuOpen(false);
+
+    console.log("🛑 Запись видео остановлена!");
+  };
+
+  // Сохранение видео
+  const saveVideo = (isMP4Format) => {
+    // 1. Проверка наличия записанных данных
+    if (recordedChunksRef.current.length === 0) {
+      console.warn("⚠️ Нет записанных данных!");
+      return;
+    }
+
+    // 2. Определение типа видео и расширения
+    const mimeType = isMP4Format ? "video/mp4" : "video/webm";
+    const extension = isMP4Format ? "mp4" : "webm";
+
+    // 3. Создание Blob из записанных фрагментов
+    const blob = new Blob(recordedChunksRef.current, { type: mimeType });
+    const url = URL.createObjectURL(blob);
+
+    // 4. Создание ссылки для скачивания
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `Cube.${extension}`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    // 5. Освобождение памяти
+    URL.revokeObjectURL(url);
+    recordedChunksRef.current = [];
+
+    console.log(`💾 Видео сохранено как Cube.${extension}!`);
+  };
+
   return (
     <div className="picto-cube3x-container">
       {/* === Панели управления кубом === */}
@@ -1137,18 +1348,11 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
             {/* Сохранение сцены как PDF */}
             <button onClick={ saveAsPDF } title={t('save.savePDF')}><i className="fas fa-file-pdf"></i></button>
             {/* Сохранение сцены как Video */}
-            <button
-              className={`film-start ${isRecording ? 'film-stop' : ''}`}
-              onClick={
-              () => setIsRecording(prev => !prev)
-              // isRecording ? stopRecording : startRecording
-            }
-              title={isRecording ? t('save.stopVideo') : t('save.startVideo')}
-            >
+            <button className={`film-start ${isRecording ? 'film-stop' : ''}`} onClick={isRecording ? stopRecording : startRecording} title={isRecording ? t('save.stopVideo') : t('save.startVideo')}>
               <i className={`fas ${isRecording ? 'fa-stop-circle' : 'fa-film'}`}></i>
             </button>
-
           </div>
+
         </div>
 
       </div>
