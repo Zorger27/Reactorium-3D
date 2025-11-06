@@ -440,6 +440,7 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
   const [isShuffleMenuOpen, setIsShuffleMenuOpen] = useState(false);
   const [isClearMenuOpen, setIsClearMenuOpen] = useState(false);
   const [isSaveMenuOpen, setIsSaveMenuOpen] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
 
   // управление вращением
   const [resetTrigger, setResetTrigger] = useState(false);
@@ -1135,6 +1136,17 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
             <button onClick={ saveAsPNG } title={t('save.savePNG')}><i className="fas fa-file-image"></i></button>
             {/* Сохранение сцены как PDF */}
             <button onClick={ saveAsPDF } title={t('save.savePDF')}><i className="fas fa-file-pdf"></i></button>
+            {/* Сохранение сцены как Video */}
+            <button
+              className={`film-start ${isRecording ? 'film-stop' : ''}`}
+              onClick={
+              () => setIsRecording(prev => !prev)
+              // isRecording ? stopRecording : startRecording
+            }
+              title={isRecording ? t('save.stopVideo') : t('save.startVideo')}
+            >
+              <i className={`fas ${isRecording ? 'fa-stop-circle' : 'fa-film'}`}></i>
+            </button>
 
           </div>
         </div>
