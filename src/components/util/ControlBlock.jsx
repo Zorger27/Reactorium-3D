@@ -77,7 +77,7 @@ function ControlBlock({
                   />
 
                   <div className="gap-value">
-                    {gapConfig.value.toFixed(2)}x
+                    {gapConfig.value.toFixed(3)}x
                   </div>
                 </div>
               </div>
