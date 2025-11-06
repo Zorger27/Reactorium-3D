@@ -492,7 +492,8 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
       if (!event.target.closest('.special-buttons')) {
         setIsShuffleMenuOpen(false);
         setIsClearMenuOpen(false);
-        setIsSaveMenuOpen(isRecording ? false : true)
+        if (!isRecording) {setIsSaveMenuOpen(false);}
+        // setIsSaveMenuOpen(isRecording ? false : true)
       }
     };
 
@@ -1351,7 +1352,7 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
             {/* Сохранение сцены как PDF */}
             <button onClick={ saveAsPDF } title={t('save.savePDF')}><i className="fas fa-file-pdf"></i></button>
             {/* Сохранение сцены как Video */}
-            <button className={`film-start ${isRecording ? 'film-stop' : ''}`}
+            <button className={`film-start ${isRecording ? 'film-stop recording' : ''}`}
                     onClick={isRecording ? stopRecording : startRecording}
                     title={isRecording ? t('save.stopVideo') : t('save.startVideo')}
             >
