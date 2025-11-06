@@ -492,8 +492,11 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
       if (!event.target.closest('.special-buttons')) {
         setIsShuffleMenuOpen(false);
         setIsClearMenuOpen(false);
-        // if (!isRecording) {setIsSaveMenuOpen(false);}
-        setIsSaveMenuOpen(isRecording ? false : true)
+
+        // Меню сохранения НЕ закрываем во время записи видео
+        if (!isRecording) {
+          setIsSaveMenuOpen(false);
+        }
       }
     };
 
@@ -501,25 +504,33 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isShuffleMenuOpen, isClearMenuOpen, isSaveMenuOpen]);
+  }, [isShuffleMenuOpen, isClearMenuOpen, isSaveMenuOpen, isRecording]);
 
-  // Когда открывается меню перемешивания — закрываем меню очистки и меню сохранения
+  // Когда открывается меню перемешивания — закрываем остальные меню
   useEffect(() => {
     if (isShuffleMenuOpen) {
       setIsClearMenuOpen(false);
-      if (!isRecording) {setIsSaveMenuOpen(false);}
-    }
-  }, [isShuffleMenuOpen]);
 
-  // Когда открывается меню очистки — закрываем меню перемешивания и меню сохранения
+      // Меню сохранения НЕ закрываем во время записи видео
+      if (!isRecording) {
+        setIsSaveMenuOpen(false);
+      }
+    }
+  }, [isShuffleMenuOpen, isRecording]);
+
+  // Когда открывается меню очистки — закрываем остальные меню
   useEffect(() => {
     if (isClearMenuOpen) {
       setIsShuffleMenuOpen(false);
-      if (!isRecording) {setIsSaveMenuOpen(false);}
-    }
-  }, [isClearMenuOpen]);
 
-  // Когда открывается меню сохранения — закрываем меню перемешивания и меню очистки
+      // Меню сохранения НЕ закрываем во время записи видео
+      if (!isRecording) {
+        setIsSaveMenuOpen(false);
+      }
+    }
+  }, [isClearMenuOpen, isRecording]);
+
+  // Когда открывается меню сохранения — закрываем остальные меню
   useEffect(() => {
     if (isSaveMenuOpen) {
       setIsShuffleMenuOpen(false);
