@@ -492,8 +492,8 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
       if (!event.target.closest('.special-buttons')) {
         setIsShuffleMenuOpen(false);
         setIsClearMenuOpen(false);
-        if (!isRecording) {setIsSaveMenuOpen(false);}
-        // setIsSaveMenuOpen(isRecording ? false : true)
+        // if (!isRecording) {setIsSaveMenuOpen(false);}
+        setIsSaveMenuOpen(isRecording ? false : true)
       }
     };
 
