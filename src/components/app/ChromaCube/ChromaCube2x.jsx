@@ -98,9 +98,24 @@ const CubeGroup = ({ groupSize, gap }) => {
   return (
     <group ref={groupRef}>
       {positions.map((pos, i) => (
-        <mesh key={i} position={pos} geometry={geometry}>
-          <meshBasicMaterial color={colors[i].color} />
-        </mesh>
+        <group key={i} position={pos}>
+
+          {/* Сам куб */}
+          <mesh geometry={geometry}>
+            <meshBasicMaterial color={colors[i].color} />
+          </mesh>
+
+          {/* Контур куба */}
+          <lineSegments geometry={new THREE.EdgesGeometry(geometry)}>
+            <lineSegments
+              geometry={new THREE.EdgesGeometry(geometry)}
+              onUpdate={self => self.position.multiplyScalar(1.0005)} // чуть вытащить наружу
+            >
+              <lineBasicMaterial color="black" depthTest={true} />
+            </lineSegments>
+          </lineSegments>
+
+        </group>
       ))}
     </group>
   );
