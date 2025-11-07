@@ -153,7 +153,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     return result;
   }, [cubeSize, gap]);
 
-  // --- order (массив индексов 0..7). Если null — значит упорядочено.
+  // --- order (массив индексов 0..26). Если null — значит упорядочено.
   const STORAGE_KEY = 'pictoCube3xPositionsOrder';
 
   // Используем useState с ленивой инициализацией из localStorage
@@ -508,7 +508,7 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
   const handleStop = () => {setIsRotating(false);setResetTrigger(prev => !prev);};
   const handleFlip = () => {setFlipTrigger(prev => !prev);};
 
-  // --- фабрика хэндлеров для ControlBlock ---
+  // --- Фабрика хэндлеров для ControlBlock ---
   const makeHandlers = (setter, defaultValue, min, max, step = 1) => ({
     reset: () => setter(defaultValue),
     increase: () => setter(prev => Math.min(max, +(prev + step).toFixed(2))),
