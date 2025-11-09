@@ -59,10 +59,18 @@ const Box = () => {
   return (
     <group ref={meshRef}>
       <mesh geometry={new THREE.BoxGeometry(2.5, 2.5, 2.5)} material={materials} />
-      {/* Белые линии по рёбрам куба */}
-      <lineSegments geometry={new THREE.EdgesGeometry(new THREE.BoxGeometry(2.5,2.5,2.5))}>
-        <lineBasicMaterial color="black" depthTest={false} />
+      {/* Чёрные линии по рёбрам куба */}
+      <lineSegments
+        geometry={new THREE.EdgesGeometry(new THREE.BoxGeometry(2.5,2.5,2.5))}
+        // onUpdate={self => self.position.multiplyScalar(1.0005)} // чуть вытащить наружу
+      >
+        <lineBasicMaterial
+          color="black"
+          transparent
+          opacity={0.9}
+          depthTest={false} />
       </lineSegments>
+
     </group>
   );
 };
