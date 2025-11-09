@@ -62,8 +62,10 @@
     "multi-description": "Forja Múltiple"
   },
   "project5": {
-    "name": "Orbitron",
-    "disc": "Un espacio de luz y movimiento, donde los cubos brillan, se transforman y dan origen a nuevas formas"
+    "name": "Composiciónes",
+    "disc": "Un espacio de luz y movimiento, donde los cubos brillan, se transforman y dan origen a nuevas formas",
+    "name-orbitron": "Orbitron",
+    "name-cuboverse": "CuboVerse"
   },
   "about": {
     "title": "Reactorium 3D",

@@ -1,16 +1,41 @@
-import React from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import '@/pages/menu/Project5.scss';
+import Orbitron from "@/components/app/Compositions/Orbitron.jsx";
+import CuboVerse from "@/components/app/Compositions/CuboVerse.jsx";
 import { useTranslation } from 'react-i18next';
 import {Link} from "react-router-dom";
 import {useSpaCleanup} from "@/hooks/useSpaCleanup.js";
 import ToggleFooterButton from "@/components/util/ToggleFooterButton.jsx";
 import MetaTags from "@/components/seo/MetaTags.jsx";
+import CanvasFullScreen from "@/components/util/CanvasFullScreen.jsx";
 
 export const Project5 = () => {
   const { t } = useTranslation();
   const siteUrl = import.meta.env.VITE_SITE_URL;
-
   useSpaCleanup();
+
+  const [mode, setMode] = useState("orbitron"); // "orbitron" | "cuboverse"
+  const canvasRef = useRef(null);
+  const [canvasContainer, setCanvasContainer] = useState(null);
+
+  // Callback для установки контейнера
+  const setCanvasRef = useCallback((element) => {
+    canvasRef.current = element;
+    setCanvasContainer(element);
+  }, []);
+
+  // Загружаем сохранённый режим при первом рендере
+  useEffect(() => {
+    const savedMode = localStorage.getItem("compositionMode");
+    if (savedMode === "orbitron" || savedMode === "cuboverse") {
+      setMode(savedMode);
+    }
+  }, []);
+
+  // Сохраняем режим при каждом изменении
+  useEffect(() => {
+    localStorage.setItem("compositionMode", mode);
+  }, [mode]);
 
   return (
     <div className="project5">
@@ -44,9 +69,21 @@ export const Project5 = () => {
         <h1><Link to="/" className="back-to-menu" title={t('extra.back')}>
           <i className="fa fa-arrow-circle-left"></i></Link>
           {t('project5.name')}
+
+          <div className="mode-switch">
+            <button className={mode} onClick={() => setMode(mode === "orbitron" ? "cuboverse" : "orbitron")}>
+              {mode === "orbitron" ? t("project5.name-cuboverse") : t("project5.name-orbitron")}
+            </button>
+          </div>
+
+          <CanvasFullScreen canvasContainer={canvasContainer} />
           <ToggleFooterButton />
         </h1>
         <hr className="custom-line" />
+
+        {mode === "orbitron" && <Orbitron ref={setCanvasRef} />}
+        {mode === "cuboverse" && <CuboVerse ref={setCanvasRef} />}
+
       </div>
     </div>
   );

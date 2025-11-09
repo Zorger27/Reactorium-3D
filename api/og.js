@@ -61,9 +61,9 @@ export default function handler(req, res) {
         es: { title: "CubeForge", desc: "Un taller digital donde puedes forjar y modificar tus propios cubos en tiempo real (creado por Anatolii Zorin)" }
       },
       project5: {
-        en: { title: "Orbitron", desc: "A space of light and motion, where cubes shine, transform, and give birth to new visions (created by Anatolii Zorin)" },
-        uk: { title: "Orbitron", desc: "Простір світла й руху, де куби сяють, змінюються і народжують нові образи (створено Анатолієм Зоріним)" },
-        es: { title: "Orbitron", desc: "Un espacio de luz y movimiento, donde los cubos brillan, se transforman y dan origen a nuevas formas (creado por Anatolii Zorin)" }
+        en: { title: "Compositions", desc: "A space of light and motion, where cubes shine, transform, and give birth to new visions (created by Anatolii Zorin)" },
+        uk: { title: "Compositions", desc: "Простір світла й руху, де куби сяють, змінюються і народжують нові образи (створено Анатолієм Зоріним)" },
+        es: { title: "Compositions", desc: "Un espacio de luz y movimiento, donde los cubos brillan, se transforman y dan origen a nuevas formas (creado por Anatolii Zorin)" }
       },
       about: {
         en: { title: "About", desc: "Detailed information about Reactorium 3D (created by Anatolii Zorin)" },

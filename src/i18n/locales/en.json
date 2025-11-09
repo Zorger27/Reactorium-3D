@@ -62,8 +62,10 @@
     "multi-description": "Multi-Cube Forge"
   },
   "project5": {
-    "name": "Orbitron",
-    "disc": "A space of light and motion, where cubes shine, transform, and give birth to new visions"
+    "name": "Compositions",
+    "disc": "A space of light and motion, where cubes shine, transform, and give birth to new visions",
+    "name-orbitron": "Orbitron",
+    "name-cuboverse": "CuboVerse"
   },
   "about": {
     "title": "Reactorium 3D",

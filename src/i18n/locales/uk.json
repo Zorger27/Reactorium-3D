@@ -62,8 +62,10 @@
     "multi-description": "Кузня кубів"
   },
   "project5": {
-    "name": "Orbitron",
-    "disc": "Простір світла й руху, де куби сяють, змінюються і народжують нові образи"
+    "name": "Композиції",
+    "disc": "Простір світла й руху, де куби сяють, змінюються і народжують нові образи",
+    "name-orbitron": "Orbitron",
+    "name-cuboverse": "CuboVerse"
   },
   "about": {
     "title": "Reactorium 3D",
