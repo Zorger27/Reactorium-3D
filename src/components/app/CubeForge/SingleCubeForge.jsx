@@ -671,7 +671,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
 
   // Функция получения данных для сохранения
   const getSaveMetadata = () => {
-    const title = SingleCubeForge.displayName;
+    const title = t('project4.single-description');
     const dateTime = new Date().toLocaleString();
     const footer = t('save.created');
     const site = "https://reactorium-3d.vercel.app";
