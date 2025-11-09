@@ -55,8 +55,10 @@
   "project4": {
     "name": "CubeForge",
     "disc": "Un taller digital donde puedes forjar y modificar tus propios cubos en tiempo real",
-    "single": "Único",
-    "multi": "Múltiple"
+    "single-title": "Único",
+    "single-description": "Forja Única",
+    "multi-title": "Múltiple",
+    "multi-description": "Forja Múltiple"
   },
   "project5": {
     "name": "Orbitron",

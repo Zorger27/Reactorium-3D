@@ -55,8 +55,10 @@
   "project4": {
     "name": "CubeForge",
     "disc": "Цифрова майстерня, де можна кувати й змінювати власні куби в реальному часі",
-    "single": "Один",
-    "multi": "Мульті"
+    "single-title": "Один",
+    "single-description": "Кузня одного куба",
+    "multi-title": "Мульті",
+    "multi-description": "Кузня кубів"
   },
   "project5": {
     "name": "Orbitron",

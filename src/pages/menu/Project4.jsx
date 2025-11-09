@@ -72,7 +72,7 @@ export const Project4 = () => {
 
           <div className="mode-switch">
             <button className={mode} onClick={() => setMode(mode === "single" ? "multi" : "single")}>
-              {mode === "single" ? t("project4.multi") : t("project4.single")}
+              {mode === "single" ? t("project4.multi-title") : t("project4.single-title")}
             </button>
           </div>
 
