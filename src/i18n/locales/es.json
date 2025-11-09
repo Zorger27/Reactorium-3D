@@ -50,7 +50,8 @@
     "disc": "Un cubo-galería, en cuyas caras las imágenes cobran vida en perfecta armonía de perspectiva",
     "picto-cube-1x": "1x",
     "picto-cube-2x": "2x",
-    "picto-cube-3x": "3x"
+    "picto-cube-3x": "3x",
+    "picto-cube-3x-desc": "Galería de Tres Niveles"
   },
   "project4": {
     "name": "CubeForge",

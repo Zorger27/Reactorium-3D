@@ -50,7 +50,8 @@
     "disc": "Куб-галерея, на гранях якого оживають зображення в ідеальній гармонії перспективи",
     "picto-cube-1x": "1x",
     "picto-cube-2x": "2x",
-    "picto-cube-3x": "3x"
+    "picto-cube-3x": "3x",
+    "picto-cube-3x-desc": "Трирівнева Куб-галерея"
   },
   "project4": {
     "name": "CubeForge",

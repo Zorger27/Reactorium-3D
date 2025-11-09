@@ -671,7 +671,7 @@ const PictoCube3x = forwardRef(({ groupSize = 2.5 }, ref) => {
 
   // Функция получения данных для сохранения
   const getSaveMetadata = () => {
-    const title = PictoCube3x.displayName;
+    const title = t('project3.picto-cube-3x-desc');
     const dateTime = new Date().toLocaleString();
     const footer = t('save.created');
     const site = "https://reactorium-3d.vercel.app";
