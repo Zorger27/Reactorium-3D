@@ -54,7 +54,9 @@
   },
   "project4": {
     "name": "CubeForge",
-    "disc": "Un taller digital donde puedes forjar y modificar tus propios cubos en tiempo real"
+    "disc": "Un taller digital donde puedes forjar y modificar tus propios cubos en tiempo real",
+    "single": "Único",
+    "multi": "Múltiple"
   },
   "project5": {
     "name": "Orbitron",

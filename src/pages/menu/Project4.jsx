@@ -1,16 +1,41 @@
-import React from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import '@/pages/menu/Project4.scss';
+import SingleCubeForge from "@/components/app/CubeForge/SingleCubeForge.jsx";
+import MultiCubeForge from "@/components/app/CubeForge/MultiCubeForge.jsx";
 import { useTranslation } from 'react-i18next';
 import {Link} from "react-router-dom";
 import {useSpaCleanup} from "@/hooks/useSpaCleanup.js";
 import ToggleFooterButton from "@/components/util/ToggleFooterButton.jsx";
 import MetaTags from "@/components/seo/MetaTags.jsx";
+import CanvasFullScreen from "@/components/util/CanvasFullScreen.jsx";
 
 export const Project4 = () => {
   const { t } = useTranslation();
   const siteUrl = import.meta.env.VITE_SITE_URL;
-
   useSpaCleanup();
+
+  const [mode, setMode] = useState("single"); // "single" | "multi"
+  const canvasRef = useRef(null);
+  const [canvasContainer, setCanvasContainer] = useState(null);
+
+  // Callback для установки контейнера
+  const setCanvasRef = useCallback((element) => {
+    canvasRef.current = element;
+    setCanvasContainer(element);
+  }, []);
+
+  // Загружаем сохранённый режим при первом рендере
+  useEffect(() => {
+    const savedMode = localStorage.getItem("cubeForgeMode");
+    if (savedMode === "single" || savedMode === "multi") {
+      setMode(savedMode);
+    }
+  }, []);
+
+  // Сохраняем режим при каждом изменении
+  useEffect(() => {
+    localStorage.setItem("cubeForgeMode", mode);
+  }, [mode]);
 
   return (
     <div className="project4">
@@ -44,9 +69,21 @@ export const Project4 = () => {
         <h1><Link to="/" className="back-to-menu" title={t('extra.back')}>
           <i className="fa fa-arrow-circle-left"></i></Link>
           {t('project4.name')}
+
+          <div className="mode-switch">
+            <button className={mode} onClick={() => setMode(mode === "single" ? "multi" : "single")}>
+              {mode === "single" ? t("project4.multi") : t("project4.single")}
+            </button>
+          </div>
+
+          <CanvasFullScreen canvasContainer={canvasContainer} />
           <ToggleFooterButton />
         </h1>
         <hr className="custom-line" />
+
+        {mode === "single" && <SingleCubeForge ref={setCanvasRef} />}
+        {mode === "multi" && <MultiCubeForge ref={setCanvasRef} />}
+
       </div>
     </div>
   );

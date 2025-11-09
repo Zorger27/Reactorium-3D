@@ -54,7 +54,9 @@
   },
   "project4": {
     "name": "CubeForge",
-    "disc": "A digital workshop where you can forge and reshape your own cubes in real time"
+    "disc": "A digital workshop where you can forge and reshape your own cubes in real time",
+    "single": "Single",
+    "multi": "Multi"
   },
   "project5": {
     "name": "Orbitron",
