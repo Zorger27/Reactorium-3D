@@ -35,12 +35,12 @@ const Box = () => {
 
   // Цвета для 6 сторон с прозрачностью - используем MeshBasicMaterial для ярких цветов
   const materials = [
-    new THREE.MeshBasicMaterial({ color: 'red', transparent: true, opacity: 0.7 }),
-    new THREE.MeshBasicMaterial({ color: 'green', transparent: true, opacity: 0.7 }),
-    new THREE.MeshBasicMaterial({ color: 'blue', transparent: true, opacity: 0.7 }),
-    new THREE.MeshBasicMaterial({ color: 'yellow', transparent: true, opacity: 0.7 }),
-    new THREE.MeshBasicMaterial({ color: 'purple', transparent: true, opacity: 0.7 }),
-    new THREE.MeshBasicMaterial({ color: 'cyan', transparent: true, opacity: 0.7 }),
+    new THREE.MeshBasicMaterial({ color: 'red' }),
+    new THREE.MeshBasicMaterial({ color: 'green' }),
+    new THREE.MeshBasicMaterial({ color: 'blue' }),
+    new THREE.MeshBasicMaterial({ color: 'yellow' }),
+    new THREE.MeshBasicMaterial({ color: 'purple' }),
+    new THREE.MeshBasicMaterial({ color: 'cyan' }),
   ];
 
   // Устанавливаем начальный наклон куба
@@ -61,7 +61,7 @@ const Box = () => {
       <mesh geometry={new THREE.BoxGeometry(2.5, 2.5, 2.5)} material={materials} />
       {/* Белые линии по рёбрам куба */}
       <lineSegments geometry={new THREE.EdgesGeometry(new THREE.BoxGeometry(2.5,2.5,2.5))}>
-        <lineBasicMaterial color="white" transparent opacity={0.8} depthTest={false} />
+        <lineBasicMaterial color="black" depthTest={false} />
       </lineSegments>
     </group>
   );
