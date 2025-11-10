@@ -111,7 +111,7 @@ const Orbitron = forwardRef((props, ref) => {
       >
         <perspectiveCamera makeDefault position={[0, 0, 2.5]} />
         <ambientLight intensity={0.6} />
-        <Box />
+        {/*<Box />*/}
         <CameraControls />
       </Canvas>
     </div>

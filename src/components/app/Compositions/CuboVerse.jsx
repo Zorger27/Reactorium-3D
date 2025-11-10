@@ -134,7 +134,7 @@ const CuboVerse = forwardRef((props, ref) => {
       >
         <perspectiveCamera makeDefault position={[4, 4, 4]} />
         <ambientLight intensity={1.2} />
-        <TextureBox />
+        {/*<TextureBox />*/}
         <CameraControls />
       </Canvas>
     </div>
