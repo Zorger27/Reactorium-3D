@@ -578,7 +578,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
     }
   }, [isSaveMenuOpen]);
 
-  // === Очистка ТЕКУЩЕГО localStorage (только PictoCube3x) ===
+  // === Очистка ТЕКУЩЕГО localStorage (только SingleCubeForge) ===
   const clearCurrentStorage = () => {
     // Проверяем, есть ли вообще что очищать
     const hasData = Object.keys(localStorage).some(key => key.startsWith('pictoCube3x'));
