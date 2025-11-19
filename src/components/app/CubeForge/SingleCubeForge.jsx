@@ -102,14 +102,7 @@ const DEFAULT_SIDE_ROTATIONS = {
 const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating, direction, speed, resetTrigger, flipTrigger, smallCubeScale, shuffleTrigger, positionsResetTrigger, cubeMode }) => {
   const groupRef = useRef(null);
   const cubeSize = groupSize / 3;
-
-  // === Расчет количества кубов в зависимости от режима ===
-  const getCubeCount = () => {
-    // cubeMode теперь уже содержит количество кубов (1, 8 или 27)
-    return cubeMode;
-  };
-
-  const cubeCount = cubeMode;
+  const cubeCount = cubeMode; // Количество кубов в зависимости от режима
 
   const geometry = useMemo(
     () => new THREE.BoxGeometry(cubeSize * smallCubeScale, cubeSize * smallCubeScale, cubeSize * smallCubeScale),
