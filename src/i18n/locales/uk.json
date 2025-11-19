@@ -117,7 +117,7 @@
     "created": "Створено за допомогою Reactorium 3D"
   },
   "control": {
-    "mode": "Режим",
+    "level": "Рівень",
     "speed": "Швидкість",
     "gap": "Зазор",
     "small-cube-size": "Розмір",

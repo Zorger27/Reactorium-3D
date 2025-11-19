@@ -99,10 +99,10 @@ const DEFAULT_SIDE_ROTATIONS = {
   bottom: 0
 };
 
-const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating, direction, speed, resetTrigger, flipTrigger, smallCubeScale, shuffleTrigger, positionsResetTrigger, cubeMode }) => {
+const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating, direction, speed, resetTrigger, flipTrigger, smallCubeScale, shuffleTrigger, positionsResetTrigger, cubeLevel }) => {
   const groupRef = useRef(null);
   const cubeSize = groupSize / 3;
-  const cubeCount = cubeMode; // Количество кубов в зависимости от режима
+  const cubeCount = cubeLevel; // Количество кубов в зависимости от уровня
 
   const geometry = useMemo(
     () => new THREE.BoxGeometry(cubeSize * smallCubeScale, cubeSize * smallCubeScale, cubeSize * smallCubeScale),
@@ -140,11 +140,11 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
 
   // === Базовые упорядоченные позиции в зависимости от cubeMode ===
   const basePositions = useMemo(() => {
-    if (cubeMode === 1) {
+    if (cubeLevel === 1) {
       // Один куб в центре
       return [[0, 0, 0]];
-    } else if (cubeMode === 8) {
-      // 2x2x2 кубов
+    } else if (cubeLevel === 8) {
+      // 2x2x2 кубов (8 кубов)
       const step = (cubeSize + gap) / 2;
       const coords = [-step, step];
       const result = [];
@@ -170,7 +170,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
       }
       return result;
     }
-  }, [cubeSize, gap, cubeMode]);
+  }, [cubeSize, gap, cubeLevel]);
 
   // --- order (массив индексов 0..26). Если null — значит упорядочено.
   const STORAGE_KEY = 'singleCubeForgePositionsOrder';
@@ -238,7 +238,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     isInitializedRef.current = false;
     currentTargetsRef.current = [];
     setOrder(null);
-  }, [cubeMode]);
+  }, [cubeLevel]);
 
   // При изменении gap - синхронно обновляем currentTargets БЕЗ анимации
   useEffect(() => {
@@ -532,7 +532,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
   const [direction, setDirection, resetDirection] = useLocalStorage("singleCubeForgeDirection", 1, v => parseInt(v, 10));
   const [isRotating, setIsRotating, resetIsRotating] = useLocalStorage("singleCubeForgeIsRotating", true, v => v === "true");
   // === Новый режим кубов ===
-  const [cubeMode, setCubeMode] = useLocalStorage("singleCubeForgeCubeMode", 3, v => parseInt(v, 10));
+  const [cubeLevel, setCubeLevel] = useLocalStorage("singleCubeForgeCubeLevel", 3, v => parseInt(v, 10));
 
   // --- кнопки вращения ---
   const handleClockwise = () => {setDirection(1);setIsRotating(true);};
@@ -549,7 +549,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
   });
 
   // Кнопки управления
-  const cubeModeHandlers = makeHandlers(setCubeMode, 3, 1, 3, 1);
+  const cubeLevelHandlers = makeHandlers(setCubeLevel, 3, 1, 3, 1);
   const speedHandlers = makeHandlers(setSpeed, 4, 0, 10, 1);
   const gapHandlers = makeHandlers(setGap, 0.15, 0, 0.5, 0.01);
   const smallCubeScaleHandlers = makeHandlers(setSmallCubeScale, 0.85, 0.5, 1, 0.05);
@@ -558,14 +558,14 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
   const rotZHandlers = makeHandlers(setRotationZ, 0, -180, 180);
 
   // Объект для маппинга режима на количество кубов:
-  const cubeModeMap = {
-    1: 1,   // режим 1 = 1 куб
-    2: 8,   // режим 2 = 8 кубов
-    3: 27   // режим 3 = 27 кубов
+  const cubeLevelMap = {
+    1: 1,   // уровень 1 = 1 куб
+    2: 8,   // уровень 2 = 8 кубов
+    3: 27   // уровень 3 = 27 кубов
   };
 
   // Фактическое количество кубов:
-  const actualCubeCount = cubeModeMap[cubeMode];
+  const actualCubeCount = cubeLevelMap[cubeLevel];
 
   // useEffect для закрытия при клике вне меню
   useEffect(() => {
@@ -1330,17 +1330,17 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
         {openBlock === null && (
           <>
             <ControlBlock
-              label={t("control.mode")}
+              label={t("control.level")}
               icon="fa-solid fa-cubes"
               isOpen={false}
-              onToggle={() => setOpenBlock("cubeMode")}
+              onToggle={() => setOpenBlock("cubeLevel")}
               gapConfig={{
-                value: cubeMode,
+                value: cubeLevel,
                 min: 1,
                 max: 3,
                 step: 1,
-                onChange: setCubeMode,
-                ...cubeModeHandlers
+                onChange: cubeLevel,
+                ...cubeLevelHandlers
               }}
             />
 
@@ -1365,20 +1365,20 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
           </>
         )}
 
-        {/* Состояние: открыт cubeMode → показываем только его */}
-        {openBlock === "cubeMode" && (
+        {/* Состояние: открыт cubeLevel → показываем только его */}
+        {openBlock === "cubeLevel" && (
           <ControlBlock
-            label={t("control.mode")}
+            label={t("control.level")}
             icon="fa-solid fa-cubes"
             isOpen={true}
             onToggle={() => setOpenBlock(null)}
             gapConfig={{
-              value: cubeMode,
+              value: cubeLevel,
               min: 1,
               max: 3,
               step: 1,
-              onChange: setCubeMode,
-              ...cubeModeHandlers
+              onChange: cubeLevel,
+              ...cubeLevelHandlers
             }}
           />
         )}
@@ -1512,7 +1512,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
             smallCubeScale={smallCubeScale}
             shuffleTrigger={shuffleTrigger}
             positionsResetTrigger={positionsResetTrigger}
-            cubeMode={actualCubeCount}
+            cubeLevel={actualCubeCount}
           />
           <CameraControls />
         </Canvas>
