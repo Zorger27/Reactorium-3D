@@ -105,12 +105,11 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
 
   // === Расчет количества кубов в зависимости от режима ===
   const getCubeCount = () => {
-    if (cubeMode === 1) return 1;
-    if (cubeMode === 8) return 8;
-    return 27; // cubeMode === 27
+    // cubeMode теперь уже содержит количество кубов (1, 8 или 27)
+    return cubeMode;
   };
 
-  const cubeCount = getCubeCount();
+  const cubeCount = cubeMode;
 
   const geometry = useMemo(
     () => new THREE.BoxGeometry(cubeSize * smallCubeScale, cubeSize * smallCubeScale, cubeSize * smallCubeScale),
@@ -540,7 +539,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
   const [direction, setDirection, resetDirection] = useLocalStorage("singleCubeForgeDirection", 1, v => parseInt(v, 10));
   const [isRotating, setIsRotating, resetIsRotating] = useLocalStorage("singleCubeForgeIsRotating", true, v => v === "true");
   // === Новый режим кубов ===
-  const [cubeMode, setCubeMode] = useLocalStorage("singleCubeForgeCubeMode", 27, v => parseInt(v, 10));
+  const [cubeMode, setCubeMode] = useLocalStorage("singleCubeForgeCubeMode", 3, v => parseInt(v, 10));
 
   // --- кнопки вращения ---
   const handleClockwise = () => {setDirection(1);setIsRotating(true);};
@@ -557,12 +556,23 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
   });
 
   // Кнопки управления
+  const cubeModeHandlers = makeHandlers(setCubeMode, 3, 1, 3, 1);
   const speedHandlers = makeHandlers(setSpeed, 4, 0, 10, 1);
   const gapHandlers = makeHandlers(setGap, 0.15, 0, 0.5, 0.01);
   const smallCubeScaleHandlers = makeHandlers(setSmallCubeScale, 0.85, 0.5, 1, 0.05);
   const rotXHandlers = makeHandlers(setRotationX, 90, -180, 180);
   const rotYHandlers = makeHandlers(setRotationY, 0, -180, 180);
   const rotZHandlers = makeHandlers(setRotationZ, 0, -180, 180);
+
+  // Объект для маппинга режима на количество кубов:
+  const cubeModeMap = {
+    1: 1,   // режим 1 = 1 куб
+    2: 8,   // режим 2 = 8 кубов
+    3: 27   // режим 3 = 27 кубов
+  };
+
+  // Фактическое количество кубов:
+  const actualCubeCount = cubeModeMap[cubeMode];
 
   // useEffect для закрытия при клике вне меню
   useEffect(() => {
@@ -1323,37 +1333,24 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
       {/* === Панели управления кубом === */}
       <div className="cube-controls">
 
-        <label htmlFor="cube-mode">{t("control.cube-mode") || "Режим кубов"}</label>
-        <div className="mode-buttons">
-          <button
-            className={`mode-btn ${cubeMode === 1 ? 'active' : ''}`}
-            onClick={() => setCubeMode(1)}
-            title="Один большой куб"
-          >
-            <i className="fas fa-cube"></i>
-            <span>1x1x1</span>
-          </button>
-          <button
-            className={`mode-btn ${cubeMode === 8 ? 'active' : ''}`}
-            onClick={() => setCubeMode(8)}
-            title="2x2x2 куба"
-          >
-            <i className="fas fa-cube"></i>
-            <span>2x2x2</span>
-          </button>
-          <button
-            className={`mode-btn ${cubeMode === 27 ? 'active' : ''}`}
-            onClick={() => setCubeMode(27)}
-            title="3x3x3 куба"
-          >
-            <i className="fas fa-cube"></i>
-            <span>3x3x3</span>
-          </button>
-        </div>
-
         {/* Состояние: ничего не открыто → показываем ВСЕ блоки (закрытые) */}
         {openBlock === null && (
           <>
+            <ControlBlock
+              label={t("control.cube-mode") || "Режим кубов"}
+              icon="fa-solid fa-cubes"
+              isOpen={false}
+              onToggle={() => setOpenBlock("cubeMode")}
+              gapConfig={{
+                value: cubeMode,
+                min: 1,
+                max: 3,
+                step: 1,
+                onChange: setCubeMode,
+                ...cubeModeHandlers
+              }}
+            />
+
             <ControlBlock label={t("control.speed")} icon="fa-solid fa-gauge-simple-high" isOpen={false} onToggle={() => setOpenBlock("speed")}
                           gapConfig={{value: speed, min: 0, max: 10, step: 1, onChange: setSpeed, ...speedHandlers,}}
             />
@@ -1373,6 +1370,24 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
                           ]}
             />
           </>
+        )}
+
+        {/* Состояние: открыт cubeMode → показываем только его */}
+        {openBlock === "cubeMode" && (
+          <ControlBlock
+            label={t("control.cube-mode") || "Режим кубов"}
+            icon="fa-solid fa-cubes"
+            isOpen={true}
+            onToggle={() => setOpenBlock(null)}
+            gapConfig={{
+              value: cubeMode,
+              min: 1,
+              max: 3,
+              step: 1,
+              onChange: setCubeMode,
+              ...cubeModeHandlers
+            }}
+          />
         )}
 
         {/* Состояние: открыт speed → показываем только его */}
@@ -1504,7 +1519,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
             smallCubeScale={smallCubeScale}
             shuffleTrigger={shuffleTrigger}
             positionsResetTrigger={positionsResetTrigger}
-            cubeMode={cubeMode}
+            cubeMode={actualCubeCount}
           />
           <CameraControls />
         </Canvas>
