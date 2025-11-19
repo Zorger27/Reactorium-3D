@@ -518,11 +518,11 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
   const recordedChunksRef = useRef([]);
   const animationFrameRef = useRef(null);
 
-  // управление вращением
+  // Управление вращением
   const [resetTrigger, setResetTrigger] = useState(false);
   const [flipTrigger, setFlipTrigger] = useState(false);
 
-  // === загрузка и сохранение в localStorage ===
+  // Загрузка и сохранение в localStorage
   const [gap, setGap, resetGap] = useLocalStorage("singleCubeForgeGap", 0.15, parseFloat);
   const [smallCubeScale, setSmallCubeScale, resetSmallCubeScale] = useLocalStorage("singleCubeForgeSmallCubeScale", 0.85, parseFloat);
   const [rotationX, setRotationX, resetRotationX] = useLocalStorage("singleCubeForgeRotX", 90, parseFloat);
@@ -531,10 +531,9 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
   const [speed, setSpeed, resetSpeed] = useLocalStorage("singleCubeForgeSpeed", 4, parseFloat);
   const [direction, setDirection, resetDirection] = useLocalStorage("singleCubeForgeDirection", 1, v => parseInt(v, 10));
   const [isRotating, setIsRotating, resetIsRotating] = useLocalStorage("singleCubeForgeIsRotating", true, v => v === "true");
-  // === Новый режим кубов ===
   const [cubeLevel, setCubeLevel] = useLocalStorage("singleCubeForgeCubeLevel", 3, v => parseInt(v, 10));
 
-  // --- кнопки вращения ---
+  // Кнопки вращения
   const handleClockwise = () => {setDirection(1);setIsRotating(true);};
   const handleCounterClockwise = () => {setDirection(-1);setIsRotating(true);};
   const handlePause = () => {setIsRotating(prev => !prev);};
@@ -567,7 +566,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
   // Фактическое количество кубов:
   const actualCubeCount = cubeLevelMap[cubeLevel];
 
-  // useEffect для закрытия при клике вне меню
+  // useEffect для закрытия при клике вне меню!!!!!
   useEffect(() => {
     if (!isShuffleMenuOpen && !isClearMenuOpen && !isSaveMenuOpen) return;
 
@@ -625,7 +624,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
   // === Очистка ТЕКУЩЕГО localStorage (только SingleCubeForge) ===
   const clearCurrentStorage = () => {
     // Проверяем, есть ли вообще что очищать
-    const hasData = Object.keys(localStorage).some(key => key.startsWith('pictoCube3x'));
+    const hasData = Object.keys(localStorage).some(key => key.startsWith('singleCubeForge'));
     if (!hasData) {
       alert(t('storage.noData')); // "Немає даних для очищення. 🙄🫤"
       return;
