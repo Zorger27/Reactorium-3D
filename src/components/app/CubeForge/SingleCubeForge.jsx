@@ -99,9 +99,18 @@ const DEFAULT_SIDE_ROTATIONS = {
   bottom: 0
 };
 
-const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating, direction, speed, resetTrigger, flipTrigger, smallCubeScale, shuffleTrigger, positionsResetTrigger }) => {
+const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating, direction, speed, resetTrigger, flipTrigger, smallCubeScale, shuffleTrigger, positionsResetTrigger, cubeMode }) => {
   const groupRef = useRef(null);
   const cubeSize = groupSize / 3;
+
+  // === Расчет количества кубов в зависимости от режима ===
+  const getCubeCount = () => {
+    if (cubeMode === 1) return 1;
+    if (cubeMode === 8) return 8;
+    return 27; // cubeMode === 27
+  };
+
+  const cubeCount = getCubeCount();
 
   const geometry = useMemo(
     () => new THREE.BoxGeometry(cubeSize * smallCubeScale, cubeSize * smallCubeScale, cubeSize * smallCubeScale),
@@ -126,7 +135,6 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
         const path = texturePathList[i];
         const tex = loaded[i];
         if (path && tex) {
-          // базовые параметры для всех текстур
           tex.colorSpace = THREE.SRGBColorSpace;
           tex.flipY = true;
           tex.center = new THREE.Vector2(0.5, 0.5);
@@ -138,20 +146,39 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     return map;
   }, [loaded, texturePathList]);
 
-  // === Базовые упорядоченные позиции для 3×3×3 (27 кубиков) ===
+  // === Базовые упорядоченные позиции в зависимости от cubeMode ===
   const basePositions = useMemo(() => {
-    const step = cubeSize + gap;
-    const coords = [-step, 0, step];
-    const result = [];
-    for (let x of coords) {
-      for (let y of coords) {
-        for (let z of coords) {
-          result.push([x, y, z]);
+    if (cubeMode === 1) {
+      // Один куб в центре
+      return [[0, 0, 0]];
+    } else if (cubeMode === 8) {
+      // 2x2x2 кубов
+      const step = (cubeSize + gap) / 2;
+      const coords = [-step, step];
+      const result = [];
+      for (let x of coords) {
+        for (let y of coords) {
+          for (let z of coords) {
+            result.push([x, y, z]);
+          }
         }
       }
+      return result;
+    } else {
+      // 3x3x3 кубов (27 кубов)
+      const step = cubeSize + gap;
+      const coords = [-step, 0, step];
+      const result = [];
+      for (let x of coords) {
+        for (let y of coords) {
+          for (let z of coords) {
+            result.push([x, y, z]);
+          }
+        }
+      }
+      return result;
     }
-    return result;
-  }, [cubeSize, gap]);
+  }, [cubeSize, gap, cubeMode]);
 
   // --- order (массив индексов 0..26). Если null — значит упорядочено.
   const STORAGE_KEY = 'singleCubeForgePositionsOrder';
@@ -162,7 +189,8 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed) && parsed.length === 27) {
+        // Проверяем соответствие текущему режиму
+        if (Array.isArray(parsed) && parsed.length === cubeCount) {
           return parsed;
         }
       }
@@ -203,7 +231,8 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
       isInitializedRef.current = true;
       currentTargetsRef.current = targets.map(pos => [...pos]);
 
-      groupRef.current.children.forEach((mesh, i) => {
+      const children = Array.from(groupRef.current.children);
+      children.forEach((mesh, i) => {
         const t = currentTargetsRef.current[i];
         if (t) {
           mesh.position.set(t[0], t[1], t[2]);
@@ -212,13 +241,21 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     }
   }, [targets]);
 
+  // === Сброс инициализации при смене режима ===
+  useEffect(() => {
+    isInitializedRef.current = false;
+    currentTargetsRef.current = [];
+    setOrder(null);
+  }, [cubeMode]);
+
   // При изменении gap - синхронно обновляем currentTargets БЕЗ анимации
   useEffect(() => {
     if (!isMovingRef.current && currentTargetsRef.current.length > 0 && isInitializedRef.current) {
       currentTargetsRef.current = targets.map(pos => [...pos]);
 
       if (groupRef.current) {
-        groupRef.current.children.forEach((mesh, i) => {
+        const children = Array.from(groupRef.current.children);
+        children.forEach((mesh, i) => {
           const t = currentTargetsRef.current[i];
           if (t) {
             mesh.position.set(t[0], t[1], t[2]);
@@ -228,7 +265,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     }
   }, [targets, gap]);
 
-  // При shuffleTrigger — создаём новую случайную перестановку индексов
+  // === Перемешивание кубов ===
   useEffect(() => {
     if (shuffleTrigger === 0) return;
 
@@ -244,7 +281,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     isMovingRef.current = true;
   }, [shuffleTrigger, basePositions.length]);
 
-  // При positionsResetTrigger — очищаем order
+  // === Сброс позиций кубов ===
   useEffect(() => {
     if (positionsResetTrigger === 0) return;
 
@@ -252,7 +289,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     isMovingRef.current = true;
   }, [positionsResetTrigger]);
 
-  // === Первоначальная ориентация - Наклон по Эйлеру ===
+  // === Первоначальная ориентация ===
   useEffect(() => {
     if (groupRef.current) {
       groupRef.current.rotation.set(
@@ -288,7 +325,8 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
       let allReached = true;
 
       // Проходим по каждому кубику в группе
-      groupRef.current.children.forEach((mesh, i) => {
+      const children = Array.from(groupRef.current.children);
+      children.forEach((mesh, i) => {
         // Получаем целевую позицию для текущего кубика
         const t = targets[i];
         if (!t) return;
@@ -420,7 +458,8 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
       });
     };
 
-    return Array.from({ length: 27 }, (_, i) => {
+    // Генерируем материалы для текущего числа кубов
+    return Array.from({ length: cubeCount }, (_, i) => {
       const cfg = CUBE_CONFIGS[i % CUBE_CONFIGS.length];
       const topTex = getTex(cfg.top);
       const bottomTex = getTex(cfg.bottom);
@@ -438,7 +477,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
         makeMat(topTex, DEFAULT_SIDE_ROTATIONS.top),
       ];
     });
-  }, [textureByPath]);
+  }, [textureByPath, cubeCount]);
 
   return (
     <group ref={groupRef}>
@@ -500,6 +539,8 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
   const [speed, setSpeed, resetSpeed] = useLocalStorage("singleCubeForgeSpeed", 4, parseFloat);
   const [direction, setDirection, resetDirection] = useLocalStorage("singleCubeForgeDirection", 1, v => parseInt(v, 10));
   const [isRotating, setIsRotating, resetIsRotating] = useLocalStorage("singleCubeForgeIsRotating", true, v => v === "true");
+  // === Новый режим кубов ===
+  const [cubeMode, setCubeMode] = useLocalStorage("singleCubeForgeCubeMode", 27, v => parseInt(v, 10));
 
   // --- кнопки вращения ---
   const handleClockwise = () => {setDirection(1);setIsRotating(true);};
@@ -1282,6 +1323,34 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
       {/* === Панели управления кубом === */}
       <div className="cube-controls">
 
+        <label htmlFor="cube-mode">{t("control.cube-mode") || "Режим кубов"}</label>
+        <div className="mode-buttons">
+          <button
+            className={`mode-btn ${cubeMode === 1 ? 'active' : ''}`}
+            onClick={() => setCubeMode(1)}
+            title="Один большой куб"
+          >
+            <i className="fas fa-cube"></i>
+            <span>1x1x1</span>
+          </button>
+          <button
+            className={`mode-btn ${cubeMode === 8 ? 'active' : ''}`}
+            onClick={() => setCubeMode(8)}
+            title="2x2x2 куба"
+          >
+            <i className="fas fa-cube"></i>
+            <span>2x2x2</span>
+          </button>
+          <button
+            className={`mode-btn ${cubeMode === 27 ? 'active' : ''}`}
+            onClick={() => setCubeMode(27)}
+            title="3x3x3 куба"
+          >
+            <i className="fas fa-cube"></i>
+            <span>3x3x3</span>
+          </button>
+        </div>
+
         {/* Состояние: ничего не открыто → показываем ВСЕ блоки (закрытые) */}
         {openBlock === null && (
           <>
@@ -1435,6 +1504,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
             smallCubeScale={smallCubeScale}
             shuffleTrigger={shuffleTrigger}
             positionsResetTrigger={positionsResetTrigger}
+            cubeMode={cubeMode}
           />
           <CameraControls />
         </Canvas>
