@@ -117,6 +117,7 @@
     "created": "Created with Reactorium 3D"
   },
   "control": {
+    "mode": "Mode",
     "speed": "Speed",
     "gap": "Gap",
     "small-cube-size": "Size",

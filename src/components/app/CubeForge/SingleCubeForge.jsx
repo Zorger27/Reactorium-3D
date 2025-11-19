@@ -1330,7 +1330,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
         {openBlock === null && (
           <>
             <ControlBlock
-              label={t("control.cube-mode") || "Режим кубов"}
+              label={t("control.mode")}
               icon="fa-solid fa-cubes"
               isOpen={false}
               onToggle={() => setOpenBlock("cubeMode")}
@@ -1368,7 +1368,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
         {/* Состояние: открыт cubeMode → показываем только его */}
         {openBlock === "cubeMode" && (
           <ControlBlock
-            label={t("control.cube-mode") || "Режим кубов"}
+            label={t("control.mode")}
             icon="fa-solid fa-cubes"
             isOpen={true}
             onToggle={() => setOpenBlock(null)}
