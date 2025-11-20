@@ -201,7 +201,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     return null;
   });
 
-  const isInitializedRef = useRef(false); // Используем ref вместо state (флаг инициализации)
+  const isInitializedRef = useRef(false); // Флаг инициализации
 
   // Храним текущие позиции кубиков (куда они реально должны идти)
   const currentTargetsRef = useRef([]);
