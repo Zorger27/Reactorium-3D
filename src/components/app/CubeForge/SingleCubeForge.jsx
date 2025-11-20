@@ -149,12 +149,13 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
 
   // === Базовые упорядоченные позиции в зависимости от cubeLevel ===
   const basePositions = useMemo(() => {
+    const step = cubeSize + gap; // Шаг между кубами
+
     if (cubeLevel === 1) {
       // Один куб в центре
       return [[0, 0, 0]];
     } else if (cubeLevel === 8) {
       // 2x2x2 кубов
-      const step = cubeSize + gap;
       const coords = [-step / 2, step / 2];
       const result = [];
       for (let x of coords) {
@@ -167,7 +168,6 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
       return result;
     } else {
       // 3x3x3 кубов (27 кубов)
-      const step = cubeSize + gap;
       const coords = [-step, 0, step];
       const result = [];
       for (let x of coords) {
