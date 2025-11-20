@@ -101,7 +101,16 @@ const DEFAULT_SIDE_ROTATIONS = {
 
 const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating, direction, speed, resetTrigger, flipTrigger, smallCubeScale, shuffleTrigger, positionsResetTrigger, cubeLevel }) => {
   const groupRef = useRef(null);
-  const cubeSize = groupSize / 3;
+
+  // Определяем сколько кубов в одной строке
+  const cubesPerSide = cubeLevel === 1 ? 1 : (cubeLevel === 8 ? 2 : 3);
+
+  // Размер одного маленького куба рассчитывается так:
+  // total = cubeSize * cubesPerSide + gap * (cubesPerSide - 1)
+  // groupSize = cubeSize * cubesPerSide + gap * (cubesPerSide - 1)
+  // cubeSize = (groupSize - gap * (cubesPerSide - 1)) / cubesPerSide
+  const cubeSize = (groupSize - gap * (cubesPerSide - 1)) / cubesPerSide;
+
   const cubeCount = cubeLevel; // Количество кубов в зависимости от уровня
 
   const geometry = useMemo(
@@ -138,15 +147,15 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     return map;
   }, [loaded, texturePathList]);
 
-  // === Базовые упорядоченные позиции в зависимости от cubeMode ===
+  // === Базовые упорядоченные позиции в зависимости от cubeLevel ===
   const basePositions = useMemo(() => {
     if (cubeLevel === 1) {
       // Один куб в центре
       return [[0, 0, 0]];
     } else if (cubeLevel === 8) {
-      // 2x2x2 кубов (8 кубов)
-      const step = (cubeSize + gap) / 2;
-      const coords = [-step, step];
+      // 2x2x2 кубов
+      const step = cubeSize + gap;
+      const coords = [-step / 2, step / 2];
       const result = [];
       for (let x of coords) {
         for (let y of coords) {
