@@ -109,7 +109,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
   // total = cubeSize * cubesPerSide + gap * (cubesPerSide - 1)
   // groupSize = cubeSize * cubesPerSide + gap * (cubesPerSide - 1)
   // cubeSize = (groupSize - gap * (cubesPerSide - 1)) / cubesPerSide
-  const cubeSize = (groupSize - gap * (cubesPerSide - 1)) / cubesPerSide + gap / cubesPerSide * 2;
+  const cubeSize = (groupSize - gap * (cubesPerSide - 1)) / cubesPerSide + gap / cubesPerSide * 2; // Супер Важно!
 
   const cubeCount = cubeLevel; // Количество кубов в зависимости от уровня
 
