@@ -306,6 +306,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
 
   // === Основная функция анимации сцены (useFrame) ===
   useFrame((_, delta) => {
+
     /**
      * Отвечает за плавное перемещение, вращение и анимацию группы кубиков в реальном времени.
      * Состоит из трёх логических блоков:
