@@ -201,8 +201,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     return null;
   });
 
-  const isInitializedRef = useRef(false); // Флаг инициализации
-  const firstShuffleRef = useRef(true);
+  const isInitializedRef = useRef(false); // Используем ref вместо state (флаг инициализации)
 
   // Храним текущие позиции кубиков (куда они реально должны идти)
   const currentTargetsRef = useRef([]);
@@ -243,11 +242,10 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     }
   }, [targets]);
 
-  // Сброс инициализации при смене режима
+  // === Сброс инициализации при смене режима ===
   useEffect(() => {
     isInitializedRef.current = false;
     currentTargetsRef.current = [];
-    firstShuffleRef.current = true;
     setOrder(null);
   }, [cubeLevel]);
 
@@ -411,7 +409,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
 
   // === Поворот на 180° ===
   useEffect(() => {
-    if (groupRef.current && isInitializedRef.current) {
+    if (groupRef.current) {
       const currentZ = groupRef.current.rotation.z;
       const newTarget = currentZ + Math.PI;
       setTargetRotationZ(newTarget);
