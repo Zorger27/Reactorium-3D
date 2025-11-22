@@ -355,6 +355,8 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
   // --- Управление вращением ---
   const [targetRotationZ, setTargetRotationZ] = useState(null);
 
+  const firstFlipFrameRef = useRef(true);
+
   // === Основная функция анимации сцены (useFrame) ===
   useFrame((_, delta) => {
 
@@ -437,8 +439,12 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
       const normalizedDiff = ((diff + Math.PI) % (2 * Math.PI)) - Math.PI;
 
       // Плавно приближаемся к целевому углу (ограничиваем скорость поворота)
-      // groupRef.current.rotation.z += normalizedDiff * Math.min(10 * delta, 1);
-      groupRef.current.rotation.z += normalizedDiff;
+      if (cubeLevel === 1 && firstFlipFrameRef.current) {
+        groupRef.current.rotation.z += normalizedDiff;
+        firstFlipFrameRef.current = false;
+      } else {
+        groupRef.current.rotation.z += normalizedDiff * Math.min(10 * delta, 1);
+      }
 
       // Если угол почти достигнут (погрешность < 0.01 радиан) — фиксируем и сбрасываем цель
       if (Math.abs(normalizedDiff) < 0.01) {
