@@ -355,6 +355,9 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
   // --- Управление вращением ---
   const [targetRotationZ, setTargetRotationZ] = useState(null);
 
+  // Флаг для отслеживания первого кадра после установки targetRotationZ
+  // Используется, чтобы на первом кадре Level 1 прибавить весь normalizedDiff сразу и убрать стартовый рывок,
+  // а на последующих кадрах применять обычную плавную интерполяцию.
   const firstFlipFrameRef = useRef(true);
 
   // === Основная функция анимации сцены (useFrame) ===
