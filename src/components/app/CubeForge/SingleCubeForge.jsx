@@ -1396,19 +1396,8 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
         {/* Состояние: ничего не открыто → показываем ВСЕ блоки (закрытые) */}
         {openBlock === null && (
           <>
-            <ControlBlock
-              label={t("control.level")}
-              icon="fa-solid fa-cubes"
-              isOpen={false}
-              onToggle={() => setOpenBlock("cubeLevel")}
-              gapConfig={{
-                value: cubeLevel,
-                min: 1,
-                max: 3,
-                step: 1,
-                onChange: cubeLevel,
-                ...cubeLevelHandlers
-              }}
+            <ControlBlock label={t("control.level")} icon="fa-solid fa-cubes" isOpen={false} onToggle={() => setOpenBlock("cubeLevel")}
+              gapConfig={{value: cubeLevel, min: 1, max: 3, step: 1, onChange: setCubeLevel, ...cubeLevelHandlers}}
             />
 
             <ControlBlock label={t("control.speed")} icon="fa-solid fa-gauge-simple-high" isOpen={false} onToggle={() => setOpenBlock("speed")}
@@ -1434,18 +1423,8 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
 
         {/* Состояние: открыт cubeLevel → показываем только его */}
         {openBlock === "cubeLevel" && (
-          <ControlBlock
-            label={t("control.level")}
-            icon="fa-solid fa-cubes"
-            isOpen={true}
-            onToggle={() => setOpenBlock(null)}
-            gapConfig={{
-              value: cubeLevel,
-              min: 1,
-              max: 3,
-              step: 1,
-              onChange: cubeLevel,
-              ...cubeLevelHandlers
+          <ControlBlock label={t("control.level")} icon="fa-solid fa-cubes" isOpen={true} onToggle={() => setOpenBlock(null)}
+            gapConfig={{value: cubeLevel, min: 1, max: 3, step: 1, onChange: setCubeLevel, ...cubeLevelHandlers
             }}
           />
         )}
