@@ -270,11 +270,35 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
   }, [targets, cubeLevel]);
 
   // === Сброс инициализации при смене режима ===
+  // useEffect(() => {
+  //   isInitializedRef.current = false;
+  //   currentTargetsRef.current = [];
+  //   setOrder(null);
+  // }, [cubeLevel]);
+
+  // === Сброс инициализации при смене режима ===
   useEffect(() => {
+    // сбрасываем флаг инициализации
     isInitializedRef.current = false;
-    currentTargetsRef.current = [];
-    setOrder(null);
-  }, [cubeLevel]);
+
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        setOrder(null);
+        return;
+      }
+
+      const parsed = JSON.parse(raw);
+
+      if (Array.isArray(parsed) && parsed.length === basePositions.length) {
+        setOrder(parsed);     // 🔥 вот правильная загрузка
+      } else {
+        setOrder(null);
+      }
+    } catch (e) {
+      setOrder(null);
+    }
+  }, [STORAGE_KEY, basePositions.length]);
 
   // При изменении gap - синхронно обновляем currentTargets БЕЗ анимации
   useEffect(() => {
@@ -510,9 +534,11 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
 
   return (
     <group ref={groupRef}>
+
       {basePositions.map((pos, i) => (
         <mesh key={i} position={pos} geometry={geometry} material={cubeMaterials[i]} />
       ))}
+
     </group>
   );
 };
