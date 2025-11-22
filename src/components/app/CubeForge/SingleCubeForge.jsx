@@ -437,7 +437,8 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
       const normalizedDiff = ((diff + Math.PI) % (2 * Math.PI)) - Math.PI;
 
       // Плавно приближаемся к целевому углу (ограничиваем скорость поворота)
-      groupRef.current.rotation.z += normalizedDiff * Math.min(10 * delta, 1);
+      // groupRef.current.rotation.z += normalizedDiff * Math.min(10 * delta, 1);
+      groupRef.current.rotation.z += normalizedDiff;
 
       // Если угол почти достигнут (погрешность < 0.01 радиан) — фиксируем и сбрасываем цель
       if (Math.abs(normalizedDiff) < 0.01) {
@@ -594,7 +595,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
   const [speed, setSpeed, resetSpeed] = useLocalStorage("singleCubeForgeSpeed", 4, parseFloat);
   const [direction, setDirection, resetDirection] = useLocalStorage("singleCubeForgeDirection", 1, v => parseInt(v, 10));
   const [isRotating, setIsRotating, resetIsRotating] = useLocalStorage("singleCubeForgeIsRotating", true, v => v === "true");
-  const [cubeLevel, setCubeLevel] = useLocalStorage("singleCubeForgeCubeLevel", 3, v => parseInt(v, 10));
+  const [cubeLevel, setCubeLevel, resetCubeLevel] = useLocalStorage("singleCubeForgeCubeLevel", 3, v => parseInt(v, 10));
 
   // Кнопки вращения
   const handleClockwise = () => {setDirection(1);setIsRotating(true);};
@@ -715,6 +716,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
       resetSpeed();
       resetDirection();
       resetIsRotating();
+      resetCubeLevel();
 
       setPositionsResetTrigger(prev => prev + 1);
       setResetTrigger(prev => !prev);
@@ -751,6 +753,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
       resetSpeed();
       resetDirection();
       resetIsRotating();
+      resetCubeLevel();
 
       setPositionsResetTrigger(prev => prev + 1);
       setResetTrigger(prev => !prev);
