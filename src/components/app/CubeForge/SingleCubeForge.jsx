@@ -181,6 +181,14 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     }
   }, [cubeSize, gap, cubeLevel]);
 
+  // Инициализация currentTargetsRef для плавного перемещения (для useFrame)
+  useEffect(() => {
+    if (!groupRef.current) return;
+
+    // Сохраняем текущие позиции кубиков как стартовые для плавного движения
+    currentTargetsRef.current = basePositions.map(pos => [...pos]);
+  }, [groupRef, basePositions]);
+
   // Функция для получения ключа хранилища в зависимости от РЕЖИМА (1, 2, 3)
   // Маппим режим (1-3) на количество кубиков (1, 8, 27) для более читаемых ключей
   const cubeLevelToCount = { 1: 1, 8: 2, 27: 3 };
@@ -268,13 +276,6 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
       console.log(`🎯 Инициализированы позиции ${children.length} кубиков для режима ${cubeLevelToCount[cubeLevel]}`);
     }
   }, [targets, cubeLevel]);
-
-  // === Сброс инициализации при смене режима ===
-  // useEffect(() => {
-  //   isInitializedRef.current = false;
-  //   currentTargetsRef.current = [];
-  //   setOrder(null);
-  // }, [cubeLevel]);
 
   // === Сброс инициализации при смене режима ===
   useEffect(() => {
