@@ -253,6 +253,8 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
   useEffect(() => {
     if (groupRef.current && !isInitializedRef.current) {
     // if (groupRef.current && !isInitializedRef.current && !isMovingRef.current) {
+    // ❗️Если стоит !isMovingRef.current - нет "телепорта" кубиков при первом shuffle,
+    // но появляется постоянное перемешивание кубиков на разных cubeLevel! ❗️
       isInitializedRef.current = true;
       // Копируем целевые позиции в рабочий буфер (для анимации перемещения)
       currentTargetsRef.current = targets.map(pos => [...pos]);
