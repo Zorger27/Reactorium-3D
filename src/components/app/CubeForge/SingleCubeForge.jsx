@@ -252,6 +252,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
   // Устанавливаем реальные координаты каждого кубика, которые либо перемешаны, либо естественны
   useEffect(() => {
     if (groupRef.current && !isInitializedRef.current) {
+    // if (groupRef.current && !isInitializedRef.current && !isMovingRef.current) {
       isInitializedRef.current = true;
       // Копируем целевые позиции в рабочий буфер (для анимации перемещения)
       currentTargetsRef.current = targets.map(pos => [...pos]);
