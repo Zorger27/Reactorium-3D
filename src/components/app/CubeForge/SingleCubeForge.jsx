@@ -181,7 +181,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     }
   }, [cubeSize, gap, cubeLevel]);
 
-  // Функция для получения ключа хранилища в зависимости от РЕЖИМА (1, 2, 3)
+  // Функция для получения ключа хранилища в зависимости от УРОВНЯ (1, 2, 3)
   // Маппим режим (1-3) на количество кубиков (1, 8, 27) для более читаемых ключей
   const cubeLevelToCount = { 1: 1, 8: 2, 27: 3 };
   const getStorageKey = (level) => `singleCubeForgePositionsOrder_level_${cubeLevelToCount[level]}`;
