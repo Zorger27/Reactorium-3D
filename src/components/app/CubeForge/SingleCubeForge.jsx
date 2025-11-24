@@ -627,7 +627,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
   const handleStop = () => {setIsRotating(false);setResetTrigger(prev => !prev);};
   const handleFlip = () => {setFlipTrigger(prev => !prev);};
 
-  // --- Фабрика хэндлеров для ControlBlock ---
+  // Фабрика хэндлеров для ControlBlock
   const makeHandlers = (setter, defaultValue, min, max, step = 1) => ({
     reset: () => setter(defaultValue),
     increase: () => setter(prev => Math.min(max, +(prev + step).toFixed(2))),
