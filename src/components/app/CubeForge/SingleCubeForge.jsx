@@ -220,6 +220,9 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
   // Флаг - двигаются ли кубики сейчас (только при shuffle)
   const isMovingRef = useRef(false);
 
+  // Флаг для отслеживания: загружаем ли мы order из localStorage (не shuffle)
+  const isLoadingFromStorageRef = useRef(false);
+
   // === ВЫЧИСЛЕНИЕ: Преобразуем порядок кубиков в реальные координаты
   // Если order пуст — используем естественный порядок позиций (basePositions)
   // Если order заполнен — переставляем позиции согласно сохранённому порядку
@@ -232,6 +235,19 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     // Используем естественный порядок
     return basePositions;
   }, [basePositions, order]);
+
+  // === СБРОС при смене basePositions.length (смена cubeLevel) ===
+  useEffect(() => {
+    isInitializedRef.current = false;
+    isMovingRef.current = false;
+    isLoadingFromStorageRef.current = true; // ✅ Помечаем как загрузку
+
+    setOrder(null);
+
+    queueMicrotask(() => {
+      console.log('🔄 Микротаск: сброс завершён, можно загружать order');
+    });
+  }, [basePositions.length]);
 
   // === СОХРАНЕНИЕ: Автоматически сохраняем в localStorage при изменении порядка
   // Сохраняем как для конкретного режима, так и логируем в консоль для отладки
@@ -247,53 +263,72 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     }
   }, [order, STORAGE_KEY, cubeLevel]);
 
-  // === ИНИЦИАЛИЗАЦИЯ ПОЗИЦИЙ: Устанавливаем начальные позиции кубиков при первом рендере
-  // Выполняется один раз когда targets готовы (после загрузки order из localStorage)
-  // Устанавливаем реальные координаты каждого кубика, которые либо перемешаны, либо естественны
+  // === ИНИЦИАЛИЗАЦИЯ ПОЗИЦИЙ ===
   useEffect(() => {
-    if (groupRef.current && !isInitializedRef.current) {
-    // if (groupRef.current && !isInitializedRef.current && !isMovingRef.current) {
-    // ❗️Если стоит !isMovingRef.current - нет "телепорта" кубиков при первом shuffle,
-    // но появляется постоянное перемешивание кубиков на разных cubeLevel! ❗️
+    queueMicrotask(() => {
+      if (!groupRef.current || isInitializedRef.current || isMovingRef.current) {
+        return;
+      }
+
+      // ⚠️ Если загружаем из localStorage - НЕ ЗАПУСКАЕМ АНИМАЦИЮ
+      if (isLoadingFromStorageRef.current) {
+        console.log('⏸️ Инициализация при загрузке - анимация НЕ запускается');
+        isLoadingFromStorageRef.current = false; // ✅ Обнуляем флаг
+        isInitializedRef.current = true;
+        currentTargetsRef.current = targets.map(pos => [...pos]);
+
+        const children = Array.from(groupRef.current.children);
+        children.forEach((mesh, i) => {
+          const t = currentTargetsRef.current[i];
+          if (t) {
+            mesh.position.set(t[0], t[1], t[2]);
+          }
+        });
+        return;
+      }
+
       isInitializedRef.current = true;
-      // Копируем целевые позиции в рабочий буфер (для анимации перемещения)
       currentTargetsRef.current = targets.map(pos => [...pos]);
 
-      // Устанавливаем каждому кубику его начальную позицию
       const children = Array.from(groupRef.current.children);
       children.forEach((mesh, i) => {
         const t = currentTargetsRef.current[i];
         if (t) {
-          // Устанавливаем позицию МГНОВЕННО (без анимации)
           mesh.position.set(t[0], t[1], t[2]);
         }
       });
-      console.log(`🎯 Инициализированы позиции ${children.length} кубиков для режима ${cubeLevelToCount[cubeLevel]}`);
-    }
-  }, [targets, cubeLevel]);
+      console.log(`🎯 Инициализированы позиции ${children.length} кубиков`);
+    });
+  }, [targets]);
 
-  // === Сброс инициализации при смене режима ===
+  // === ЗАГРУЗКА ORDER из localStorage ===
   useEffect(() => {
-    // сбрасываем флаг инициализации
-    isInitializedRef.current = false;
+    queueMicrotask(() => {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) {
+          setOrder(null);
+          isLoadingFromStorageRef.current = false;
+          return;
+        }
 
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) {
+        const parsed = JSON.parse(raw);
+
+        if (Array.isArray(parsed) && parsed.length === basePositions.length) {
+          console.log(`✅ Загружен совместимый order для режима (${parsed.length} элементов)`);
+          isLoadingFromStorageRef.current = true; // ✅ Помечаем как загрузку
+          setOrder(parsed);
+        } else {
+          console.log(`❌ Order несовместим: ожидается ${basePositions.length}, получено ${parsed?.length}`);
+          setOrder(null);
+          isLoadingFromStorageRef.current = false;
+        }
+      } catch (e) {
+        console.error('Ошибка загрузки order:', e);
         setOrder(null);
-        return;
+        isLoadingFromStorageRef.current = false;
       }
-
-      const parsed = JSON.parse(raw);
-
-      if (Array.isArray(parsed) && parsed.length === basePositions.length) {
-        setOrder(parsed);     // 🔥 вот правильная загрузка
-      } else {
-        setOrder(null);
-      }
-    } catch (e) {
-      setOrder(null);
-    }
+    });
   }, [STORAGE_KEY, basePositions.length]);
 
   // При изменении gap - синхронно обновляем currentTargets БЕЗ анимации
@@ -313,9 +348,15 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     }
   }, [targets, gap]);
 
-  // === Перемешивание кубов ===
+  // === ПЕРЕМЕШИВАНИЕ кубиков ===
   useEffect(() => {
     if (shuffleTrigger === 0) return;
+
+    // ⚠️ Если загружаем из localStorage - НЕ ЗАПУСКАЕМ SHUFFLE
+    if (isLoadingFromStorageRef.current) {
+      console.log('⏸️ Shuffle пропущен - это загрузка из localStorage');
+      return;
+    }
 
     const n = basePositions.length;
     const arr = Array.from({ length: n }, (_, i) => i);
@@ -327,6 +368,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
 
     setOrder(arr);
     isMovingRef.current = true;
+    console.log(`🎲 Запущено перемешивание (${n} кубиков)`);
   }, [shuffleTrigger, basePositions.length]);
 
   // === Сброс позиций кубов ===
