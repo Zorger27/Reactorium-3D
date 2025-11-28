@@ -99,7 +99,7 @@ const DEFAULT_SIDE_ROTATIONS = {
   bottom: 0
 };
 
-const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating, direction, speed, resetTrigger, flipTrigger, smallCubeScale, shuffleTrigger, positionsResetTrigger, cubeLevel }) => {
+const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating, direction, speed, resetTrigger, flipTrigger, smallCubeScale, shuffleTrigger, setShuffleTrigger, positionsResetTrigger, cubeLevel }) => {
   const groupRef = useRef(null);
 
   // Определяем сколько кубов в одной строке
@@ -236,32 +236,34 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     return basePositions;
   }, [basePositions, order]);
 
+  // Функция для получения текущего order из localStorage (без state)
+  const getOrderFromStorage = () => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length === basePositions.length) {
+        return parsed;
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  };
+
   // === СБРОС при смене basePositions.length (смена cubeLevel) ===
   useEffect(() => {
     isInitializedRef.current = false;
     isMovingRef.current = false;
-    isLoadingFromStorageRef.current = true; // ✅ Помечаем как загрузку
+    isLoadingFromStorageRef.current = true; // Помечаем как загрузку
 
-    setOrder(null);
+    // ❌ НЕ вызываем setOrder(null) - просто отмечаем флаг
 
     queueMicrotask(() => {
       console.log('🔄 Микротаск: сброс завершён, можно загружать order');
     });
   }, [basePositions.length]);
-
-  // === СОХРАНЕНИЕ: Автоматически сохраняем в localStorage при изменении порядка
-  // Сохраняем как для конкретного режима, так и логируем в консоль для отладки
-  useEffect(() => {
-    if (order === null) {
-      // Удаляем сохранённые данные если порядок вернулся в естественное состояние
-      localStorage.removeItem(STORAGE_KEY);
-      console.log(`🗑️ Очищены позиции для режима ${cubeLevelToCount[cubeLevel]} (${cubeLevel} кубиков)`);
-    } else {
-      // Сохраняем новый порядок для конкретного режима
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(order));
-      console.log(`💾 Сохранены позиции для режима ${cubeLevelToCount[cubeLevel]} (${cubeLevel} кубиков):`, order);
-    }
-  }, [order, STORAGE_KEY, cubeLevel]);
 
   // === ИНИЦИАЛИЗАЦИЯ ПОЗИЦИЙ ===
   useEffect(() => {
@@ -270,10 +272,13 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
         return;
       }
 
-      // ⚠️ Если загружаем из localStorage - НЕ ЗАПУСКАЕМ АНИМАЦИЮ
-      if (isLoadingFromStorageRef.current) {
+      // ✅ Загружаем order напрямую из localStorage (не из state!)
+      const storedOrder = getOrderFromStorage();
+
+      // Если загружаем из localStorage - НЕ ЗАПУСКАЕМ АНИМАЦИЮ
+      if (isLoadingFromStorageRef.current && storedOrder) {
         console.log('⏸️ Инициализация при загрузке - анимация НЕ запускается');
-        isLoadingFromStorageRef.current = false; // ✅ Обнуляем флаг
+        isLoadingFromStorageRef.current = false; // ✅ Сбрасываем флаг
         isInitializedRef.current = true;
         currentTargetsRef.current = targets.map(pos => [...pos]);
 
@@ -287,6 +292,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
         return;
       }
 
+      isLoadingFromStorageRef.current = false;
       isInitializedRef.current = true;
       currentTargetsRef.current = targets.map(pos => [...pos]);
 
@@ -300,6 +306,29 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
       console.log(`🎯 Инициализированы позиции ${children.length} кубиков`);
     });
   }, [targets]);
+
+  // === СИНХРОНИЗАЦИЯ targets с СОХРАНЁННЫМ order ===
+  // ⚠️ Этот effect ТОЛЬКО читает из localStorage и обновляет targets отрисовку
+  // БЕЗ запуска анимации (isMovingRef остаётся false)
+  useEffect(() => {
+    const storedOrder = getOrderFromStorage();
+
+    if (!storedOrder || !groupRef.current || isMovingRef.current) {
+      return;
+    }
+
+    // Применяем сохранённый order к позициям (без анимации)
+    const children = Array.from(groupRef.current.children);
+    children.forEach((mesh, i) => {
+      const targetIdx = storedOrder[i];
+      const targetPos = basePositions[targetIdx];
+      if (targetPos) {
+        mesh.position.set(targetPos[0], targetPos[1], targetPos[2]);
+      }
+    });
+
+    console.log(`📦 Применён сохранённый order для режима ${cubeLevelToCount[cubeLevel]}`);
+  }, [basePositions, cubeLevel]);
 
   // === ЗАГРУЗКА ORDER из localStorage ===
   useEffect(() => {
@@ -352,12 +381,6 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
   useEffect(() => {
     if (shuffleTrigger === 0) return;
 
-    // ⚠️ Если загружаем из localStorage - НЕ ЗАПУСКАЕМ SHUFFLE
-    if (isLoadingFromStorageRef.current) {
-      console.log('⏸️ Shuffle пропущен - это загрузка из localStorage');
-      return;
-    }
-
     const n = basePositions.length;
     const arr = Array.from({ length: n }, (_, i) => i);
 
@@ -366,10 +389,19 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
       [arr[i], arr[j]] = [arr[j], arr[i]];
     }
 
+    // Сохраняем в localStorage
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+
+    // Обновляем targets для анимации
     setOrder(arr);
     isMovingRef.current = true;
     console.log(`🎲 Запущено перемешивание (${n} кубиков)`);
-  }, [shuffleTrigger, basePositions.length]);
+
+    // ⚠️ КРИТИЧНО: сбрасываем shuffleTrigger СРАЗУ после использования
+    queueMicrotask(() => {
+      setShuffleTrigger(0);
+    });
+  }, [shuffleTrigger, basePositions.length, setShuffleTrigger]);
 
   // === Сброс позиций кубов ===
   useEffect(() => {
@@ -1620,6 +1652,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
             flipTrigger={flipTrigger}
             smallCubeScale={smallCubeScale}
             shuffleTrigger={shuffleTrigger}
+            setShuffleTrigger={setShuffleTrigger}
             positionsResetTrigger={positionsResetTrigger}
             cubeLevel={actualCubeCount}
           />
