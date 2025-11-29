@@ -372,12 +372,15 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
 
     const storedOrder = getOrderFromStorage();
 
-    // Если нет сохранённого порядка или идёт перемещение → ничего не делаем
-    if (!storedOrder || !groupRef.current || isMovingRef.current) {
+    if (!storedOrder || !groupRef.current || isMovingRef.current || !isInitializedRef.current) {
       return;
     }
 
-    // Применяем сохранённый порядок к каждому кубику
+    if (storedOrder.length !== basePositions.length) {
+      console.log(`⚠️ Order несовместим: сохранено ${storedOrder.length}, нужно ${basePositions.length}`);
+      return;
+    }
+
     const children = Array.from(groupRef.current.children);
     children.forEach((mesh, i) => {
       const targetIdx = storedOrder[i];
@@ -421,50 +424,49 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
       [arr[i], arr[j]] = [arr[j], arr[i]];
     }
 
-    // Сохраняем новый порядок в localStorage
+    // ✅ Сохраняем в localStorage
     localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+    console.log(`💾 Сохранён order для режима ${cubeLevelToCount[cubeLevel]} (${n} кубиков)`);
 
-    // Запускаем плавную анимацию перемещения
+    // ✅ Запускаем анимацию
     setOrder(arr);
     isMovingRef.current = true;
     console.log(`🎲 Запущено перемешивание (${n} кубиков)`);
 
-    // ⚠️ КРИТИЧНО: сбрасываем shuffleTrigger СРАЗУ после использования
-    // Если этого не сделать, то при смене уровня effect сработает заново и кубики будут перемешиваться без участия пользователя
+    // ✅ Сбрасываем trigger
     queueMicrotask(() => {
       setShuffleTrigger(0);
     });
   }, [shuffleTrigger, basePositions.length, setShuffleTrigger]); // Зависимость: shuffleTrigger от кнопки, basePositions от уровня
 
-  // === ЗАГРУЗКА ORDER из localStorage ===
+  // EFFECT 5: СБРОС ПОЗИЦИЙ (КНОПКА RESET)
   useEffect(() => {
-    queueMicrotask(() => {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) {
-          setOrder(null);
-          isLoadingFromStorageRef.current = false;
-          return;
-        }
 
-        const parsed = JSON.parse(raw);
+    /**
+     * Срабатывает когда пользователь нажимает кнопку "Восстановить позиции"
+     *
+     * Что делает:
+     * 1. Очищает сохранённый порядок из localStorage
+     *    → при следующем входе кубики будут в естественном порядке
+     * 2. Сбрасывает order в null (естественный порядок)
+     *    → targets вернутся к basePositions
+     * 3. Запускает плавную анимацию возврата кубиков на исходные позиции
+     *
+     * Почему нужно очищать localStorage?
+     * Если не очистить, то при смене уровня и возврате обратно
+     * загрузится старый перемешанный порядок из Effect 3
+     */
 
-        if (Array.isArray(parsed) && parsed.length === basePositions.length) {
-          console.log(`✅ Загружен совместимый order для режима (${parsed.length} элементов)`);
-          isLoadingFromStorageRef.current = true; // ✅ Помечаем как загрузку
-          setOrder(parsed);
-        } else {
-          console.log(`❌ Order несовместим: ожидается ${basePositions.length}, получено ${parsed?.length}`);
-          setOrder(null);
-          isLoadingFromStorageRef.current = false;
-        }
-      } catch (e) {
-        console.error('Ошибка загрузки order:', e);
-        setOrder(null);
-        isLoadingFromStorageRef.current = false;
-      }
-    });
-  }, [STORAGE_KEY, basePositions.length]);
+    if (positionsResetTrigger === 0) return;
+
+    // Очищаем localStorage для ТЕКУЩЕГО режима
+    localStorage.removeItem(STORAGE_KEY);
+    console.log(`🗑️ Очищен order для режима ${cubeLevelToCount[cubeLevel]} (${basePositions.length} кубиков)`);
+
+    // Сбрасываем order
+    setOrder(null);
+    isMovingRef.current = true;
+  }, [positionsResetTrigger]);
 
   // При изменении gap - синхронно обновляем currentTargets БЕЗ анимации
   useEffect(() => {
@@ -482,14 +484,6 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
       }
     }
   }, [targets, gap]);
-
-  // === Сброс позиций кубов ===
-  useEffect(() => {
-    if (positionsResetTrigger === 0) return;
-
-    setOrder(null);
-    isMovingRef.current = true;
-  }, [positionsResetTrigger]);
 
   // === Первоначальная ориентация ===
   useEffect(() => {
