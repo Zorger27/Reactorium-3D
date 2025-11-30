@@ -336,6 +336,8 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
         return;
       }
 
+      isLoadingFromStorageRef.current = false;
+
       // Первая инициализация → обычный процесс
       isInitializedRef.current = true;
       currentTargetsRef.current = targets.map(pos => [...pos]);
@@ -459,11 +461,40 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
 
     if (positionsResetTrigger === 0) return;
 
+    // ⚠️ Проверяем ТЕКУЩИЙ режим (STORAGE_KEY может измениться)
+    const currentStorageKey = getStorageKey(cubeLevel);
+    const raw = localStorage.getItem(currentStorageKey);
+    const storedOrder = raw ? JSON.parse(raw) : null;
+
+    if (!storedOrder) {
+      // Если localStorage пустой → кубики уже на базовых позициях → ничего не делаем
+      console.log(`ℹ️ Order уже сброшен для режима ${cubeLevelToCount[cubeLevel]}, анимация не нужна`);
+      return;
+    }
+
     // Очищаем localStorage для ТЕКУЩЕГО режима
-    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(currentStorageKey);
     console.log(`🗑️ Очищен order для режима ${cubeLevelToCount[cubeLevel]} (${basePositions.length} кубиков)`);
 
-    // Сбрасываем order
+    // ⚠️ ДОПОЛНИТЕЛЬНАЯ ПРОВЕРКА: order уже null?
+    if (order === null) {
+      // Если order уже null → анимация не нужна, просто обновим позиции
+      console.log(`ℹ️ Order уже null, принудительно обновляем позиции без анимации`);
+
+      // Принудительно устанавливаем базовые позиции
+      if (groupRef.current) {
+        const children = Array.from(groupRef.current.children);
+        children.forEach((mesh, i) => {
+          const pos = basePositions[i];
+          if (pos) {
+            mesh.position.set(pos[0], pos[1], pos[2]);
+          }
+        });
+      }
+      return;
+    }
+
+    // Сбрасываем order и запускаем анимацию
     setOrder(null);
     isMovingRef.current = true;
   }, [positionsResetTrigger]);
