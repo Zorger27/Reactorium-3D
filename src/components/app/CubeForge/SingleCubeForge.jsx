@@ -372,14 +372,16 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
      * кубик #2 встанет на basePositions[1]
      */
 
-    const storedOrder = getOrderFromStorage();
+    const currentStorageKey = getStorageKey(cubeLevel);
+    const raw = localStorage.getItem(currentStorageKey);
+    const storedOrder = raw ? (Array.isArray(JSON.parse(raw)) ? JSON.parse(raw) : null) : null;
 
-    if (!storedOrder || !groupRef.current || isMovingRef.current || !isInitializedRef.current) {
+    if (!storedOrder || !groupRef.current || isMovingRef.current) {
       return;
     }
 
-    if (storedOrder.length !== basePositions.length) {
-      console.log(`⚠️ Order несовместим: сохранено ${storedOrder.length}, нужно ${basePositions.length}`);
+    if (storedOrder && storedOrder.length !== basePositions.length) {
+      console.log(`⚠️ Order несовместим в Effect 3: сохранено ${storedOrder.length}, нужно ${basePositions.length}`);
       return;
     }
 
@@ -438,6 +440,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     // ✅ Сбрасываем trigger
     queueMicrotask(() => {
       setShuffleTrigger(0);
+      isLoadingFromStorageRef.current = true; // Помечаем для следующей загрузки
     });
   }, [shuffleTrigger, basePositions.length, setShuffleTrigger]); // Зависимость: shuffleTrigger от кнопки, basePositions от уровня
 
