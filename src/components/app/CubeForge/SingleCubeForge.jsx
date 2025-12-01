@@ -188,7 +188,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
 
   // Массив индексов позиций кубиков. Если null — значит кубики в естественном порядке (не перемешаны).
   // Сохраняем ОТДЕЛЬНО для каждого уровня (1x1x1, 2x2x2, 3x3x3)
-  const STORAGE_KEY = getStorageKey(cubeLevel);
+  const STORAGE_KEY = useMemo(() => getStorageKey(cubeLevel), [cubeLevel]);
 
   // === ИНИЦИАЛИЗАЦИЯ: Загружаем сохранённый порядок из localStorage для текущего режима
   // Ленивая инициализация - выполняется один раз при первом рендере
@@ -238,7 +238,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
   }, [basePositions, order]);
 
   // Функция для получения текущего order из localStorage (без state)
-  const getOrderFromStorage = () => {
+  const getOrderFromStorage = (level = cubeLevel) => {
 
     /**
      * Получает сохранённый порядок кубиков из localStorage
@@ -249,9 +249,9 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
      */
 
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const key = getStorageKey(level);
+      const raw = localStorage.getItem(key);
       if (!raw) return null;
-
       const parsed = JSON.parse(raw);
       // Проверяем: массив ли это и совпадает ли длина с текущим режимом
       if (Array.isArray(parsed) && parsed.length === basePositions.length) {
@@ -353,50 +353,6 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     });
   }, [targets]); // Зависимость: только от targets, БЕЗ cubeLevel (чтобы не срабатывало при смене уровня)
 
-  // EFFECT 3: СИНХРОНИЗАЦИЯ ВИЗУАЛА С СОХРАНЁННЫМ ПОРЯДКОМ
-  useEffect(() => {
-
-    /**
-     * Срабатывает когда смена уровня завершена и нужно применить сохранённый порядок
-     *
-     * Что делает:
-     * - Читает order из localStorage (getOrderFromStorage)
-     * - Если есть сохранённый порядок → применяет его к позициям кубиков БЕЗ АНИМАЦИИ
-     * - Это нужно чтобы при входе в раздел кубики встали в то положение,
-     *   в котором они были в прошлый раз
-     *
-     * Пример:
-     * localStorage содержит: [2, 0, 1] (для 3 кубиков)
-     * кубик #0 встанет на basePositions[2]
-     * кубик #1 встанет на basePositions[0]
-     * кубик #2 встанет на basePositions[1]
-     */
-
-    const currentStorageKey = getStorageKey(cubeLevel);
-    const raw = localStorage.getItem(currentStorageKey);
-    const storedOrder = raw ? (Array.isArray(JSON.parse(raw)) ? JSON.parse(raw) : null) : null;
-
-    if (!storedOrder || !groupRef.current || isMovingRef.current) {
-      return;
-    }
-
-    if (storedOrder && storedOrder.length !== basePositions.length) {
-      console.log(`⚠️ Order несовместим в Effect 3: сохранено ${storedOrder.length}, нужно ${basePositions.length}`);
-      return;
-    }
-
-    const children = Array.from(groupRef.current.children);
-    children.forEach((mesh, i) => {
-      const targetIdx = storedOrder[i];
-      const targetPos = basePositions[targetIdx];
-      if (targetPos) {
-        mesh.position.set(targetPos[0], targetPos[1], targetPos[2]);
-      }
-    });
-
-    console.log(`📦 Применён сохранённый order для режима ${cubeLevelToCount[cubeLevel]}`);
-  }, [basePositions, cubeLevel]); // Зависимость: при смене уровня применяем сохранённый порядок
-
   // EFFECT 4: ПЕРЕМЕШИВАНИЕ КУБИКОВ
   useEffect(() => {
 
@@ -429,7 +385,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     }
 
     // ✅ Сохраняем в localStorage
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+    localStorage.setItem(getStorageKey(cubeLevel), JSON.stringify(arr));
     console.log(`💾 Сохранён order для режима ${cubeLevelToCount[cubeLevel]} (${n} кубиков)`);
 
     // ✅ Запускаем анимацию
