@@ -708,11 +708,9 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
 
   return (
     <group ref={groupRef}>
-
       {basePositions.map((pos, i) => (
         <mesh key={i} position={pos} geometry={geometry} material={cubeMaterials[i]} />
       ))}
-
     </group>
   );
 };
