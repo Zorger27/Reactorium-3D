@@ -317,7 +317,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
       const storedOrder = getOrderFromStorage();
 
       // Если загружаем из localStorage и есть сохранённые данные → инициализируем БЕЗ анимации
-      if (isLoadingFromStorageRef.current && storedOrder) {
+      if (storedOrder) {
         console.log('⏸️ Инициализация при загрузке - анимация НЕ запускается');
         isLoadingFromStorageRef.current = false; // Помечаем что загрузка завершена
         isInitializedRef.current = true;
@@ -335,8 +335,6 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
         });
         return;
       }
-
-      isLoadingFromStorageRef.current = false;
 
       // Первая инициализация → обычный процесс
       isInitializedRef.current = true;
