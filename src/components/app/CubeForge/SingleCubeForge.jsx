@@ -263,7 +263,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     }
   };
 
-  // EFFECT 1: СБРОС ФЛАГОВ ПРИ СМЕНЕ КУБА LEVEL
+  // EFFECT 1: СБРОС ФЛАГОВ ПРИ СМЕНЕ CUBE LEVEL
   useEffect(() => {
 
     /**
@@ -283,6 +283,8 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     isInitializedRef.current = false;
     isMovingRef.current = false;
     isLoadingFromStorageRef.current = true;
+    currentTargetsRef.current = [];  // Очищаем старые позиции
+    // setOrder(null);  // Сбрасываем order при смене уровня
 
     queueMicrotask(() => {
       console.log('🔄 Микротаск: сброс завершён, можно загружать order');
@@ -352,6 +354,16 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
       console.log(`🎯 Инициализированы позиции ${children.length} кубиков`);
     });
   }, [targets]); // Зависимость: только от targets, БЕЗ cubeLevel (чтобы не срабатывало при смене уровня)
+
+  // EFFECT 3: Синхронизация currentTargetsRef с targets
+  useEffect(() => {
+    // Обновляем currentTargetsRef когда targets меняется
+    // (например, после shuffle через setOrder)
+    if (isInitializedRef.current) {
+      currentTargetsRef.current = targets.map(pos => [...pos]);
+      // console.log(`🔄 Синхронизированы targets для ${targets.length} кубиков, первая позиция: [${targets[0][0].toFixed(2)}, ${targets[0][1].toFixed(2)}, ${targets[0][2].toFixed(2)}]`);
+    }
+  }, [targets]);
 
   // EFFECT 4: ПЕРЕМЕШИВАНИЕ КУБИКОВ
   useEffect(() => {
@@ -458,7 +470,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     isMovingRef.current = true;
   }, [positionsResetTrigger]);
 
-  // При изменении gap - синхронно обновляем currentTargets БЕЗ анимации
+  // EFFECT 6: При изменении gap - синхронно обновляем currentTargets БЕЗ анимации
   useEffect(() => {
     if (!isMovingRef.current && currentTargetsRef.current.length > 0 && isInitializedRef.current) {
       currentTargetsRef.current = targets.map(pos => [...pos]);
@@ -475,7 +487,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     }
   }, [targets, gap]);
 
-  // === Первоначальная ориентация ===
+  // EFFECT 7: Первоначальная ориентация
   useEffect(() => {
     if (groupRef.current) {
       groupRef.current.rotation.set(
@@ -609,7 +621,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     }
   });
 
-  // === Сброс ===
+  // EFFECT 8: Сброс
   useEffect(() => {
     if (groupRef.current) {
       groupRef.current.rotation.set(
@@ -621,7 +633,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     }
   }, [resetTrigger]);
 
-  // === Поворот на 180° ===
+  // EFFECT 9: Поворот на 180°
   useEffect(() => {
     if (groupRef.current) {
       const currentZ = groupRef.current.rotation.z;
@@ -630,7 +642,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     }
   }, [flipTrigger]);
 
-  // Очистка. При размонтировании CubeGroup все текстуры и материалы будут освобождены и память не утечёт!
+  // EFFECT 10: Очистка. При размонтировании CubeGroup все текстуры и материалы будут освобождены и память не утечёт!
   useEffect(() => {
     return () => {
       if (!groupRef.current) return;
@@ -791,7 +803,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
   // Фактическое количество кубов:
   const actualCubeCount = cubeLevelMap[cubeLevel];
 
-  // useEffect для закрытия при клике вне меню!!!!!
+  // EFFECT 11: useEffect для закрытия при клике вне меню!!!!!
   useEffect(() => {
     if (!isShuffleMenuOpen && !isClearMenuOpen && !isSaveMenuOpen) return;
 
@@ -814,7 +826,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
     };
   }, [isShuffleMenuOpen, isClearMenuOpen, isSaveMenuOpen, isRecording]);
 
-  // Когда открывается меню перемешивания — закрываем остальные меню
+  // EFFECT 12: Когда открывается меню перемешивания — закрываем остальные меню
   useEffect(() => {
     if (isShuffleMenuOpen) {
       setIsClearMenuOpen(false);
@@ -826,7 +838,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
     }
   }, [isShuffleMenuOpen, isRecording]);
 
-  // Когда открывается меню очистки — закрываем остальные меню
+  // EFFECT 13: Когда открывается меню очистки — закрываем остальные меню
   useEffect(() => {
     if (isClearMenuOpen) {
       setIsShuffleMenuOpen(false);
@@ -838,7 +850,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
     }
   }, [isClearMenuOpen, isRecording]);
 
-  // Когда открывается меню сохранения — закрываем остальные меню
+  // EFFECT 14: Когда открывается меню сохранения — закрываем остальные меню
   useEffect(() => {
     if (isSaveMenuOpen) {
       setIsShuffleMenuOpen(false);
