@@ -9,6 +9,27 @@ import {Canvas, useFrame, useThree, extend, useLoader} from '@react-three/fiber'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import * as THREE from "three";
 
+// Картинки для кубика с Уровнем 1
+import rightImg from "@/assets/app/PictoCube/cube3/cube04.webp";
+import leftImg from "@/assets/app/PictoCube/cube3/cube07.webp";
+import frontImg from "@/assets/app/PictoCube/cube1/front.webp";
+import backImg from "@/assets/app/PictoCube/cube1/back.webp";
+import bottomImg from "@/assets/app/PictoCube/cube1/bottom.webp";
+import topImg from "@/assets/app/PictoCube/cube1/top.webp";
+
+// Картинки для кубика с Уровнем 2
+import topLevel2Cube from "@/assets/app/PictoCube/cube2/top01.webp"
+import bottomLevel2Cube from "@/assets/app/PictoCube/cube2/bottom01.webp"
+import sideLevel2Cube01 from "@/assets/app/PictoCube/cube2/cube01.webp"
+import sideLevel2Cube02 from "@/assets/app/PictoCube/cube2/cube02.webp"
+import sideLevel2Cube03 from "@/assets/app/PictoCube/cube2/cube03.webp"
+import sideLevel2Cube04 from "@/assets/app/PictoCube/cube2/cube04.webp"
+import sideLevel2Cube05 from "@/assets/app/PictoCube/cube2/cube05.webp"
+import sideLevel2Cube06 from "@/assets/app/PictoCube/cube2/cube06.webp"
+import sideLevel2Cube07 from "@/assets/app/PictoCube/cube2/cube07.webp"
+import sideLevel2Cube08 from "@/assets/app/PictoCube/cube2/cube08.webp"
+
+// Картинки для кубика с Уровнем 3
 import topSmallCube from "@/assets/app/PictoCube/cube3/top01.webp"
 import bottomSmallCube from "@/assets/app/PictoCube/cube3/bottom03.webp"
 import sideSmallCube01 from "@/assets/app/PictoCube/cube3/cube01.webp"
@@ -58,8 +79,25 @@ const CameraControls = () => {
   );
 };
 
-// Конфигурации 27 кубиков
-const CUBE_CONFIGS = [
+// Конфигурация 1 кубика (уровень 1)
+const CUBE_CONFIG_LEVEL_1 = [
+  { top: topImg, bottom: bottomImg, sides: [leftImg, rightImg, frontImg, backImg] },
+];
+
+// Конфигурации 8 кубиков (уровень 2)
+const CUBE_CONFIG_LEVEL_2 = [
+  { top: topLevel2Cube, bottom: bottomLevel2Cube, sides: [sideLevel2Cube01, sideLevel2Cube01, sideLevel2Cube01, sideLevel2Cube01] },
+  { top: topLevel2Cube, bottom: bottomLevel2Cube, sides: [sideLevel2Cube02, sideLevel2Cube02, sideLevel2Cube02, sideLevel2Cube02] },
+  { top: topLevel2Cube, bottom: bottomLevel2Cube, sides: [sideLevel2Cube03, sideLevel2Cube03, sideLevel2Cube03, sideLevel2Cube03] },
+  { top: topLevel2Cube, bottom: bottomLevel2Cube, sides: [sideLevel2Cube04, sideLevel2Cube04, sideLevel2Cube04, sideLevel2Cube04] },
+  { top: topLevel2Cube, bottom: bottomLevel2Cube, sides: [sideLevel2Cube05, sideLevel2Cube05, sideLevel2Cube05, sideLevel2Cube05] },
+  { top: topLevel2Cube, bottom: bottomLevel2Cube, sides: [sideLevel2Cube06, sideLevel2Cube06, sideLevel2Cube06, sideLevel2Cube06] },
+  { top: topLevel2Cube, bottom: bottomLevel2Cube, sides: [sideLevel2Cube07, sideLevel2Cube07, sideLevel2Cube07, sideLevel2Cube07] },
+  { top: topLevel2Cube, bottom: bottomLevel2Cube, sides: [sideLevel2Cube08, sideLevel2Cube08, sideLevel2Cube08, sideLevel2Cube08] },
+];
+
+// Конфигурации 27 кубиков (уровень 3)
+const CUBE_CONFIG_LEVEL_3 = [
   { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube01, sideSmallCube01, sideSmallCube01, sideSmallCube01] },
   { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube02, sideSmallCube02, sideSmallCube02, sideSmallCube02] },
   { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube03, sideSmallCube03, sideSmallCube03, sideSmallCube03] },
@@ -113,6 +151,8 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
 
   const cubeCount = cubeLevel; // Количество кубов в зависимости от уровня
 
+  const CUBE_CONFIGS = cubeLevel === 1 ? CUBE_CONFIG_LEVEL_1 : cubeLevel === 8 ? CUBE_CONFIG_LEVEL_2 : CUBE_CONFIG_LEVEL_3;
+
   const geometry = useMemo(
     () => new THREE.BoxGeometry(cubeSize * smallCubeScale, cubeSize * smallCubeScale, cubeSize * smallCubeScale),
     [cubeSize, smallCubeScale]
@@ -121,7 +161,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
   const texturePathList = useMemo(() => {
     const arr = CUBE_CONFIGS.flatMap(cfg => [cfg.top, cfg.bottom, ...(cfg.sides || [])]);
     return Array.from(new Set(arr.filter(Boolean)));
-  }, []);
+  }, [CUBE_CONFIGS]); // ⭐ Теперь зависит от CUBE_CONFIGS!
 
   // ---- Загружаем все текстуры одним вызовом ----
   // Если texturePathList пуст — передадим пустой массив (useLoader вернёт либо [], либо что-то корректное)
@@ -704,7 +744,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
         makeMat(topTex, DEFAULT_SIDE_ROTATIONS.top),
       ];
     });
-  }, [textureByPath, cubeCount]);
+  }, [textureByPath, cubeCount, CUBE_CONFIGS]);
 
   return (
     <group ref={groupRef}>
