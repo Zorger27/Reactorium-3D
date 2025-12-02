@@ -353,7 +353,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     });
   }, [targets]); // Зависимость: только от targets, БЕЗ cubeLevel (чтобы не срабатывало при смене уровня)
 
-  // EFFECT 4: ПЕРЕМЕШИВАНИЕ КУБИКОВ
+  // EFFECT 3: ПЕРЕМЕШИВАНИЕ КУБИКОВ
   useEffect(() => {
 
     /**
@@ -400,7 +400,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     });
   }, [shuffleTrigger, basePositions.length, setShuffleTrigger]); // Зависимость: shuffleTrigger от кнопки, basePositions от уровня
 
-  // EFFECT 5: СБРОС ПОЗИЦИЙ (КНОПКА RESET)
+  // EFFECT 4: СБРОС ПОЗИЦИЙ (КНОПКА RESET)
   useEffect(() => {
 
     /**
@@ -458,7 +458,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     isMovingRef.current = true;
   }, [positionsResetTrigger]);
 
-  // При изменении gap - синхронно обновляем currentTargets БЕЗ анимации
+  // EFFECT 5: При изменении gap - синхронно обновляем currentTargets БЕЗ анимации
   useEffect(() => {
     if (!isMovingRef.current && currentTargetsRef.current.length > 0 && isInitializedRef.current) {
       currentTargetsRef.current = targets.map(pos => [...pos]);
@@ -475,7 +475,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     }
   }, [targets, gap]);
 
-  // === Первоначальная ориентация ===
+  // EFFECT 6: Первоначальная ориентация
   useEffect(() => {
     if (groupRef.current) {
       groupRef.current.rotation.set(
@@ -609,7 +609,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     }
   });
 
-  // === Сброс ===
+  // EFFECT 7: Сброс
   useEffect(() => {
     if (groupRef.current) {
       groupRef.current.rotation.set(
@@ -621,7 +621,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     }
   }, [resetTrigger]);
 
-  // === Поворот на 180° ===
+  // EFFECT 8: Поворот на 180°
   useEffect(() => {
     if (groupRef.current) {
       const currentZ = groupRef.current.rotation.z;
@@ -630,7 +630,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     }
   }, [flipTrigger]);
 
-  // Очистка. При размонтировании CubeGroup все текстуры и материалы будут освобождены и память не утечёт!
+  // EFFECT 9: Очистка. При размонтировании CubeGroup все текстуры и материалы будут освобождены и память не утечёт!
   useEffect(() => {
     return () => {
       if (!groupRef.current) return;
