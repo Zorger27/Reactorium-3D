@@ -1031,13 +1031,31 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
 
   }, [textureByPath, cubeCount, CUBE_CONFIGS, cubeStyle, cubeLevel]);
 
+  // return (
+  //   <group ref={groupRef}>
+  //
+  //     {basePositions.map((pos, i) => (
+  //       <mesh key={i} position={pos} geometry={geometry} material={cubeMaterials[i]} />
+  //     ))}
+  //
+  //   </group>
+  // );
+
+  const edgesGeometry = useMemo(() => new THREE.EdgesGeometry(geometry), [geometry]);
+
   return (
     <group ref={groupRef}>
-
       {basePositions.map((pos, i) => (
-        <mesh key={i} position={pos} geometry={geometry} material={cubeMaterials[i]} />
-      ))}
+        <group key={i} position={pos}>
+          <mesh geometry={geometry} material={cubeMaterials[i]} />
 
+          {cubeStyle === 'color' && (
+            <lineSegments geometry={edgesGeometry} onUpdate={(self) => self.position.multiplyScalar(1.0005)}>
+              <lineBasicMaterial color="black" depthTest={true} />
+            </lineSegments>
+          )}
+        </group>
+      ))}
     </group>
   );
 };
