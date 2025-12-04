@@ -253,17 +253,10 @@
 
           &:hover {
             background: #ffffff;
-            color: purple;
-            border: 2px solid purple;
+            color: darkred;
+            border: 2px solid darkred;
             box-shadow: none;
             text-shadow: none;
-          }
-
-          .fa-undo {
-            color: black;
-            text-shadow: none;
-            transition: color 0.2s ease-in-out, transform 0.2s ease-in-out;
-            &:hover {color: purple;}
           }
 
           .fas {
