@@ -9,7 +9,7 @@ import {Canvas, useFrame, useThree, extend, useLoader} from '@react-three/fiber'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import * as THREE from "three";
 
-// Картинки для кубика с Уровнем 1
+// Картинки для фото-кубика с Уровнем 1
 import rightImg from "@/assets/app/PictoCube/cube3/cube04.webp";
 import leftImg from "@/assets/app/PictoCube/cube3/cube07.webp";
 import frontImg from "@/assets/app/PictoCube/cube1/front.webp";
@@ -17,7 +17,7 @@ import backImg from "@/assets/app/PictoCube/cube1/back.webp";
 import bottomImg from "@/assets/app/PictoCube/cube1/bottom.webp";
 import topImg from "@/assets/app/PictoCube/cube1/top.webp";
 
-// Картинки для кубика с Уровнем 2
+// Картинки для фото-кубика с Уровнем 2
 import topLevel2Cube from "@/assets/app/PictoCube/cube2/top01.webp"
 import bottomLevel2Cube from "@/assets/app/PictoCube/cube2/bottom01.webp"
 import sideLevel2Cube01 from "@/assets/app/PictoCube/cube2/cube01.webp"
@@ -29,7 +29,7 @@ import sideLevel2Cube06 from "@/assets/app/PictoCube/cube2/cube06.webp"
 import sideLevel2Cube07 from "@/assets/app/PictoCube/cube2/cube07.webp"
 import sideLevel2Cube08 from "@/assets/app/PictoCube/cube2/cube08.webp"
 
-// Картинки для кубика с Уровнем 3
+// Картинки для фото-кубика с Уровнем 3
 import topSmallCube from "@/assets/app/PictoCube/cube3/top01.webp"
 import bottomSmallCube from "@/assets/app/PictoCube/cube3/bottom03.webp"
 import sideSmallCube01 from "@/assets/app/PictoCube/cube3/cube01.webp"
@@ -60,32 +60,158 @@ import sideSmallCube25 from "@/assets/app/PictoCube/cube3/cube25.webp"
 import sideSmallCube26 from "@/assets/app/PictoCube/cube3/cube26.webp"
 import sideSmallCube27 from "@/assets/app/PictoCube/cube3/cube27.webp"
 
-extend({ OrbitControls });
-const degreesToRadians = (degrees) => degrees * (Math.PI / 180);
+// Картинки для кубика с текстурами с Уровнем 1
+import rightTexture from "@/assets/app/VortexCube/cube1/cube1-14.webp";
+import leftTexture from "@/assets/app/VortexCube/cube1/cube1-11.webp";
+import frontTexture from "@/assets/app/VortexCube/cube1/cube1-06.webp";
+import backTexture from "@/assets/app/VortexCube/cube1/cube1-03.webp";
+import bottomTexture from "@/assets/app/VortexCube/cube1/cube1-05.webp";
+import topTexture from "@/assets/app/VortexCube/cube1/cube1-12.webp";
 
-const CameraControls = () => {
-  const { camera, gl } = useThree();
-  const controls = useRef(null);
-  useFrame(() => controls.current && controls.current.update());
-  return (
-    <orbitControls
-      ref={controls}
-      args={[camera, gl.domElement]}
-      enableDamping
-      enablePan={false}
-      enableZoom={true}
-      autoRotate={false}
-    />
-  );
-};
+// Картинки для кубика с текстурами с Уровнем 2
+import smallCube01 from "@/assets/app/VortexCube/cube2/cube2-01.webp";
+import smallCube02 from "@/assets/app/VortexCube/cube2/cube2-02.webp";
+import smallCube03 from "@/assets/app/VortexCube/cube2/cube2-03.webp";
+import smallCube04 from "@/assets/app/VortexCube/cube2/cube2-04.webp";
+import smallCube05 from "@/assets/app/VortexCube/cube2/cube2-05.webp";
+import smallCube06 from "@/assets/app/VortexCube/cube2/cube2-06.webp";
+import smallCube07 from "@/assets/app/VortexCube/cube2/cube2-07.webp";
+import smallCube08 from "@/assets/app/VortexCube/cube2/cube2-08.webp";
 
-// Конфигурация 1 кубика (уровень 1)
-const CUBE_CONFIG_LEVEL_1 = [
-  { top: topImg, bottom: bottomImg, sides: [leftImg, rightImg, frontImg, backImg] },
+// Картинки для кубика с текстурами с Уровнем 3
+import small2Cube01 from "@/assets/app/VortexCube/cube3/cube3-01.webp";
+import small2Cube02 from "@/assets/app/VortexCube/cube3/cube3-02.webp";
+import small2Cube03 from "@/assets/app/VortexCube/cube3/cube3-03.webp";
+import small2Cube04 from "@/assets/app/VortexCube/cube3/cube3-04.webp";
+import small2Cube05 from "@/assets/app/VortexCube/cube3/cube3-05.webp";
+import small2Cube06 from "@/assets/app/VortexCube/cube3/cube3-06.webp";
+import small2Cube07 from "@/assets/app/VortexCube/cube3/cube3-07.webp";
+import small2Cube08 from "@/assets/app/VortexCube/cube3/cube3-08.webp";
+import small2Cube09 from "@/assets/app/VortexCube/cube3/cube3-09.webp";
+import small2Cube10 from "@/assets/app/VortexCube/cube3/cube3-10.webp";
+import small2Cube11 from "@/assets/app/VortexCube/cube3/cube3-11.webp";
+import small2Cube12 from "@/assets/app/VortexCube/cube3/cube3-12.webp";
+import small2Cube13 from "@/assets/app/VortexCube/cube3/cube3-13.webp";
+import small2Cube14 from "@/assets/app/VortexCube/cube3/cube3-14.webp";
+import small2Cube15 from "@/assets/app/VortexCube/cube3/cube3-15.webp";
+import small2Cube16 from "@/assets/app/VortexCube/cube3/cube3-16.webp";
+import small2Cube17 from "@/assets/app/VortexCube/cube3/cube3-17.webp";
+import small2Cube18 from "@/assets/app/VortexCube/cube3/cube3-18.webp";
+import small2Cube19 from "@/assets/app/VortexCube/cube3/cube3-19.webp";
+import small2Cube20 from "@/assets/app/VortexCube/cube3/cube3-20.webp";
+import small2Cube21 from "@/assets/app/VortexCube/cube3/cube3-21.webp";
+import small2Cube22 from "@/assets/app/VortexCube/cube3/cube3-22.webp";
+import small2Cube23 from "@/assets/app/VortexCube/cube3/cube3-23.webp";
+import small2Cube24 from "@/assets/app/VortexCube/cube3/cube3-24.webp";
+import small2Cube25 from "@/assets/app/VortexCube/cube3/cube3-25.webp";
+import small2Cube26 from "@/assets/app/VortexCube/cube3/cube3-26.webp";
+import small2Cube27 from "@/assets/app/VortexCube/cube3/cube3-27.webp";
+
+// === Конфигурации текстур для разных уровней ===
+
+// Уровень 1: каждая сторона - своя текстура (6 текстур)
+const TEXTURE_CONFIG_LEVEL_1 = [
+  {
+    right: rightTexture,
+    left: leftTexture,
+    front: frontTexture,
+    back: backTexture,
+    bottom: bottomTexture,
+    top: topTexture
+  }
 ];
 
-// Конфигурации 8 кубиков (уровень 2)
+// Уровень 2: каждый кубик - одна текстура (8 кубиков)
+const TEXTURE_CONFIG_LEVEL_2 = [
+  { texture: smallCube01 },
+  { texture: smallCube02 },
+  { texture: smallCube03 },
+  { texture: smallCube04 },
+  { texture: smallCube05 },
+  { texture: smallCube06 },
+  { texture: smallCube07 },
+  { texture: smallCube08 },
+];
+
+// Уровень 3: каждый кубик - одна текстура (27 кубиков)
+const TEXTURE_CONFIG_LEVEL_3 = [
+  { texture: small2Cube01 }, { texture: small2Cube02 }, { texture: small2Cube03 },
+  { texture: small2Cube04 }, { texture: small2Cube05 }, { texture: small2Cube06 },
+  { texture: small2Cube07 }, { texture: small2Cube08 }, { texture: small2Cube09 },
+  { texture: small2Cube10 }, { texture: small2Cube11 }, { texture: small2Cube12 },
+  { texture: small2Cube13 }, { texture: small2Cube14 }, { texture: small2Cube15 },
+  { texture: small2Cube16 }, { texture: small2Cube17 }, { texture: small2Cube18 },
+  { texture: small2Cube19 }, { texture: small2Cube20 }, { texture: small2Cube21 },
+  { texture: small2Cube22 }, { texture: small2Cube23 }, { texture: small2Cube24 },
+  { texture: small2Cube25 }, { texture: small2Cube26 }, { texture: small2Cube27 },
+];
+
+// === Палитра цветов (27 цветов для разных кубиков) ===
+const COLOR_PALETTE = [
+  { name: "Красный", value: 0xff0000 }, { name: "Зелёный", value: 0x00ff00 }, { name: "Синий", value: 0x0000ff },
+  { name: "Жёлтый", value: 0xffff00 }, { name: "Пурпурный", value: 0xff00ff }, { name: "Бирюзовый", value: 0x00ffff },
+  { name: "Оранжевый", value: 0xff8c00 }, { name: "Сиреневый", value: 0x8a2be2 }, { name: "Ярко-зелёный", value: 0x32cd32 },
+  { name: "Золотой", value: 0xffd700 }, { name: "Розовый", value: 0xff69b4 }, { name: "Фиолетовый", value: 0x9400d3 },
+  { name: "Морская волна", value: 0x00fa9a }, { name: "Коралловый", value: 0xff7f50 }, { name: "Каштановый", value: 0x8b4513 },
+  { name: "Тёмно-бирюзовый", value: 0x00ced1 }, { name: "Песочный", value: 0xf0e68c }, { name: "Томатный", value: 0xff6347 },
+  { name: "Светло-голубой", value: 0x87ceeb }, { name: "Стальной", value: 0x4682b4 }, { name: "Тёмно-фиолетовый", value: 0x9932cc },
+  { name: "Морской зелёный", value: 0x2e8b57 }, { name: "Малиновый", value: 0xff1493 }, { name: "Лайм", value: 0x7cfc00 },
+  { name: "Кирпичный", value: 0xb22222 }, { name: "Бирюзово-зелёный", value: 0x20b2aa }, { name: "Индиго", value: 0x4b0082 },
+];
+
+// === Конфигурации цветов для разных уровней ===
+
+// Уровень 1: каждая сторона - свой цвет (6 цветов)
+const COLOR_CONFIG_LEVEL_1 = [
+  {
+    right: COLOR_PALETTE[0].value,   // Красный
+    left: COLOR_PALETTE[1].value,    // Зелёный
+    top: COLOR_PALETTE[2].value,     // Синий
+    bottom: COLOR_PALETTE[3].value,  // Жёлтый
+    front: COLOR_PALETTE[4].value,   // Пурпурный
+    back: COLOR_PALETTE[5].value     // Бирюзовый
+  }
+];
+
+// Уровень 2: каждый кубик - один цвет (8 кубиков)
+const COLOR_CONFIG_LEVEL_2 = [
+  { color: COLOR_PALETTE[26].value },  // Индиго
+  { color: COLOR_PALETTE[25].value },  // Бирюзово-зелёный
+  { color: COLOR_PALETTE[24].value },  // Кирпичный
+  { color: COLOR_PALETTE[23].value },  // Лайм
+  { color: COLOR_PALETTE[22].value },  // Малиновый
+  { color: COLOR_PALETTE[21].value },  // Морской зелёный
+  { color: COLOR_PALETTE[20].value },  // Тёмно-фиолетовый
+  { color: COLOR_PALETTE[19].value },  // Стальной
+];
+
+// Уровень 3: каждый кубик - один цвет (27 кубиков)
+const COLOR_CONFIG_LEVEL_3 = COLOR_PALETTE.map(c => ({ color: c.value }));
+
+// === Конфигурации ФОТО для разных уровней ===
+
+// Уровень 1: каждая сторона - своё фото (6 сторон)
+const CUBE_CONFIG_LEVEL_1 = [
+  {
+    top: topImg,
+    bottom: bottomImg,
+    sides: [rightImg, leftImg, frontImg, backImg]  // Порядок: right, left, front, back
+  }
+];
+// const PHOTO_CONFIG_LEVEL_1 = [
+//   {
+//     right: rightImg,
+//     left: leftImg,
+//     front: frontImg,
+//     back: backImg,
+//     bottom: bottomImg,
+//     top: topImg
+//   }
+// ];
+
+// Уровень 2: каждый кубик - свои фото (8 кубиков, top/bottom/sides)
 const CUBE_CONFIG_LEVEL_2 = [
+// const PHOTO_CONFIG_LEVEL_2 = [
   { top: topLevel2Cube, bottom: bottomLevel2Cube, sides: [sideLevel2Cube01, sideLevel2Cube01, sideLevel2Cube01, sideLevel2Cube01] },
   { top: topLevel2Cube, bottom: bottomLevel2Cube, sides: [sideLevel2Cube02, sideLevel2Cube02, sideLevel2Cube02, sideLevel2Cube02] },
   { top: topLevel2Cube, bottom: bottomLevel2Cube, sides: [sideLevel2Cube03, sideLevel2Cube03, sideLevel2Cube03, sideLevel2Cube03] },
@@ -96,8 +222,9 @@ const CUBE_CONFIG_LEVEL_2 = [
   { top: topLevel2Cube, bottom: bottomLevel2Cube, sides: [sideLevel2Cube08, sideLevel2Cube08, sideLevel2Cube08, sideLevel2Cube08] },
 ];
 
-// Конфигурации 27 кубиков (уровень 3)
+// Уровень 3: каждый кубик - свои фото (27 кубиков, top/bottom/sides)
 const CUBE_CONFIG_LEVEL_3 = [
+// const PHOTO_CONFIG_LEVEL_3 = [
   { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube01, sideSmallCube01, sideSmallCube01, sideSmallCube01] },
   { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube02, sideSmallCube02, sideSmallCube02, sideSmallCube02] },
   { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube03, sideSmallCube03, sideSmallCube03, sideSmallCube03] },
@@ -126,6 +253,25 @@ const CUBE_CONFIG_LEVEL_3 = [
   { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube26, sideSmallCube26, sideSmallCube26, sideSmallCube26] },
   { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube27, sideSmallCube27, sideSmallCube27, sideSmallCube27] },
 ];
+
+extend({ OrbitControls });
+const degreesToRadians = (degrees) => degrees * (Math.PI / 180);
+
+const CameraControls = () => {
+  const { camera, gl } = useThree();
+  const controls = useRef(null);
+  useFrame(() => controls.current && controls.current.update());
+  return (
+    <orbitControls
+      ref={controls}
+      args={[camera, gl.domElement]}
+      enableDamping
+      enablePan={false}
+      enableZoom={true}
+      autoRotate={false}
+    />
+  );
+};
 
 // ---- Настройка поворотов по умолчанию для граней (можно расширить/перенастроить) ----
 const DEFAULT_SIDE_ROTATIONS = {
