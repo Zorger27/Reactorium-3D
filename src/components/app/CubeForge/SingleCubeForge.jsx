@@ -1,6 +1,6 @@
 import React, {forwardRef, useEffect, useMemo, useRef, useState} from "react";
 import '@/components/app/CubeForge/SingleCubeForge.scss'
-import { useResponsiveStyle } from "@/hooks/useResponsiveStyle";
+import { useResponsiveStyle } from "@/hooks/useResponsiveStyle.js";
 import { useLocalStorage } from "@/hooks/useLocalStorage.js";
 import ControlBlock from "@/components/util/ControlBlock.jsx";
 import { useTranslation } from 'react-i18next';

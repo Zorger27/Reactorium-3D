@@ -4,137 +4,131 @@ const initialState = [
   {
     id: 1,
     title: 'React',
-    version: '19.1.0',
+    version: '19.2.1',
     url: 'https://react.dev',
   },
   {
     id: 2,
     title: "Three.js",
-    version: "180",
+    version: "181.2",
     url: "https://github.com/mrdoob/three.js/releases"
   },
   {
     id: 3,
-    title: "Orbit controls",
-    version: "82.1.0",
-    url: "https://threejs.org/docs/#examples/en/controls/OrbitControls"
-  },
-  {
-    id: 4,
     title: "React Three Fiber",
-    version: "9.3.0",
+    version: "9.4.2",
     url: "https://r3f.docs.pmnd.rs/getting-started/introduction"
   },
   {
-    id: 5,
+    id: 4,
     title: 'React Router',
-    version: '7.7.1',
+    version: '7.10.1',
     url: 'https://reactrouter.com',
   },
   {
-    id: 6,
+    id: 5,
     title: 'Redux Toolkit',
-    version: '2.8.2',
+    version: '2.11.0',
     url: 'https://redux-toolkit.js.org',
   },
   {
-    id: 7,
+    id: 6,
     title: 'Vite',
-    version: '7.1.5',
+    version: '7.2.6',
     url: 'https://vitejs.dev',
   },
   {
-    id: 8,
+    id: 7,
     title: 'React i18next',
-    version: '15.6.1',
+    version: '25.7.1',
     url: 'https://react.i18next.com',
   },
   {
-    id: 9,
+    id: 8,
     title: "jsPDF",
-    version: "3.0.3",
+    version: "3.0.4",
     url: "https://www.npmjs.com/package/jspdf"
   },
   {
-    id: 10,
+    id: 9,
     title: "HTML5",
     version: "",
     url: "https://developer.mozilla.org/ru/docs/Learn/HTML/Introduction_to_HTML"
   },
   {
-    id: 11,
+    id: 10,
     title: "CSS3",
     version: "",
     url: "https://developer.mozilla.org/ru/docs/Learn/CSS/First_steps"
   },
   {
-    id: 12,
+    id: 11,
     title: "SASS",
-    version: "1.89.2",
+    version: "1.94.2",
     url: "https://sass-lang.com"
   },
   {
-    id: 13,
+    id: 12,
     title: "FlexBox CSS",
     version: "",
     url: "https://developer.mozilla.org/ru/docs/Learn/CSS/CSS_layout/Flexbox"
   },
   {
-    id: 14,
+    id: 13,
     title: "Grid CSS",
     version: "",
     url: "https://developer.mozilla.org/ru/docs/Web/CSS/CSS_grid_layout"
   },
   {
-    id: 15,
+    id: 14,
     title: "JavaScript",
     version: "",
     url: "https://developer.mozilla.org/ru/docs/Learn/JavaScript"
   },
   {
-    id: 16,
+    id: 15,
     title: "Markdown",
     version: "",
     url: "https://www.markdownguide.org"
   },
   {
-    id: 17,
+    id: 16,
     title: "Font Awesome",
     version: "7.1.0",
     url: "https://fontawesome.com"
   },
   {
-    id: 18,
+    id: 17,
     title: "Google Search Console",
     version: "",
     url: "https://search.google.com/search-console"
   },
   {
-    id: 19,
+    id: 18,
     title: "Google Analytics",
     version: "4.0",
     url: "https://analytics.google.com"
   },
   {
-    id: 20,
+    id: 19,
     title: "Open Graph protocol",
     version: "",
     url: "https://ogp.me"
   },
   {
-    id: 21,
+    id: 20,
     title: "Favicon",
     version: "",
     url: "https://developer.mozilla.org/en-US/docs/Glossary/Favicon"
   },
   {
-    id: 22,
+    id: 21,
     title: "Sitemap",
     version: "",
     url: "https://www.sitemaps.org"
   },
   {
-    id: 23,
+    id: 22,
     title: "Robots.txt",
     version: "",
     url: "https://developers.google.com/search/docs/crawling-indexing/robots/intro"
