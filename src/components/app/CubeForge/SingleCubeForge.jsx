@@ -1018,6 +1018,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
   useEffect(() => {
     if (isShuffleMenuOpen) {
       setIsClearMenuOpen(false);
+      setIsCubeStyleMenuOpen(false);
 
       // Меню сохранения НЕ закрываем во время записи видео
       if (!isRecording) {
@@ -1030,6 +1031,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
   useEffect(() => {
     if (isClearMenuOpen) {
       setIsShuffleMenuOpen(false);
+      setIsCubeStyleMenuOpen(false);
 
       // Меню сохранения НЕ закрываем во время записи видео
       if (!isRecording) {
@@ -1043,8 +1045,22 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
     if (isSaveMenuOpen) {
       setIsShuffleMenuOpen(false);
       setIsClearMenuOpen(false);
+      setIsCubeStyleMenuOpen(false);
     }
   }, [isSaveMenuOpen]);
+
+  // EFFECT 15: Когда открывается меню выбора стиля куба — закрываем остальные меню
+  useEffect(() => {
+    if (isCubeStyleMenuOpen) {
+      setIsShuffleMenuOpen(false);
+      setIsClearMenuOpen(false);
+
+      // Меню сохранения НЕ закрываем во время записи видео
+      if (!isRecording) {
+        setIsSaveMenuOpen(false);
+      }
+    }
+  }, [isCubeStyleMenuOpen, isRecording]);
 
   // === Очистка ТЕКУЩЕГО localStorage (только SingleCubeForge) ===
   const clearCurrentStorage = () => {
