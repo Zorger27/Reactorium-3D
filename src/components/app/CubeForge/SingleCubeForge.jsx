@@ -1899,23 +1899,27 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
           </div>
         </div>
 
-        {/* === Панель перемешивания кубов === */}
-        <div className="shuffle-buttons">
-          {/* Главная кнопка */}
-          <button className={`main-shuffle-button ${isShuffleMenuOpen ? 'open' : ''}`} onClick={() => setIsShuffleMenuOpen(prev => !prev)} title={isShuffleMenuOpen ? t('shuffle.menu-close') : t('shuffle.menu-open')}>
-            <i className={`main-shuffle-icon fas ${isShuffleMenuOpen ? 'fa-times' : 'fa-globe'}`}></i><span className="main-shuffle-text">{t('shuffle.title')}</span>
-          </button>
+        {cubeLevel !== 1 && (
+          <>
+            {/* === Панель перемешивания кубов === */}
+            <div className="shuffle-buttons">
+              {/* Главная кнопка */}
+              <button className={`main-shuffle-button ${isShuffleMenuOpen ? 'open' : ''}`} onClick={() => setIsShuffleMenuOpen(prev => !prev)} title={isShuffleMenuOpen ? t('shuffle.menu-close') : t('shuffle.menu-open')}>
+                <i className={`main-shuffle-icon fas ${isShuffleMenuOpen ? 'fa-times' : 'fa-globe'}`}></i><span className="main-shuffle-text">{t('shuffle.title')}</span>
+              </button>
 
-          {/* Подменю с кнопками */}
-          <div className={`shuffle-submenu ${isShuffleMenuOpen ? 'open' : ''}`}>
-            <button onClick={() => {setShuffleTrigger(prev => prev + 1);setIsShuffleMenuOpen(true);}} title={t('shuffle.begin')}>
-              <i className="fas fa-random"></i>
-            </button>
-            <button onClick={() => {setPositionsResetTrigger(prev => prev + 1);setIsShuffleMenuOpen(true);}} title={t('shuffle.reset')}>
-              <i className="fas fa-undo"></i>
-            </button>
-          </div>
-        </div>
+              {/* Подменю с кнопками */}
+              <div className={`shuffle-submenu ${isShuffleMenuOpen ? 'open' : ''}`}>
+                <button onClick={() => {setShuffleTrigger(prev => prev + 1);setIsShuffleMenuOpen(true);}} title={t('shuffle.begin')}>
+                  <i className="fas fa-random"></i>
+                </button>
+                <button onClick={() => {setPositionsResetTrigger(prev => prev + 1);setIsShuffleMenuOpen(true);}} title={t('shuffle.reset')}>
+                  <i className="fas fa-undo"></i>
+                </button>
+              </div>
+            </div>
+          </>
+        )}
 
         {/* === Панель сохранения === */}
         <div className="save-buttons">
