@@ -824,7 +824,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
       const normalizedDiff = ((diff + Math.PI) % (2 * Math.PI)) - Math.PI;
 
       // Плавно приближаемся к целевому углу (ограничиваем скорость поворота)
-      if (cubeLevel === 1 && firstFlipFrameRef.current) {
+      if (cubeLevel === 1 && firstFlipFrameRef.current || cubeStyle === "color") {
         groupRef.current.rotation.z += normalizedDiff;
         firstFlipFrameRef.current = false;
       } else {
