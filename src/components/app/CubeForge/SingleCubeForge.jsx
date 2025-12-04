@@ -166,10 +166,10 @@ const COLOR_CONFIG_LEVEL_1 = [
   {
     right: COLOR_PALETTE[0].value,   // Красный
     left: COLOR_PALETTE[1].value,    // Зелёный
-    top: COLOR_PALETTE[2].value,     // Синий
-    bottom: COLOR_PALETTE[3].value,  // Жёлтый
     front: COLOR_PALETTE[4].value,   // Пурпурный
-    back: COLOR_PALETTE[5].value     // Бирюзовый
+    back: COLOR_PALETTE[5].value,    // Бирюзовый
+    bottom: COLOR_PALETTE[3].value,  // Жёлтый
+    top: COLOR_PALETTE[2].value,     // Синий
   }
 ];
 
@@ -190,28 +190,19 @@ const COLOR_CONFIG_LEVEL_3 = COLOR_PALETTE.map(c => ({ color: c.value }));
 
 // === Конфигурации ФОТО для разных уровней ===
 
-// Уровень 1: каждая сторона - своё фото (6 сторон)
-const CUBE_CONFIG_LEVEL_1 = [
+const PHOTO_CONFIG_LEVEL_1 = [
   {
-    top: topImg,
+    right: rightImg,
+    left: leftImg,
+    front: frontImg,
+    back: backImg,
     bottom: bottomImg,
-    sides: [rightImg, leftImg, frontImg, backImg]  // Порядок: right, left, front, back
+    top: topImg
   }
 ];
-// const PHOTO_CONFIG_LEVEL_1 = [
-//   {
-//     right: rightImg,
-//     left: leftImg,
-//     front: frontImg,
-//     back: backImg,
-//     bottom: bottomImg,
-//     top: topImg
-//   }
-// ];
 
 // Уровень 2: каждый кубик - свои фото (8 кубиков, top/bottom/sides)
-const CUBE_CONFIG_LEVEL_2 = [
-// const PHOTO_CONFIG_LEVEL_2 = [
+const PHOTO_CONFIG_LEVEL_2 = [
   { top: topLevel2Cube, bottom: bottomLevel2Cube, sides: [sideLevel2Cube01, sideLevel2Cube01, sideLevel2Cube01, sideLevel2Cube01] },
   { top: topLevel2Cube, bottom: bottomLevel2Cube, sides: [sideLevel2Cube02, sideLevel2Cube02, sideLevel2Cube02, sideLevel2Cube02] },
   { top: topLevel2Cube, bottom: bottomLevel2Cube, sides: [sideLevel2Cube03, sideLevel2Cube03, sideLevel2Cube03, sideLevel2Cube03] },
@@ -223,8 +214,7 @@ const CUBE_CONFIG_LEVEL_2 = [
 ];
 
 // Уровень 3: каждый кубик - свои фото (27 кубиков, top/bottom/sides)
-const CUBE_CONFIG_LEVEL_3 = [
-// const PHOTO_CONFIG_LEVEL_3 = [
+const PHOTO_CONFIG_LEVEL_3 = [
   { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube01, sideSmallCube01, sideSmallCube01, sideSmallCube01] },
   { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube02, sideSmallCube02, sideSmallCube02, sideSmallCube02] },
   { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube03, sideSmallCube03, sideSmallCube03, sideSmallCube03] },
@@ -283,7 +273,7 @@ const DEFAULT_SIDE_ROTATIONS = {
   bottom: 0
 };
 
-const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating, direction, speed, resetTrigger, flipTrigger, smallCubeScale, shuffleTrigger, setShuffleTrigger, positionsResetTrigger, cubeLevel }) => {
+const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating, direction, speed, resetTrigger, flipTrigger, smallCubeScale, shuffleTrigger, setShuffleTrigger, positionsResetTrigger, cubeLevel, cubeStyle }) => {
   const groupRef = useRef(null);
 
   // Определяем сколько кубов в одной строке
@@ -297,17 +287,59 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
 
   const cubeCount = cubeLevel; // Количество кубов в зависимости от уровня
 
-  const CUBE_CONFIGS = cubeLevel === 1 ? CUBE_CONFIG_LEVEL_1 : cubeLevel === 8 ? CUBE_CONFIG_LEVEL_2 : CUBE_CONFIG_LEVEL_3;
+  // Выбираем правильную конфигурацию в зависимости от cubeLevel И cubeStyle
+  const CUBE_CONFIGS = useMemo(() => {
+    // Фото
+    if (cubeStyle === 'photo') {
+      return cubeLevel === 1 ? PHOTO_CONFIG_LEVEL_1
+        : cubeLevel === 8 ? PHOTO_CONFIG_LEVEL_2
+          : PHOTO_CONFIG_LEVEL_3;
+    }
+    // Текстура
+    if (cubeStyle === 'texture') {
+      return cubeLevel === 1 ? TEXTURE_CONFIG_LEVEL_1
+        : cubeLevel === 8 ? TEXTURE_CONFIG_LEVEL_2
+          : TEXTURE_CONFIG_LEVEL_3;
+    }
+    // Цвет
+    if (cubeStyle === 'color') {
+      return cubeLevel === 1 ? COLOR_CONFIG_LEVEL_1
+        : cubeLevel === 8 ? COLOR_CONFIG_LEVEL_2
+          : COLOR_CONFIG_LEVEL_3;
+    }
+    // По умолчанию - фото
+    return cubeLevel === 1 ? PHOTO_CONFIG_LEVEL_1
+      : cubeLevel === 8 ? PHOTO_CONFIG_LEVEL_2
+        : PHOTO_CONFIG_LEVEL_3;
+  }, [cubeLevel, cubeStyle]);
 
   const geometry = useMemo(
     () => new THREE.BoxGeometry(cubeSize * smallCubeScale, cubeSize * smallCubeScale, cubeSize * smallCubeScale),
     [cubeSize, smallCubeScale]
   );
 
+  // Для загрузки текстур, фотографий
   const texturePathList = useMemo(() => {
-    const arr = CUBE_CONFIGS.flatMap(cfg => [cfg.top, cfg.bottom, ...(cfg.sides || [])]);
+    if (cubeStyle === "color") return []; // Чертовски важная штука!!! Без неё не будет работать cubeLevel1!
+
+    const arr = [];
+
+    CUBE_CONFIGS.forEach(cfg => {
+      // Для фото: добавляем top, bottom, sides
+      if (cfg.top) arr.push(cfg.top);
+      if (cfg.bottom) arr.push(cfg.bottom);
+      if (cfg.sides) arr.push(...cfg.sides);
+
+      // Для текстур: добавляем texture, right, left, front, back
+      if (cfg.texture) arr.push(cfg.texture);
+      if (cfg.right) arr.push(cfg.right);
+      if (cfg.left) arr.push(cfg.left);
+      if (cfg.front) arr.push(cfg.front);
+      if (cfg.back) arr.push(cfg.back);
+    });
+
     return Array.from(new Set(arr.filter(Boolean)));
-  }, [CUBE_CONFIGS]); // ⭐ Теперь зависит от CUBE_CONFIGS!
+  }, [CUBE_CONFIGS]);
 
   // ---- Загружаем все текстуры одним вызовом ----
   // Если texturePathList пуст — передадим пустой массив (useLoader вернёт либо [], либо что-то корректное)
@@ -852,45 +884,152 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
   // Мемоизируем создание материалов
   const cubeMaterials = useMemo(() => {
 
-    // ---- Вспомогательная функция: получить текстуру по пути, или null ----
-    const getTex = (path) => (path ? textureByPath.get(path) || null : null);
+    // === ЦВЕТ: один цвет на все стороны (кроме уровня 1) ===
+    if (cubeStyle === 'color') {
+      return Array.from({ length: cubeCount }, (_, i) => {
+        const cfg = CUBE_CONFIGS[i % CUBE_CONFIGS.length];
 
-    const makeMat = (tex, rotateDeg = 0) => {
-      if (!tex) return new THREE.MeshBasicMaterial({ color: 0xcccccc });
-      const t = tex.clone();
-      t.center = new THREE.Vector2(0.5, 0.5);
-      t.flipY = true;
-      t.colorSpace = THREE.SRGBColorSpace;
-      t.rotation = degreesToRadians(rotateDeg || 0);
-      t.needsUpdate = true;
-      return new THREE.MeshBasicMaterial({
-        map: t,
-        depthTest: true,
-        depthWrite: true,
-        transparent: false
+        // Уровень 1: каждая сторона - свой цвет
+        if (cubeLevel === 1) {
+          return [
+            new THREE.MeshBasicMaterial({ color: cfg.right }),
+            new THREE.MeshBasicMaterial({ color: cfg.left }),
+            new THREE.MeshBasicMaterial({ color: cfg.front }),
+            new THREE.MeshBasicMaterial({ color: cfg.back }),
+            new THREE.MeshBasicMaterial({ color: cfg.bottom }),
+            new THREE.MeshBasicMaterial({ color: cfg.top }),
+          ];
+        }
+
+        // Уровни 2 и 3: один цвет на все стороны
+        const colorMat = new THREE.MeshBasicMaterial({ color: cfg.color });
+        return [colorMat, colorMat, colorMat, colorMat, colorMat, colorMat];
       });
-    };
+    }
 
-    // Генерируем материалы для текущего числа кубов
-    return Array.from({ length: cubeCount }, (_, i) => {
-      const cfg = CUBE_CONFIGS[i % CUBE_CONFIGS.length];
-      const topTex = getTex(cfg.top);
-      const bottomTex = getTex(cfg.bottom);
+    // === ФОТО: используем текстуры с top/bottom/sides ===
+    if (cubeStyle === 'photo') {
+      const getTex = (path) => (path ? textureByPath.get(path) || null : null);
 
-      const sidesPaths = [...(cfg.sides || [])];
-      while (sidesPaths.length < 4) sidesPaths.push(sidesPaths[sidesPaths.length - 1] || null);
-      const sideTexs = sidesPaths.map(p => getTex(p));
+      const makeMat = (tex, rotateDeg = 0) => {
+        if (!tex) return new THREE.MeshBasicMaterial({ color: 0xcccccc });
+        const t = tex.clone();
+        t.center = new THREE.Vector2(0.5, 0.5);
+        t.flipY = true;
+        t.colorSpace = THREE.SRGBColorSpace;
+        t.rotation = degreesToRadians(rotateDeg || 0);
+        t.needsUpdate = true;
+        return new THREE.MeshBasicMaterial({
+          map: t,
+          depthTest: true,
+          depthWrite: true,
+          transparent: false
+        });
+      };
 
-      return [
-        makeMat(sideTexs[0], DEFAULT_SIDE_ROTATIONS.right),
-        makeMat(sideTexs[1], DEFAULT_SIDE_ROTATIONS.left),
-        makeMat(sideTexs[2], DEFAULT_SIDE_ROTATIONS.front),
-        makeMat(sideTexs[3], DEFAULT_SIDE_ROTATIONS.back),
-        makeMat(bottomTex, DEFAULT_SIDE_ROTATIONS.bottom),
-        makeMat(topTex, DEFAULT_SIDE_ROTATIONS.top),
-      ];
+      return Array.from({ length: cubeCount }, (_, i) => {
+        const cfg = CUBE_CONFIGS[i % CUBE_CONFIGS.length];
+
+        // Уровень 1: используем right/left/top/bottom/front/back
+        if (cubeLevel === 1) {
+          const rightTex = getTex(cfg.right);
+          const leftTex = getTex(cfg.left);
+          const frontTex = getTex(cfg.front);
+          const backTex = getTex(cfg.back);
+          const bottomTex = getTex(cfg.bottom);
+          const topTex = getTex(cfg.top);
+
+          return [
+            makeMat(rightTex, DEFAULT_SIDE_ROTATIONS.right),
+            makeMat(leftTex, DEFAULT_SIDE_ROTATIONS.left),
+            makeMat(frontTex, DEFAULT_SIDE_ROTATIONS.front),
+            makeMat(backTex, DEFAULT_SIDE_ROTATIONS.back),
+            makeMat(bottomTex, DEFAULT_SIDE_ROTATIONS.bottom),
+            makeMat(topTex, DEFAULT_SIDE_ROTATIONS.top),
+          ];
+        }
+
+        // Уровни 2 и 3: используем top/bottom/sides
+        const topTex = getTex(cfg.top);
+        const bottomTex = getTex(cfg.bottom);
+        const sidesPaths = [...(cfg.sides || [])];
+        while (sidesPaths.length < 4) sidesPaths.push(sidesPaths[sidesPaths.length - 1] || null);
+        const sideTexs = sidesPaths.map(p => getTex(p));
+
+        return [
+          makeMat(sideTexs[0], DEFAULT_SIDE_ROTATIONS.right),
+          makeMat(sideTexs[1], DEFAULT_SIDE_ROTATIONS.left),
+          makeMat(sideTexs[2], DEFAULT_SIDE_ROTATIONS.front),
+          makeMat(sideTexs[3], DEFAULT_SIDE_ROTATIONS.back),
+          makeMat(bottomTex, DEFAULT_SIDE_ROTATIONS.bottom),
+          makeMat(topTex, DEFAULT_SIDE_ROTATIONS.top),
+        ];
+      });
+    }
+
+    // === ТЕКСТУРА: одна текстура на все стороны (кроме уровня 1) ===
+    if (cubeStyle === 'texture') {
+      const getTex = (path) => (path ? textureByPath.get(path) || null : null);
+
+      const makeMat = (tex, rotateDeg = 0) => {
+        if (!tex) return new THREE.MeshBasicMaterial({ color: 0xcccccc });
+        const t = tex.clone();
+        t.center = new THREE.Vector2(0.5, 0.5);
+        t.flipY = true;
+        t.colorSpace = THREE.SRGBColorSpace;
+        t.rotation = degreesToRadians(rotateDeg || 0);
+        t.needsUpdate = true;
+        return new THREE.MeshBasicMaterial({
+          map: t,
+          depthTest: true,
+          depthWrite: true,
+          transparent: false
+        });
+      };
+
+      return Array.from({ length: cubeCount }, (_, i) => {
+        const cfg = CUBE_CONFIGS[i % CUBE_CONFIGS.length];
+
+        // Уровень 1: каждая сторона - своя текстура
+        if (cubeLevel === 1) {
+          const rightTex = getTex(cfg.right);
+          const leftTex = getTex(cfg.left);
+          const frontTex = getTex(cfg.front);
+          const backTex = getTex(cfg.back);
+          const bottomTex = getTex(cfg.bottom);
+          const topTex = getTex(cfg.top);
+
+          return [
+            makeMat(rightTex, DEFAULT_SIDE_ROTATIONS.right),
+            makeMat(leftTex, DEFAULT_SIDE_ROTATIONS.left),
+            makeMat(frontTex, DEFAULT_SIDE_ROTATIONS.front),
+            makeMat(backTex, DEFAULT_SIDE_ROTATIONS.back),
+            makeMat(bottomTex, DEFAULT_SIDE_ROTATIONS.bottom),
+            makeMat(topTex, DEFAULT_SIDE_ROTATIONS.top),
+          ];
+        }
+
+        // Уровни 2 и 3: одна текстура на все стороны
+        const tex = getTex(cfg.texture);
+
+        return [
+          makeMat(tex, DEFAULT_SIDE_ROTATIONS.right),
+          makeMat(tex, DEFAULT_SIDE_ROTATIONS.left),
+          makeMat(tex, DEFAULT_SIDE_ROTATIONS.front),
+          makeMat(tex, DEFAULT_SIDE_ROTATIONS.back),
+          makeMat(tex, DEFAULT_SIDE_ROTATIONS.bottom),
+          makeMat(tex, DEFAULT_SIDE_ROTATIONS.top),
+        ];
+      });
+    }
+
+    // По умолчанию - возвращаем серые кубики
+    return Array.from({ length: cubeCount }, () => {
+      const mat = new THREE.MeshBasicMaterial({ color: 0xcccccc });
+      return [mat, mat, mat, mat, mat, mat];
     });
-  }, [textureByPath, cubeCount, CUBE_CONFIGS]);
+
+  }, [textureByPath, cubeCount, CUBE_CONFIGS, cubeStyle, cubeLevel]);
 
   return (
     <group ref={groupRef}>
@@ -931,10 +1070,10 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
   const [openBlock, setOpenBlock] = useState(null);
   const [shuffleTrigger, setShuffleTrigger] = useState(0);
   const [positionsResetTrigger, setPositionsResetTrigger] = useState(0);
-  const [isCubeStyleMenuOpen, setIsCubeStyleMenuOpen] = useState(false);
   const [isShuffleMenuOpen, setIsShuffleMenuOpen] = useState(false);
   const [isClearMenuOpen, setIsClearMenuOpen] = useState(false);
   const [isSaveMenuOpen, setIsSaveMenuOpen] = useState(false);
+  const [isCubeStyleMenuOpen, setIsCubeStyleMenuOpen] = useState(false);
 
   // Состояние для записи видео
   const [isRecording, setIsRecording] = useState(false);
@@ -956,6 +1095,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
   const [direction, setDirection, resetDirection] = useLocalStorage("singleCubeForgeDirection", 1, v => parseInt(v, 10));
   const [isRotating, setIsRotating, resetIsRotating] = useLocalStorage("singleCubeForgeIsRotating", true, v => v === "true");
   const [cubeLevel, setCubeLevel, resetCubeLevel] = useLocalStorage("singleCubeForgeCubeLevel", 3, v => parseInt(v, 10));
+  const [cubeStyle, setCubeStyle, resetCubeStyle] = useLocalStorage("singleCubeForgeCubeStyle", "photo", v => v);
 
   // Кнопки вращения
   const handleClockwise = () => {setDirection(1);setIsRotating(true);};
@@ -1094,6 +1234,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
       resetDirection();
       resetIsRotating();
       resetCubeLevel();
+      resetCubeStyle();
 
       setPositionsResetTrigger(prev => prev + 1);
       setResetTrigger(prev => !prev);
@@ -1131,6 +1272,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
       resetDirection();
       resetIsRotating();
       resetCubeLevel();
+      resetCubeStyle();
 
       setPositionsResetTrigger(prev => prev + 1);
       setResetTrigger(prev => !prev);
@@ -1876,32 +2018,29 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
           {/* Подменю с кнопками */}
           <div className={`cube-style-submenu ${isCubeStyleMenuOpen ? 'open' : ''}`}>
             <button
-              onClick={() => {
-                // setPhotoStyle(prev => prev + 1);
-                setIsCubeStyleMenuOpen(true);}}
+              className={cubeStyle === 'photo' ? 'active' : ''}
+              onClick={() => {setCubeStyle('photo');setIsCubeStyleMenuOpen(true);}}
               title={t('cube-style.photo')}>
               <i className="fas fa-image"></i>
             </button>
             <button
-              onClick={() => {
-                // setTextureStyle(prev => prev + 1);
-                setIsCubeStyleMenuOpen(true);}}
+              className={cubeStyle === 'texture' ? 'active' : ''}
+              onClick={() => {setCubeStyle('texture');setIsCubeStyleMenuOpen(true);}}
               title={t('cube-style.texture')}>
               <i className="fas fa-layer-group"></i>
             </button>
             <button
-              onClick={() => {
-                // setColorStyle(prev => prev + 1);
-                setIsCubeStyleMenuOpen(true);}}
+              className={cubeStyle === 'color' ? 'active' : ''}
+              onClick={() => {setCubeStyle('color');setIsCubeStyleMenuOpen(true);}}
               title={t('cube-style.color')}>
               <i className="fas fa-tint"></i>
             </button>
           </div>
         </div>
 
+        {/* === Панель перемешивания кубов === */}
         {cubeLevel !== 1 && (
           <>
-            {/* === Панель перемешивания кубов === */}
             <div className="shuffle-buttons">
               {/* Главная кнопка */}
               <button className={`main-shuffle-button ${isShuffleMenuOpen ? 'open' : ''}`} onClick={() => setIsShuffleMenuOpen(prev => !prev)} title={isShuffleMenuOpen ? t('shuffle.menu-close') : t('shuffle.menu-open')}>
@@ -1972,6 +2111,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
             setShuffleTrigger={setShuffleTrigger}
             positionsResetTrigger={positionsResetTrigger}
             cubeLevel={actualCubeCount}
+            cubeStyle={cubeStyle}
           />
           <CameraControls />
         </Canvas>
