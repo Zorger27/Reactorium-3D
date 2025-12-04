@@ -1009,6 +1009,10 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
           ];
         }
 
+        // // Уровни 2 и 3: одна текстура на все стороны, БЕЗ DEFAULT_SIDE_ROTATIONS (без ротации)
+        // const tex = getTex(cfg.texture);
+        // return Array.from({ length: 6 }, () => makeMat(tex, 0));
+
         // Уровни 2 и 3: одна текстура на все стороны
         const tex = getTex(cfg.texture);
 
