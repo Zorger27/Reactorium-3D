@@ -98,6 +98,14 @@
     "alertNo": "Thank you for changing your mind! \uD83D\uDE01\uD83D\uDE0A",
     "noData": "No data to clear. \uD83D\uDE44\uD83E\uDEE4"
   },
+  "cube-style": {
+    "title": "Style",
+    "menu-open": "Open the styles menu",
+    "menu-close": "Close the styles menu",
+    "photo": "Photos",
+    "texture": "Textures",
+    "color": "Colors"
+  },
   "shuffle": {
     "title": "Shuffle",
     "menu-open": "Open cube shuffle menu",

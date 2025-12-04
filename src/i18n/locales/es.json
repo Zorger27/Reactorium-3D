@@ -98,6 +98,14 @@
     "alertNo": "¡Gracias por cambiar de opinión! \uD83D\uDE01\uD83D\uDE0A",
     "noData": "No hay datos para limpiar. \uD83D\uDE44\uD83E\uDEE4"
   },
+  "cube-style": {
+    "title": "Estilo",
+    "menu-open": "Abrir el menú de estilos",
+    "menu-close": "Cerrar el menú de estilos",
+    "photo": "Fotos",
+    "texture": "Texturas",
+    "color": "Colores"
+  },
   "shuffle": {
     "title": "Barajar",
     "menu-open": "Abrir el menú de Cube Shuffle",

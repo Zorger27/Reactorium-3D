@@ -931,6 +931,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
   const [openBlock, setOpenBlock] = useState(null);
   const [shuffleTrigger, setShuffleTrigger] = useState(0);
   const [positionsResetTrigger, setPositionsResetTrigger] = useState(0);
+  const [isCubeStyleMenuOpen, setIsCubeStyleMenuOpen] = useState(false);
   const [isShuffleMenuOpen, setIsShuffleMenuOpen] = useState(false);
   const [isClearMenuOpen, setIsClearMenuOpen] = useState(false);
   const [isSaveMenuOpen, setIsSaveMenuOpen] = useState(false);
@@ -991,13 +992,14 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
 
   // EFFECT 11: useEffect для закрытия при клике вне меню!!!!!
   useEffect(() => {
-    if (!isShuffleMenuOpen && !isClearMenuOpen && !isSaveMenuOpen) return;
+    if (!isShuffleMenuOpen && !isClearMenuOpen && !isSaveMenuOpen && !isCubeStyleMenuOpen) return;
 
     const handleClickOutside = (event) => {
       // Если клик не внутри панели кнопок
       if (!event.target.closest('.special-buttons')) {
         setIsShuffleMenuOpen(false);
         setIsClearMenuOpen(false);
+        setIsCubeStyleMenuOpen(false);
 
         // Меню сохранения НЕ закрываем во время записи видео
         if (!isRecording) {
@@ -1010,7 +1012,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isShuffleMenuOpen, isClearMenuOpen, isSaveMenuOpen, isRecording]);
+  }, [isShuffleMenuOpen, isClearMenuOpen, isSaveMenuOpen, isCubeStyleMenuOpen, isRecording]);
 
   // EFFECT 12: Когда открывается меню перемешивания — закрываем остальные меню
   useEffect(() => {
@@ -1845,6 +1847,39 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
           <div className={`clear-submenu ${isClearMenuOpen ? 'open' : ''}`}>
             <button onClick={clearCurrentStorage} title={t('storage.clearCurrent')}><i className="fas fa-broom"></i></button>
             <button onClick={clearAllStorage} title={t('storage.clearAll')}><i className="fas fa-fire"></i></button>
+          </div>
+        </div>
+
+        {/* === Панель изменения стиля куба === */}
+        <div className="cube-style-buttons">
+          {/* Главная кнопка */}
+          <button className={`main-cube-style-button ${isCubeStyleMenuOpen ? 'open' : ''}`} onClick={() => setIsCubeStyleMenuOpen(prev => !prev)} title={isCubeStyleMenuOpen ? t('cube-style.menu-close') : t('cube-style.menu-open')}>
+            <i className={`main-cube-style-icon fas ${isCubeStyleMenuOpen ? 'fa-times' : 'fa-palette'}`}></i><span className="main-cube-style-text">{t('cube-style.title')}</span>
+          </button>
+
+          {/* Подменю с кнопками */}
+          <div className={`cube-style-submenu ${isCubeStyleMenuOpen ? 'open' : ''}`}>
+            <button
+              onClick={() => {
+                // setPhotoStyle(prev => prev + 1);
+                setIsCubeStyleMenuOpen(true);}}
+              title={t('cube-style.photo')}>
+              <i className="fas fa-image"></i>
+            </button>
+            <button
+              onClick={() => {
+                // setTextureStyle(prev => prev + 1);
+                setIsCubeStyleMenuOpen(true);}}
+              title={t('cube-style.texture')}>
+              <i className="fas fa-layer-group"></i>
+            </button>
+            <button
+              onClick={() => {
+                // setColorStyle(prev => prev + 1);
+                setIsCubeStyleMenuOpen(true);}}
+              title={t('cube-style.color')}>
+              <i className="fas fa-tint"></i>
+            </button>
           </div>
         </div>
 
