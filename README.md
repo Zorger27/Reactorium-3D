@@ -2,7 +2,7 @@
 ### You can view my CV here: [Curriculum VITAE](https://zorger27.github.io)❗️ ###
 ### You can view my Portfolio here: [My Portfolio](https://Zorin.Expert)❗️ ###
 
-<img width="1709" height="918" alt="CubeForge 01" src="https://github.com/user-attachments/assets/24c61b38-d44c-476f-9e95-d3e76ad89e66" />
+<img width="1709" alt="CubeForge 01" src="https://github.com/user-attachments/assets/24c61b38-d44c-476f-9e95-d3e76ad89e66" />
 
 #### 🔮 Reactorium 3D is a “React laboratory in the space of three dimensions”, where <i>React</i>, <i>Three.js</i> and <i>React Three Fiber</i> merge to create interactive worlds filled with shapes, motion and light. ####
 
