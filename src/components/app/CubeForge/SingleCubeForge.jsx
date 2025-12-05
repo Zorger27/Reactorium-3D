@@ -4,6 +4,7 @@ import { useResponsiveStyle } from "@/hooks/useResponsiveStyle.js";
 import { useLocalStorage } from "@/hooks/useLocalStorage.js";
 import ControlBlock from "@/components/util/ControlBlock.jsx";
 import SavePanel from "@/components/util/SavePanel.jsx";
+import ClearStoragePanel from "@/components/util/ClearStoragePanel.jsx";
 import { useTranslation } from 'react-i18next';
 import {Canvas, useFrame, useThree, extend, useLoader} from '@react-three/fiber';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
@@ -1211,87 +1212,21 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
     }
   }, [isCubeStyleMenuOpen, isRecording]);
 
-  // === Очистка ТЕКУЩЕГО localStorage (только SingleCubeForge) ===
-  const clearCurrentStorage = () => {
-    // Проверяем, есть ли вообще что очищать
-    const hasData = Object.keys(localStorage).some(key => key.startsWith('singleCubeForge'));
-    if (!hasData) {
-      alert(t('storage.noData')); // "Немає даних для очищення. 🙄🫤"
-      return;
-    }
+  // Функция для сброса всех состояний
+  const resetAllStates = () => {
+    resetGap();
+    resetSmallCubeScale();
+    resetRotationX();
+    resetRotationY();
+    resetRotationZ();
+    resetSpeed();
+    resetDirection();
+    resetIsRotating();
+    resetCubeLevel();
+    resetCubeStyle();
 
-    const confirmed = window.confirm(t('storage.confirm-clear-current'));
-    if (!confirmed) {
-      alert(t('storage.alertNo'));
-      return;
-    }
-
-    try {
-      Object.keys(localStorage).forEach(key => {
-        if (key.startsWith('singleCubeForge')) {
-          localStorage.removeItem(key);
-        }
-      });
-
-      // Сброс значений через reset-хуки
-      resetGap();
-      resetSmallCubeScale();
-      resetRotationX();
-      resetRotationY();
-      resetRotationZ();
-      resetSpeed();
-      resetDirection();
-      resetIsRotating();
-      resetCubeLevel();
-      resetCubeStyle();
-
-      setPositionsResetTrigger(prev => prev + 1);
-      setResetTrigger(prev => !prev);
-
-      alert(t('storage.alertYes'));
-    } catch (e) {
-      console.error('Ошибка при очистке localStorage:', e);
-    }
-
-    setIsClearMenuOpen(false);
-  };
-
-  // === Полная очистка localStorage ===
-  const clearAllStorage = () => {
-    if (localStorage.length === 0) {
-      alert(t('storage.noData'));
-      return;
-    }
-
-    const confirmed = window.confirm(t('storage.confirm-clear-all'));
-    if (!confirmed) {
-      alert(t('storage.alertNo'));
-      return;
-    }
-
-    try {
-      localStorage.clear();
-      // сброс дефолтов через reset
-      resetGap();
-      resetSmallCubeScale();
-      resetRotationX();
-      resetRotationY();
-      resetRotationZ();
-      resetSpeed();
-      resetDirection();
-      resetIsRotating();
-      resetCubeLevel();
-      resetCubeStyle();
-
-      setPositionsResetTrigger(prev => prev + 1);
-      setResetTrigger(prev => !prev);
-
-      alert(t('storage.alertYes'));
-    } catch (e) {
-      console.error('Ошибка при очистке всего localStorage:', e);
-    }
-
-    setIsClearMenuOpen(false);
+    setPositionsResetTrigger(prev => prev + 1);
+    setResetTrigger(prev => !prev);
   };
 
   // Внутренний ref для доступа к Canvas
@@ -1396,18 +1331,9 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
       <div className="special-buttons">
 
         {/* === Панель очистки localStorage === */}
-        <div className="clear-buttons">
-          {/* Главная кнопка */}
-          <button className={`main-clear-button ${isClearMenuOpen ? 'open' : ''}`} onClick={() => setIsClearMenuOpen(prev => !prev)} title={isClearMenuOpen ? t('storage.menu-close') : t('storage.menu-open')}>
-            <i className={`main-clear-icon fas ${isClearMenuOpen ? 'fa-times' : 'fa-trash-alt'}`}></i><span className="main-clear-text">{t('storage.title')}</span>
-          </button>
-
-          {/* Подменю */}
-          <div className={`clear-submenu ${isClearMenuOpen ? 'open' : ''}`}>
-            <button onClick={clearCurrentStorage} title={t('storage.clearCurrent')}><i className="fas fa-broom"></i></button>
-            <button onClick={clearAllStorage} title={t('storage.clearAll')}><i className="fas fa-fire"></i></button>
-          </div>
-        </div>
+        <ClearStoragePanel onClearCurrent={resetAllStates} onClearAll={resetAllStates} isOpen={isClearMenuOpen} onToggle={setIsClearMenuOpen}
+          storagePrefix="singleCubeForge"
+        />
 
         {/* === Панель изменения стиля куба === */}
         <div className="cube-style-buttons">
@@ -1462,15 +1388,10 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
         )}
 
         {/* === Панель сохранения === */}
-        <SavePanel
-          canvasRef={internalRef}
+        <SavePanel canvasRef={internalRef} isRecording={isRecording} onRecordingChange={setIsRecording} isOpen={isSaveMenuOpen} onToggle={setIsSaveMenuOpen}
           projectTitle={t('project4.single-description')}
           footerText={t('save.created')}
           siteUrl="https://reactorium-3d.vercel.app"
-          isRecording={isRecording}
-          onRecordingChange={setIsRecording}
-          isOpen={isSaveMenuOpen}
-          onToggle={setIsSaveMenuOpen}
         />
 
       </div>
