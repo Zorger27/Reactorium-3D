@@ -6,6 +6,7 @@ import ControlBlock from "@/components/util/ControlBlock.jsx";
 import SavePanel from "@/components/panel/SavePanel.jsx";
 import ClearStoragePanel from "@/components/panel/ClearStoragePanel.jsx";
 import CubeStylePanel from "@/components/panel/CubeStylePanel.jsx";
+import ShufflePanel from "@/components/panel/ShufflePanel.jsx";
 import { useTranslation } from 'react-i18next';
 import {Canvas, useFrame, useThree, extend, useLoader} from '@react-three/fiber';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
@@ -1340,26 +1341,10 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
         <CubeStylePanel currentStyle={cubeStyle} onStyleChange={setCubeStyle} isOpen={isCubeStyleMenuOpen} onToggle={setIsCubeStyleMenuOpen}/>
 
         {/* === Панель перемешивания кубов === */}
-        {cubeLevel !== 1 && (
-          <>
-            <div className="shuffle-buttons">
-              {/* Главная кнопка */}
-              <button className={`main-shuffle-button ${isShuffleMenuOpen ? 'open' : ''}`} onClick={() => setIsShuffleMenuOpen(prev => !prev)} title={isShuffleMenuOpen ? t('shuffle.menu-close') : t('shuffle.menu-open')}>
-                <i className={`main-shuffle-icon fas ${isShuffleMenuOpen ? 'fa-times' : 'fa-globe'}`}></i><span className="main-shuffle-text">{t('shuffle.title')}</span>
-              </button>
-
-              {/* Подменю с кнопками */}
-              <div className={`shuffle-submenu ${isShuffleMenuOpen ? 'open' : ''}`}>
-                <button onClick={() => {setShuffleTrigger(prev => prev + 1);setIsShuffleMenuOpen(true);}} title={t('shuffle.begin')}>
-                  <i className="fas fa-random"></i>
-                </button>
-                <button onClick={() => {setPositionsResetTrigger(prev => prev + 1);setIsShuffleMenuOpen(true);}} title={t('shuffle.reset')}>
-                  <i className="fas fa-undo"></i>
-                </button>
-              </div>
-            </div>
-          </>
-        )}
+        <ShufflePanel isVisible={cubeLevel !== 1} isOpen={isShuffleMenuOpen} onToggle={setIsShuffleMenuOpen}
+          onShuffle={() => setShuffleTrigger(prev => prev + 1)}
+          onReset={() => setPositionsResetTrigger(prev => prev + 1)}
+        />
 
         {/* === Панель сохранения === */}
         <SavePanel canvasRef={internalRef} isRecording={isRecording} onRecordingChange={setIsRecording} isOpen={isSaveMenuOpen} onToggle={setIsSaveMenuOpen}
