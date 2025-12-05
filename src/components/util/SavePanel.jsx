@@ -37,9 +37,9 @@ const SavePanel = ({
 
   // === Получение метаданных для сохранения ===
   const getSaveMetadata = () => {
-    const title = projectTitle || "Main Title";
+    const title = projectTitle || t('home.name');
     const dateTime = new Date().toLocaleString();
-    const footer = footerText || t('save.created');
+    const footer = footerText || t('footer.socialSharing.tweetText');
     const site = siteUrl || "https://Zorin.Expert";
     return { title, dateTime, footer, site };
   };
