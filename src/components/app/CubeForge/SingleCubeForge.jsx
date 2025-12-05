@@ -5,6 +5,7 @@ import { useLocalStorage } from "@/hooks/useLocalStorage.js";
 import ControlBlock from "@/components/util/ControlBlock.jsx";
 import SavePanel from "@/components/panel/SavePanel.jsx";
 import ClearStoragePanel from "@/components/panel/ClearStoragePanel.jsx";
+import CubeStylePanel from "@/components/panel/CubeStylePanel.jsx";
 import { useTranslation } from 'react-i18next';
 import {Canvas, useFrame, useThree, extend, useLoader} from '@react-three/fiber';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
@@ -1336,34 +1337,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
         />
 
         {/* === Панель изменения стиля куба === */}
-        <div className="cube-style-buttons">
-          {/* Главная кнопка */}
-          <button className={`main-cube-style-button ${isCubeStyleMenuOpen ? 'open' : ''}`} onClick={() => setIsCubeStyleMenuOpen(prev => !prev)} title={isCubeStyleMenuOpen ? t('cube-style.menu-close') : t('cube-style.menu-open')}>
-            <i className={`main-cube-style-icon fas ${isCubeStyleMenuOpen ? 'fa-times' : 'fa-palette'}`}></i><span className="main-cube-style-text">{t('cube-style.title')}</span>
-          </button>
-
-          {/* Подменю с кнопками */}
-          <div className={`cube-style-submenu ${isCubeStyleMenuOpen ? 'open' : ''}`}>
-            <button
-              className={cubeStyle === 'photo' ? 'active' : ''}
-              onClick={() => {setCubeStyle('photo');setIsCubeStyleMenuOpen(true);}}
-              title={t('cube-style.photo')}>
-              <i className="fas fa-image"></i>
-            </button>
-            <button
-              className={cubeStyle === 'texture' ? 'active' : ''}
-              onClick={() => {setCubeStyle('texture');setIsCubeStyleMenuOpen(true);}}
-              title={t('cube-style.texture')}>
-              <i className="fas fa-layer-group"></i>
-            </button>
-            <button
-              className={cubeStyle === 'color' ? 'active' : ''}
-              onClick={() => {setCubeStyle('color');setIsCubeStyleMenuOpen(true);}}
-              title={t('cube-style.color')}>
-              <i className="fas fa-tint"></i>
-            </button>
-          </div>
-        </div>
+        <CubeStylePanel currentStyle={cubeStyle} onStyleChange={setCubeStyle} isOpen={isCubeStyleMenuOpen} onToggle={setIsCubeStyleMenuOpen}/>
 
         {/* === Панель перемешивания кубов === */}
         {cubeLevel !== 1 && (
