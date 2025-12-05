@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from 'react-i18next';
-import '@/components/util/ClearStoragePanel.scss';
+import '@/components/panel/ClearStoragePanel.scss';
 
 /**
  * Универсальная панель очистки localStorage

@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import jsPDF from "jspdf";
-import '@/components/util/SavePanel.scss';
+import '@/components/panel/SavePanel.scss';
 
 /**
  * Универсальная панель сохранения 3D-сцены

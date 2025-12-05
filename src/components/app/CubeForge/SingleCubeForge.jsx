@@ -3,8 +3,8 @@ import '@/components/app/CubeForge/SingleCubeForge.scss'
 import { useResponsiveStyle } from "@/hooks/useResponsiveStyle.js";
 import { useLocalStorage } from "@/hooks/useLocalStorage.js";
 import ControlBlock from "@/components/util/ControlBlock.jsx";
-import SavePanel from "@/components/util/SavePanel.jsx";
-import ClearStoragePanel from "@/components/util/ClearStoragePanel.jsx";
+import SavePanel from "@/components/panel/SavePanel.jsx";
+import ClearStoragePanel from "@/components/panel/ClearStoragePanel.jsx";
 import { useTranslation } from 'react-i18next';
 import {Canvas, useFrame, useThree, extend, useLoader} from '@react-three/fiber';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
