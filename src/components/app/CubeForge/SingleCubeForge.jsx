@@ -1320,13 +1320,8 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
       </div>
 
       {/* === Панель кнопок управления вращением === */}
-      <RotationControlPanel
-        isRotating={isRotating}
-        onClockwise={handleClockwise}
-        onCounterClockwise={handleCounterClockwise}
-        onPause={handlePause}
-        onStop={handleStop}
-        onFlip={handleFlip}
+      <RotationControlPanel isRotating={isRotating} onClockwise={handleClockwise} onCounterClockwise={handleCounterClockwise}
+        onPause={handlePause} onStop={handleStop} onFlip={handleFlip}
       />
 
       {/* === Панель специальных кнопок === */}
