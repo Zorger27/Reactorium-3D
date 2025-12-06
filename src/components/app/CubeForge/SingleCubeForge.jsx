@@ -7,6 +7,7 @@ import SavePanel from "@/components/panel/SavePanel.jsx";
 import ClearStoragePanel from "@/components/panel/ClearStoragePanel.jsx";
 import CubeStylePanel from "@/components/panel/CubeStylePanel.jsx";
 import ShufflePanel from "@/components/panel/ShufflePanel.jsx";
+import RotationControlPanel from "@/components/panel/RotationControlPanel.jsx";
 import { useTranslation } from 'react-i18next';
 import {Canvas, useFrame, useThree, extend, useLoader} from '@react-three/fiber';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
@@ -1319,15 +1320,14 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
       </div>
 
       {/* === Панель кнопок управления вращением === */}
-      <div className="rotation-buttons">
-        <button onClick={handleClockwise} title={t('control.clockwise')}><i className="fa-solid fa-left-long"></i></button>
-        <button onClick={handlePause} title={ isRotating ? t('control.pause') : t('control.continue') }>
-          <i className={`fas ${isRotating ? "fa-pause" : "fa-play"}`}></i>
-        </button>
-        <button onClick={handleStop} title={t('control.stop')}><i className="fas fa-stop"></i></button>
-        <button onClick={handleFlip} title={t('control.180')}><i className="fas fa-sync-alt"></i></button>
-        <button onClick={handleCounterClockwise} title={t('control.counterclockwise')}><i className="fa-solid fa-right-long"></i></button>
-      </div>
+      <RotationControlPanel
+        isRotating={isRotating}
+        onClockwise={handleClockwise}
+        onCounterClockwise={handleCounterClockwise}
+        onPause={handlePause}
+        onStop={handleStop}
+        onFlip={handleFlip}
+      />
 
       {/* === Панель специальных кнопок === */}
       <div className="special-buttons">

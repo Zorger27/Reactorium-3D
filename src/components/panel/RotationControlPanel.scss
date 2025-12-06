@@ -1,0 +1,60 @@
+@use "sass:color";
+
+.rotation-buttons {
+  position: absolute;
+  bottom: 90px; // Перемещаем вниз
+  left: 50%; // Центрируем
+  transform: translateX(-50%); // Смещаем на половину ширины
+  z-index: 10;
+  display: flex;
+  flex-direction: row; // Горизонтальное расположение
+  gap: 20px; // Отступ между кнопками
+
+  button {
+    color: white;
+    text-shadow: 0 2px 4px black;
+    background-color: #87ceeb;
+    height: 3rem;
+    width: 4rem;
+    font-size: 1.8rem;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
+    transition:  background-color .2s ease-in-out, box-shadow .2s ease-in-out;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #00bfff; /* Более яркий цвет при наведении */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+}
+
+@media(max-width: 1020px) {
+  .rotation-buttons {
+    bottom: 85px; // Перемещаем вниз
+    gap: 1.2rem; // Отступ между кнопками
+
+    button {
+      height: 2.6rem;
+      width: 3.6rem;
+      font-size: 1.4rem;
+    }
+  }
+}
+
+
+@media (max-width: 768px) {
+  .rotation-buttons {
+    bottom: 50px; // Перемещаем вниз
+    gap: 1rem; // Отступ между кнопками
+
+    button {
+      height: 2.6rem;
+      width: 3rem;
+      font-size: 1.4rem;
+      border: 1px solid skyblue;
+      //box-shadow: none;
+    }
+  }
+}
