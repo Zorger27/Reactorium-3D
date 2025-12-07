@@ -1354,6 +1354,8 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
         <Canvas style={canvasStyle} camera={{ fov: 75 }} gl={{ antialias: true, toneMapping: THREE.NoToneMapping, logarithmicDepthBuffer: true }}>
           <perspectiveCamera makeDefault position={[0, 0, 2.5]} />
           <ambientLight intensity={0.6} />
+          {/*/!* Установить цвет внутри Canvas *!/*/}
+          {/*<color attach="background" args={['skyblue']} />*/}
           <CubeGroup
             groupSize={groupSize}
             gap={gap}
