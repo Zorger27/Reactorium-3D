@@ -446,6 +446,9 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
   // Используется чтобы отличить загрузку (без анимации) от shuffle (с анимацией)
   const isLoadingFromStorageRef = useRef(false);
 
+  // Управление вращением куба
+  const [targetRotationZ, setTargetRotationZ] = useState(null);
+
   // === ВЫЧИСЛЕНИЕ: Преобразуем порядок кубиков в реальные координаты
   // Если order пуст — используем естественный порядок позиций (basePositions)
   // Если order заполнен — переставляем позиции согласно сохранённому порядку
@@ -720,8 +723,47 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     }
   }, [rotationX, rotationY, rotationZ]);
 
-  // --- Управление вращением ---
-  const [targetRotationZ, setTargetRotationZ] = useState(null);
+  // EFFECT 8: Сброс
+  useEffect(() => {
+    if (groupRef.current) {
+      groupRef.current.rotation.set(
+        degreesToRadians(rotationX),
+        degreesToRadians(rotationY),
+        degreesToRadians(rotationZ)
+      );
+      setTargetRotationZ(null);
+    }
+  }, [resetTrigger]);
+
+  // EFFECT 9: Поворот на 180°
+  useEffect(() => {
+    if (groupRef.current) {
+      const currentZ = groupRef.current.rotation.z;
+      const newTarget = currentZ + Math.PI;
+      setTargetRotationZ(newTarget);
+    }
+  }, [flipTrigger]);
+
+  // EFFECT 10: Очистка. При размонтировании CubeGroup все текстуры и материалы будут освобождены и память не утечёт!
+  useEffect(() => {
+    return () => {
+      if (!groupRef.current) return;
+      groupRef.current.children.forEach(mesh => {
+        if (mesh.material) {
+          if (Array.isArray(mesh.material)) {
+            mesh.material.forEach(mat => {
+              if (mat.map) mat.map.dispose(); // освобождаем текстуру
+              mat.dispose(); // освобождаем материал
+            });
+          } else {
+            if (mesh.material.map) mesh.material.map.dispose();
+            mesh.material.dispose();
+          }
+        }
+        if (mesh.geometry) mesh.geometry.dispose(); // освобождаем геометрию
+      });
+    };
+  }, []);
 
   // Флаг для отслеживания первого кадра после установки targetRotationZ
   // Используется, чтобы на первом кадре Level 1 прибавить весь normalizedDiff сразу и убрать стартовый рывок,
@@ -842,48 +884,6 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
       }
     }
   });
-
-  // EFFECT 8: Сброс
-  useEffect(() => {
-    if (groupRef.current) {
-      groupRef.current.rotation.set(
-        degreesToRadians(rotationX),
-        degreesToRadians(rotationY),
-        degreesToRadians(rotationZ)
-      );
-      setTargetRotationZ(null);
-    }
-  }, [resetTrigger]);
-
-  // EFFECT 9: Поворот на 180°
-  useEffect(() => {
-    if (groupRef.current) {
-      const currentZ = groupRef.current.rotation.z;
-      const newTarget = currentZ + Math.PI;
-      setTargetRotationZ(newTarget);
-    }
-  }, [flipTrigger]);
-
-  // EFFECT 10: Очистка. При размонтировании CubeGroup все текстуры и материалы будут освобождены и память не утечёт!
-  useEffect(() => {
-    return () => {
-      if (!groupRef.current) return;
-      groupRef.current.children.forEach(mesh => {
-        if (mesh.material) {
-          if (Array.isArray(mesh.material)) {
-            mesh.material.forEach(mat => {
-              if (mat.map) mat.map.dispose(); // освобождаем текстуру
-              mat.dispose(); // освобождаем материал
-            });
-          } else {
-            if (mesh.material.map) mesh.material.map.dispose();
-            mesh.material.dispose();
-          }
-        }
-        if (mesh.geometry) mesh.geometry.dispose(); // освобождаем геометрию
-      });
-    };
-  }, []);
 
   // Мемоизируем создание материалов
   const cubeMaterials = useMemo(() => {
