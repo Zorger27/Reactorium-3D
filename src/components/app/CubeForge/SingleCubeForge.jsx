@@ -11,7 +11,11 @@ import RotationControlPanel from "@/components/panel/RotationControlPanel.jsx";
 import { useTranslation } from 'react-i18next';
 import {Canvas, useFrame, useThree, extend, useLoader} from '@react-three/fiber';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader.js';
 import * as THREE from "three";
+
+// Картинка для фона на Canvas
+import sky from '@/assets/exr/sky01small.exr';
 
 // Картинки для фото-кубика с Уровнем 1
 import rightImg from "@/assets/app/PictoCube/cube3/cube04.webp";
@@ -266,6 +270,21 @@ const CameraControls = () => {
     />
   );
 };
+
+// Компонент для установки фона
+function SceneBackground({ imagePath, isFullscreen }) {
+  // Хук R3F для загрузки ресурсов three.js
+  const texture = useLoader(EXRLoader, imagePath);
+
+  // Если НЕ в fullscreen - НЕ устанавливаем фон вообще (прозрачный)
+  if (!isFullscreen) {
+    return null; // ⭐ Просто ничего не рендерим - фон будет прозрачным
+    // return <color attach="background" args={['#f5f5f5']} />;
+  }
+
+  // Возвращаем специальный элемент, который прикрепляет текстуру к фону сцены
+  return <primitive attach="background" object={texture} />;
+}
 
 // ---- Настройка поворотов по умолчанию для граней (можно расширить/перенастроить) ----
 const DEFAULT_SIDE_ROTATIONS = {
@@ -1058,7 +1077,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
   );
 };
 
-const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
+const SingleCubeForge = forwardRef(({ groupSize = 2.5, isFullscreen = false }, ref) => {
   const { t } = useTranslation();
 
   const canvasStyle = useResponsiveStyle({
@@ -1354,8 +1373,10 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5 }, ref) => {
         <Canvas style={canvasStyle} camera={{ fov: 75 }} gl={{ antialias: true, toneMapping: THREE.NoToneMapping, logarithmicDepthBuffer: true }}>
           <perspectiveCamera makeDefault position={[0, 0, 2.5]} />
           <ambientLight intensity={0.6} />
-          {/*/!* Установить цвет внутри Canvas *!/*/}
-          {/*<color attach="background" args={['skyblue']} />*/}
+
+          {/* Используем компонент с путём к картинке */}
+          <SceneBackground imagePath={sky} isFullscreen={isFullscreen} />
+
           <CubeGroup
             groupSize={groupSize}
             gap={gap}

@@ -2,7 +2,18 @@ import React, { useEffect, useCallback } from 'react';
 import '@/components/util/CanvasFullScreen.scss';
 import { useTranslation } from 'react-i18next';
 
-const CanvasFullScreen = ({ canvasContainer }) => {
+const CanvasFullScreen = ({ canvasContainer, onFullscreenChange }) => {
+  const { t } = useTranslation();
+
+  const handleFullscreenChange = useCallback(() => {
+    const fullscreenActive = !!document.fullscreenElement;
+
+    // Уведомляем родителя об изменении
+    if (onFullscreenChange) {
+      onFullscreenChange(fullscreenActive);
+    }
+  }, [onFullscreenChange]);
+
   const handleKeyDown = useCallback((event) => {
     if ((event.key === 'Backspace' || event.key === ' ') && document.fullscreenElement) {
       document.exitFullscreen().catch((error) => {
@@ -12,12 +23,23 @@ const CanvasFullScreen = ({ canvasContainer }) => {
   }, []);
 
   useEffect(() => {
+    // Отслеживаем изменения fullscreen
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+
+    // Отслеживаем клавиши
     window.addEventListener('keydown', handleKeyDown);
 
     return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [handleKeyDown]);
+  }, [handleKeyDown, handleFullscreenChange]);
 
   const fullScreenView = () => {
     const canvasContainerElement = canvasContainer;
@@ -41,7 +63,6 @@ const CanvasFullScreen = ({ canvasContainer }) => {
     }
   };
 
-  const { t } = useTranslation();
   return (
     <button
       onClick={fullScreenView}
