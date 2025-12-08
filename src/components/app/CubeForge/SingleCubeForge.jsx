@@ -11,11 +11,12 @@ import RotationControlPanel from "@/components/panel/RotationControlPanel.jsx";
 import { useTranslation } from 'react-i18next';
 import {Canvas, useFrame, useThree, extend, useLoader} from '@react-three/fiber';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader.js';
+// import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader.js';
+import { TextureLoader } from 'three';
 import * as THREE from "three";
 
 // Картинка для фона на Canvas
-import sky from '@/assets/exr/sky01small.exr';
+// import sky from '@/assets/exr/sky01small.exr';
 
 // Картинки для фото-кубика с Уровнем 1
 import rightImg from "@/assets/app/PictoCube/cube3/cube04.webp";
@@ -274,12 +275,12 @@ const CameraControls = () => {
 // Компонент для установки фона
 function SceneBackground({ imagePath, isFullscreen }) {
   // Хук R3F для загрузки ресурсов three.js
-  const texture = useLoader(EXRLoader, imagePath);
+  // const texture = useLoader(EXRLoader, imagePath);
+  const texture = useLoader(TextureLoader, imagePath);
 
   // Если НЕ в fullscreen - НЕ устанавливаем фон вообще (прозрачный)
   if (!isFullscreen) {
     return null; // ⭐ Просто ничего не рендерим - фон будет прозрачным
-    // return <color attach="background" args={['#f5f5f5']} />;
   }
 
   // Возвращаем специальный элемент, который прикрепляет текстуру к фону сцены
@@ -1375,7 +1376,8 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5, isFullscreen = false }, r
           <ambientLight intensity={0.6} />
 
           {/* Используем компонент с путём к картинке */}
-          <SceneBackground imagePath={sky} isFullscreen={isFullscreen} />
+          <SceneBackground imagePath={small2Cube10} isFullscreen={isFullscreen} />
+          {/*<SceneBackground imagePath={sky} isFullscreen={isFullscreen} />*/}
 
           <CubeGroup
             groupSize={groupSize}
