@@ -40,7 +40,7 @@ const initialState = [
   {
     id: 7,
     title: 'React i18next',
-    version: '25.7.1',
+    version: '16.4.0',
     url: 'https://react.i18next.com',
   },
   {
