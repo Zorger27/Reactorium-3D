@@ -6,13 +6,13 @@ const CanvasFullScreen = ({ canvasContainer, onFullscreenChange }) => {
   const { t } = useTranslation();
 
   const handleFullscreenChange = useCallback(() => {
-    const fullscreenActive = !!document.fullscreenElement;
+    const fullscreenActive = document.fullscreenElement === canvasContainer;
 
     // Уведомляем родителя об изменении
     if (onFullscreenChange) {
       onFullscreenChange(fullscreenActive);
     }
-  }, [onFullscreenChange]);
+  }, [onFullscreenChange, canvasContainer]);
 
   const handleKeyDown = useCallback((event) => {
     if ((event.key === 'Backspace' || event.key === ' ') && document.fullscreenElement) {
