@@ -81,6 +81,7 @@
       height: 3rem;
       width: 3rem;
       object-fit: cover; /* Сохраняет пропорции изображения и заполняет контейнер */
+      //border: 2px solid transparent;
       outline: 2px solid transparent;
       outline-offset: -2px; // чтобы выглядело как border
       border-radius: 5px;
