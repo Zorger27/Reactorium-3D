@@ -1383,16 +1383,13 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false 
         />
 
         {/* === Панель выбора фона канваса для просмотра куба === */}
-        <CanvasBackgroundPanel
-          currentBackground={canvasBackground}
-          onBackgroundChange={setCanvasBackground}
+        <CanvasBackgroundPanel canvasContainer={internalRef.current} currentBackground={canvasBackground} onBackgroundChange={setCanvasBackground}
           onActivate={(bg) => {
             setCanvasBackground(bg);
             // Fullscreen откроется автоматически внутри компоненты
           }}
           isOpen={isCanvasBackgroundMenuOpen}
           onToggle={setIsCanvasBackgroundMenuOpen}
-          canvasContainer={internalRef.current}
         />
 
         {/* === Панель сохранения === */}
