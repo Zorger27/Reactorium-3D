@@ -2,8 +2,9 @@ import React, { forwardRef, useEffect, useMemo, useRef } from "react";
 import "@/components/app/VortexCube/VortexCube1x.scss"
 import { useResponsiveStyle } from "@/hooks/useResponsiveStyle";
 import { Canvas, useFrame, useThree, extend, useLoader } from '@react-three/fiber';
-import * as THREE from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { TextureLoader } from 'three';
+import * as THREE from "three";
 
 import rightImg from "@/assets/app/VortexCube/cube1/cube1-14.webp";
 import leftImg from "@/assets/app/VortexCube/cube1/cube1-11.webp";
@@ -11,6 +12,8 @@ import frontImg from "@/assets/app/VortexCube/cube1/cube1-06.webp";
 import backImg from "@/assets/app/VortexCube/cube1/cube1-03.webp";
 import bottomImg from "@/assets/app/VortexCube/cube1/cube1-05.webp";
 import topImg from "@/assets/app/VortexCube/cube1/cube1-12.webp";
+
+import small2Cube25 from "@/assets/app/VortexCube/cube3/cube3-25.webp";
 
 // Подключаем OrbitControls
 extend({ OrbitControls });
@@ -34,6 +37,21 @@ const CameraControls = () => {
     />
   );
 };
+
+// Компонент для установки фона
+function SceneBackground({ imagePath, canvasFullscreen }) {
+  // Хук R3F для загрузки ресурсов three.js
+  // const texture = useLoader(EXRLoader, imagePath);
+  const texture = useLoader(TextureLoader, imagePath);
+
+  // Если НЕ в fullscreen - НЕ устанавливаем фон вообще (прозрачный)
+  if (!canvasFullscreen) {
+    return null; // ⭐ Просто ничего не рендерим - фон будет прозрачным
+  }
+
+  // Возвращаем специальный элемент, который прикрепляет текстуру к фону сцены
+  return <primitive attach="background" object={texture} />;
+}
 
 // Куб с текстурами
 const TextureBox = () => {
@@ -98,7 +116,7 @@ const TextureBox = () => {
   );
 };
 
-const VortexCube1x = forwardRef((props, ref) => {
+const VortexCube1x = forwardRef(({ canvasFullscreen = false, ...props }, ref) => {
   // responsive inline-стили
   const canvasStyle = useResponsiveStyle({
     default: {
@@ -123,17 +141,13 @@ const VortexCube1x = forwardRef((props, ref) => {
 
   return (
     <div ref={ref} className="vortex-cube-container">
-      <Canvas
-        // style={{ height: '100%', width: '100%' }}
-        style={canvasStyle} // responsive inline-стили
-        camera={{ fov: 75 }}
-        gl={{
-          antialias: true,
-          toneMapping: THREE.NoToneMapping // Убираем tone mapping для ярких цветов
-        }}
-      >
+      <Canvas style={canvasStyle} camera={{ fov: 75 }} gl={{antialias: true, toneMapping: THREE.NoToneMapping}}>
         <perspectiveCamera makeDefault position={[4, 4, 4]} />
         <ambientLight intensity={1.2} />
+
+        {/* Используем компонент с путём к картинке */}
+        <SceneBackground imagePath={small2Cube25} canvasFullscreen={canvasFullscreen} />
+
         <TextureBox />
         <CameraControls />
       </Canvas>

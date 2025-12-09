@@ -4,6 +4,7 @@ import { useResponsiveStyle } from "@/hooks/useResponsiveStyle";
 import { useTranslation } from 'react-i18next';
 import {Canvas, useFrame, useThree, extend, useLoader} from '@react-three/fiber';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { TextureLoader } from 'three';
 import * as THREE from "three";
 
 import ControlBlock from "@/components/util/ControlBlock.jsx";
@@ -18,6 +19,8 @@ import smallCube07 from "@/assets/app/VortexCube/cube2/cube2-07.webp";
 import smallCube08 from "@/assets/app/VortexCube/cube2/cube2-08.webp";
 import smallCube09 from "@/assets/app/VortexCube/cube2/cube2-09.webp";
 import smallCube10 from "@/assets/app/VortexCube/cube2/cube2-10.webp";
+
+import small2Cube06 from "@/assets/app/VortexCube/cube3/cube3-06.webp";
 
 // Подключаем OrbitControls
 extend({ OrbitControls });
@@ -40,6 +43,21 @@ const CameraControls = () => {
     />
   );
 };
+
+// Компонент для установки фона
+function SceneBackground({ imagePath, canvasFullscreen }) {
+  // Хук R3F для загрузки ресурсов three.js
+  // const texture = useLoader(EXRLoader, imagePath);
+  const texture = useLoader(TextureLoader, imagePath);
+
+  // Если НЕ в fullscreen - НЕ устанавливаем фон вообще (прозрачный)
+  if (!canvasFullscreen) {
+    return null; // ⭐ Просто ничего не рендерим - фон будет прозрачным
+  }
+
+  // Возвращаем специальный элемент, который прикрепляет текстуру к фону сцены
+  return <primitive attach="background" object={texture} />;
+}
 
 // === Группа из 8 кубиков с текстурами ===
 const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ }) => {
@@ -107,7 +125,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ }) => {
 };
 
 // === Основной компонент ===
-const VortexCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
+const VortexCube2x = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref) => {
   const { t } = useTranslation();
   // responsive inline-стили
   const canvasStyle = useResponsiveStyle({
@@ -216,6 +234,10 @@ const VortexCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
         <Canvas style={canvasStyle} camera={{ fov: 75 }} gl={{ antialias: true, toneMapping: THREE.NoToneMapping }}>
           <perspectiveCamera makeDefault position={[0, 0, 2.5]} />
           <ambientLight intensity={0.6} />
+
+          {/* Используем компонент с путём к картинке */}
+          <SceneBackground imagePath={small2Cube06} canvasFullscreen={canvasFullscreen} />
+
           <CubeGroup groupSize={groupSize} gap={gap} rotationX={rotationX} rotationY={rotationY} rotationZ={rotationZ} />
           <CameraControls />
         </Canvas>

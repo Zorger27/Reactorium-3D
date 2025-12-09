@@ -20,7 +20,7 @@ import sideSmallCube06 from "@/assets/app/PictoCube/cube2/cube06.webp"
 import sideSmallCube07 from "@/assets/app/PictoCube/cube2/cube07.webp"
 import sideSmallCube08 from "@/assets/app/PictoCube/cube2/cube08.webp"
 
-import small2Cube01 from "@/assets/app/VortexCube/cube3/cube3-01.webp";
+import small2Cube04 from "@/assets/app/VortexCube/cube3/cube3-04.webp";
 
 extend({ OrbitControls });
 const degreesToRadians = (degrees) => degrees * (Math.PI / 180);
@@ -685,7 +685,7 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, r
           <ambientLight intensity={0.6} />
 
           {/* Используем компонент с путём к картинке */}
-          <SceneBackground imagePath={small2Cube01} canvasFullscreen={canvasFullscreen} />
+          <SceneBackground imagePath={small2Cube04} canvasFullscreen={canvasFullscreen} />
 
           <CubeGroup
             groupSize={groupSize}
