@@ -76,6 +76,7 @@ const CanvasBackgroundPanel = ({
 
       {/* Подменю с кнопками */}
       <div className={`canvas-background-submenu ${isOpen ? 'open' : ''}`}>
+
         <img
           src={String(small2Cube10)}
           alt="scene01"
