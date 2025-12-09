@@ -2,6 +2,11 @@ import React from "react";
 import { useTranslation } from 'react-i18next';
 import '@/components/panel/CanvasBackgroundPanel.scss';
 
+import small2Cube10 from "@/assets/app/VortexCube/cube3/cube3-10.webp";
+import small2Cube15 from "@/assets/app/VortexCube/cube3/cube3-15.webp";
+import small2Cube20 from "@/assets/app/VortexCube/cube3/cube3-20.webp";
+import small2Cube24 from "@/assets/app/VortexCube/cube3/cube3-24.webp";
+
 /**
  * Панель выбора фона Canvas в fullscreen режиме
  *
@@ -71,34 +76,42 @@ const CanvasBackgroundPanel = ({
 
       {/* Подменю с кнопками */}
       <div className={`canvas-background-submenu ${isOpen ? 'open' : ''}`}>
-        <button
+        <img
+          src={String(small2Cube10)}
+          alt="scene01"
           className={currentBackground === 'scene01' ? 'active' : ''}
           onClick={() => handleBackgroundClick('scene01')}
           title={t('canvas-background.scene01')}
         >
-          <i className="fas fa-cloud-sun"></i>
-        </button>
-        <button
+        </img>
+
+        <img
+          src={String(small2Cube15)}
+          alt="scene02"
           className={currentBackground === 'scene02' ? 'active' : ''}
           onClick={() => handleBackgroundClick('scene02')}
           title={t('canvas-background.scene02')}
         >
-          <i className="fas fa-cloud-moon"></i>
-        </button>
-        <button
+        </img>
+
+        <img
+          src={String(small2Cube20)}
+          alt="scene03"
           className={currentBackground === 'scene03' ? 'active' : ''}
           onClick={() => handleBackgroundClick('scene03')}
           title={t('canvas-background.scene03')}
         >
-          <i className="fas fa-sun"></i>
-        </button>
-        <button
-          className={currentBackground === 'scene04' ? 'active' : ''}
+        </img>
+
+        <img
+          src={String(small2Cube24)}
+          alt="scene04"
           onClick={() => handleBackgroundClick('scene04')}
+          className={currentBackground === 'scene04' ? 'active' : ''}
           title={t('canvas-background.scene04')}
         >
-          <i className="fas fa-mountain"></i>
-        </button>
+        </img>
+
       </div>
     </div>
   );

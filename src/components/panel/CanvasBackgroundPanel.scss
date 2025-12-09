@@ -73,43 +73,46 @@
       transform: translateY(-50%) translateX(0); // Центрирование + финальная позиция
     }
 
-    button {
+    img {
       display: flex;
       justify-content: center;
       align-items: center;
-      color: black;
       margin-right: 0.8rem; /* Расстояние между кнопками */
-      background-color: lightgoldenrodyellow;
       height: 3rem;
       width: 3rem;
-      border: 2px solid transparent;
+      object-fit: cover; /* Сохраняет пропорции изображения и заполняет контейнер */
+      outline: 2px solid transparent;
+      outline-offset: -2px; // чтобы выглядело как border
       border-radius: 5px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
       transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border 0.2s ease-in-out, transform 0.2s ease-in-out;
       cursor: pointer;
 
       &:hover {
-        background: #ffffff;
-        color: darkred;
-        border: 2px solid darkred;
+        outline-color: darkorange;
         box-shadow: none;
         text-shadow: none;
       }
 
-      .fas {
-        font-size: 1.5rem;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+    }
+
+    @keyframes recording-blink {
+      0%, 100% {
+        color: red;
+        outline-color: red;
+        box-shadow: 0 0 6px rgba(255, 0, 0, 0.8);
+      }
+      50% {
+        color: darkred;
+        outline-color: darkred;
+        box-shadow: 0 0 2px rgba(255, 0, 0, 0.3);
       }
     }
 
     // Активная кнопка стиля
-    button.active {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-
-      i {color: white;}
-      &:hover {border-color: rebeccapurple;}
+    img.active {
+      outline-color: red;
+      animation: recording-blink 1.2s ease-in-out infinite;
     }
 
     // Анимация появления кнопок с задержкой
@@ -153,34 +156,6 @@
 
 @media (max-width: 768px) {
   .canvas-background-buttons {
-
-    .main-canvas-background-button {
-      height: 2.6rem;
-      width: 2.6rem;
-      font-size: 1.4rem;
-      border-radius: 5px;
-      //box-shadow: none;
-
-      .main-canvas-background-icon {display: inline;}
-      .main-canvas-background-text {display: none;}
-    }
-
-    .canvas-background-submenu {
-      transform: translateY(-50%) translateX(0.5rem);
-      button {
-        margin-right: 0.5rem; /* Расстояние между кнопками */
-        height: 2.6rem;
-        width: 2.6rem;
-        font-size: 1.4rem;
-        border-radius: 5px;
-        border: 1px solid slategrey;
-        //box-shadow: none;
-
-        &:hover {box-shadow: none; border: 1px solid purple;}
-
-        .fas {font-size: 1.2rem;}
-      }
-    }
-
+    display: none;
   }
 }
