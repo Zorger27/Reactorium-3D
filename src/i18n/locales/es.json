@@ -113,6 +113,15 @@
     "begin": "Barajar",
     "reset": "Restablecer posiciones"
   },
+  "canvas-background": {
+    "title": "Fondo",
+    "menu-open": "Abrir el menú de fondo",
+    "menu-close": "Cerrar el menú de fondo",
+    "scene01": "Fondo 1",
+    "scene02": "Fondo 2",
+    "scene03": "Fondo 3",
+    "scene04": "Fondo 4"
+  },
   "save": {
     "title": "Guardar",
     "saveData": "Abra el menú de guardar datos en el disco",

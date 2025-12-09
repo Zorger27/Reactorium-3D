@@ -113,6 +113,15 @@
     "begin": "Shuffle",
     "reset": "Reset positions"
   },
+  "canvas-background": {
+    "title": "Background",
+    "menu-open": "Open background menu",
+    "menu-close": "Close background menu",
+    "scene01": "Background 1",
+    "scene02": "Background 2",
+    "scene03": "Background 3",
+    "scene04": "Background 4"
+  },
   "save": {
     "title": "Save",
     "saveData": "Open the save data menu to the disk",

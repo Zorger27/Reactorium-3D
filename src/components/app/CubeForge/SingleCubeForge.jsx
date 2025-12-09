@@ -7,6 +7,7 @@ import SavePanel from "@/components/panel/SavePanel.jsx";
 import ClearStoragePanel from "@/components/panel/ClearStoragePanel.jsx";
 import CubeStylePanel from "@/components/panel/CubeStylePanel.jsx";
 import ShufflePanel from "@/components/panel/ShufflePanel.jsx";
+import CanvasBackgroundPanel from "@/components/panel/CanvasBackgroundPanel.jsx";
 import RotationControlPanel from "@/components/panel/RotationControlPanel.jsx";
 import { useTranslation } from 'react-i18next';
 import {Canvas, useFrame, useThree, extend, useLoader} from '@react-three/fiber';
@@ -268,18 +269,18 @@ const CameraControls = () => {
   );
 };
 
-// Компонент для установки фона
+// Компонент для установки фона (условно рендерит загрузчик)
 function SceneBackground({ imagePath, canvasFullscreen }) {
-  // Хук R3F для загрузки ресурсов three.js
-  // const texture = useLoader(EXRLoader, imagePath);
-  const texture = useLoader(TextureLoader, imagePath);
-
-  // Если НЕ в fullscreen - НЕ устанавливаем фон вообще (прозрачный)
   if (!canvasFullscreen) {
-    return null; // ⭐ Просто ничего не рендерим - фон будет прозрачным
+    return null; // Прозрачный фон
   }
 
-  // Возвращаем специальный элемент, который прикрепляет текстуру к фону сцены
+  return <BackgroundTexture imagePath={imagePath} />;
+}
+
+// Компонент загрузки текстуры (вызывается только когда нужно)
+function BackgroundTexture({ imagePath }) {
+  const texture = useLoader(TextureLoader, imagePath);
   return <primitive attach="background" object={texture} />;
 }
 
@@ -1106,6 +1107,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false 
   const [isClearMenuOpen, setIsClearMenuOpen] = useState(false);
   const [isSaveMenuOpen, setIsSaveMenuOpen] = useState(false);
   const [isCubeStyleMenuOpen, setIsCubeStyleMenuOpen] = useState(false);
+  const [isCanvasBackgroundMenuOpen, setIsCanvasBackgroundMenuOpen] = useState(false);
 
   // Состояние для записи видео
   const [isRecording, setIsRecording] = useState(false);
@@ -1125,6 +1127,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false 
   const [isRotating, setIsRotating, resetIsRotating] = useLocalStorage("singleCubeForgeIsRotating", true, v => v === "true");
   const [cubeLevel, setCubeLevel, resetCubeLevel] = useLocalStorage("singleCubeForgeCubeLevel", 3, v => parseInt(v, 10));
   const [cubeStyle, setCubeStyle, resetCubeStyle] = useLocalStorage("singleCubeForgeCubeStyle", "photo", v => v);
+  const [canvasBackground, setCanvasBackground, resetCanvasBackground] = useLocalStorage("singleCubeForgeCanvasBackground", "scene01", v => v);
 
   // Кнопки вращения
   const handleClockwise = () => {setDirection(1);setIsRotating(true);};
@@ -1156,12 +1159,20 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false 
     3: 27   // уровень 3 = 27 кубов
   };
 
+  // Маппинг названий фонов на импортированные изображения
+  const backgroundMap = {
+    scene01: small2Cube10,
+    scene02: small2Cube15,
+    scene03: small2Cube20,
+    scene04: small2Cube24
+  };
+
   // Фактическое количество кубов:
   const actualCubeCount = cubeLevelMap[cubeLevel];
 
   // EFFECT 11: useEffect для закрытия при клике вне меню!!!!!
   useEffect(() => {
-    if (!isShuffleMenuOpen && !isClearMenuOpen && !isSaveMenuOpen && !isCubeStyleMenuOpen) return;
+    if (!isShuffleMenuOpen && !isClearMenuOpen && !isSaveMenuOpen && !isCubeStyleMenuOpen && !isCanvasBackgroundMenuOpen) return;
 
     const handleClickOutside = (event) => {
       // Если клик не внутри панели кнопок
@@ -1169,10 +1180,10 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false 
         setIsShuffleMenuOpen(false);
         setIsClearMenuOpen(false);
         setIsCubeStyleMenuOpen(false);
+        setIsCanvasBackgroundMenuOpen(false);
 
         // Меню сохранения НЕ закрываем во время записи видео
-        if (!isRecording) {
-          setIsSaveMenuOpen(false);
+        if (!isRecording) {setIsSaveMenuOpen(false);
         }
       }
     };
@@ -1181,17 +1192,17 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isShuffleMenuOpen, isClearMenuOpen, isSaveMenuOpen, isCubeStyleMenuOpen, isRecording]);
+  }, [isShuffleMenuOpen, isClearMenuOpen, isSaveMenuOpen, isCubeStyleMenuOpen, isCanvasBackgroundMenuOpen, isRecording]);
 
   // EFFECT 12: Когда открывается меню перемешивания — закрываем остальные меню
   useEffect(() => {
     if (isShuffleMenuOpen) {
       setIsClearMenuOpen(false);
       setIsCubeStyleMenuOpen(false);
+      setIsCanvasBackgroundMenuOpen(false);
 
       // Меню сохранения НЕ закрываем во время записи видео
-      if (!isRecording) {
-        setIsSaveMenuOpen(false);
+      if (!isRecording) {setIsSaveMenuOpen(false);
       }
     }
   }, [isShuffleMenuOpen, isRecording]);
@@ -1201,6 +1212,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false 
     if (isClearMenuOpen) {
       setIsShuffleMenuOpen(false);
       setIsCubeStyleMenuOpen(false);
+      setIsCanvasBackgroundMenuOpen(false);
 
       // Меню сохранения НЕ закрываем во время записи видео
       if (!isRecording) {
@@ -1215,6 +1227,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false 
       setIsShuffleMenuOpen(false);
       setIsClearMenuOpen(false);
       setIsCubeStyleMenuOpen(false);
+      setIsCanvasBackgroundMenuOpen(false);
     }
   }, [isSaveMenuOpen]);
 
@@ -1223,6 +1236,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false 
     if (isCubeStyleMenuOpen) {
       setIsShuffleMenuOpen(false);
       setIsClearMenuOpen(false);
+      setIsCanvasBackgroundMenuOpen(false);
 
       // Меню сохранения НЕ закрываем во время записи видео
       if (!isRecording) {
@@ -1230,6 +1244,16 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false 
       }
     }
   }, [isCubeStyleMenuOpen, isRecording]);
+
+  // EFFECT 16: Когда открывается меню фона — закрываем остальные меню
+  useEffect(() => {
+    if (isCanvasBackgroundMenuOpen) {
+      setIsShuffleMenuOpen(false);
+      setIsClearMenuOpen(false);
+      setIsCubeStyleMenuOpen(false);
+      if (!isRecording) setIsSaveMenuOpen(false);
+    }
+  }, [isCanvasBackgroundMenuOpen, isRecording]);
 
   // Функция для сброса всех состояний
   const resetAllStates = () => {
@@ -1243,6 +1267,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false 
     resetIsRotating();
     resetCubeLevel();
     resetCubeStyle();
+    resetCanvasBackground();
 
     setPositionsResetTrigger(prev => prev + 1);
     setResetTrigger(prev => !prev);
@@ -1357,6 +1382,19 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false 
           onReset={() => setPositionsResetTrigger(prev => prev + 1)}
         />
 
+        {/* === Панель выбора фона канваса для просмотра куба === */}
+        <CanvasBackgroundPanel
+          currentBackground={canvasBackground}
+          onBackgroundChange={setCanvasBackground}
+          onActivate={(bg) => {
+            setCanvasBackground(bg);
+            // Fullscreen откроется автоматически внутри компоненты
+          }}
+          isOpen={isCanvasBackgroundMenuOpen}
+          onToggle={setIsCanvasBackgroundMenuOpen}
+          canvasContainer={internalRef.current}
+        />
+
         {/* === Панель сохранения === */}
         <SavePanel canvasRef={internalRef} isRecording={isRecording} onRecordingChange={setIsRecording} isOpen={isSaveMenuOpen} onToggle={setIsSaveMenuOpen}
           projectTitle={t('project4.single-description')}
@@ -1372,7 +1410,8 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false 
           <ambientLight intensity={0.6} />
 
           {/* Используем компонент с путём к картинке */}
-          <SceneBackground imagePath={small2Cube10} canvasFullscreen={canvasFullscreen} />
+          {/*<SceneBackground imagePath={small2Cube10} canvasFullscreen={canvasFullscreen} />*/}
+          <SceneBackground imagePath={backgroundMap[canvasBackground]} canvasFullscreen={canvasFullscreen}/>
 
           <CubeGroup
             groupSize={groupSize}
