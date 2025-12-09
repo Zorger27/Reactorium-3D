@@ -70,7 +70,7 @@ const CanvasBackgroundPanel = ({
         }}
         title={isOpen ? t('canvas-background.menu-close') : t('canvas-background.menu-open')}
       >
-        <i className={`main-canvas-background-icon fas ${isOpen ? 'fa-times' : 'fa-image'}`}></i>
+        <i className={`main-canvas-background-icon fas ${isOpen ? 'fa-times' : 'fa-images'}`}></i>
         <span className="main-canvas-background-text">{t('canvas-background.title')}</span>
       </button>
 
