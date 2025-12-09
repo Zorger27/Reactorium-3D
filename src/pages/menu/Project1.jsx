@@ -19,6 +19,9 @@ export const Project1 = () => {
   const canvasRef = useRef(null);
   const [canvasContainer, setCanvasContainer] = useState(null);
 
+  // Состояние для отслеживания полноэкранного режима
+  const [canvasFullscreen, setCanvasFullscreen] = useState(false);
+
   // Массив режимов для циклического переключения
   const modes = ["chroma-cube-1x", "chroma-cube-2x", "chroma-cube-3x"];
 
@@ -105,14 +108,14 @@ export const Project1 = () => {
             </button>
           </div>
 
-          <CanvasFullScreen canvasContainer={canvasContainer} />
+          <CanvasFullScreen canvasContainer={canvasContainer} onCanvasChange={setCanvasFullscreen}/>
           <ToggleFooterButton />
         </h1>
         <hr className="custom-line" />
 
-        {mode === "chroma-cube-1x" && <ChromaCube1x ref={setCanvasRef} />}
-        {mode === "chroma-cube-2x" && <ChromaCube2x ref={setCanvasRef} />}
-        {mode === "chroma-cube-3x" && <ChromaCube3x ref={setCanvasRef} />}
+        {mode === "chroma-cube-1x" && <ChromaCube1x ref={setCanvasRef} canvasFullscreen={canvasFullscreen} />}
+        {mode === "chroma-cube-2x" && <ChromaCube2x ref={setCanvasRef} canvasFullscreen={canvasFullscreen} />}
+        {mode === "chroma-cube-3x" && <ChromaCube3x ref={setCanvasRef} canvasFullscreen={canvasFullscreen} />}
 
       </div>
     </div>

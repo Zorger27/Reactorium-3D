@@ -19,6 +19,9 @@ export const Project2 = () => {
   const canvasRef = useRef(null);
   const [canvasContainer, setCanvasContainer] = useState(null);
 
+  // Состояние для отслеживания полноэкранного режима
+  const [canvasFullscreen, setCanvasFullscreen] = useState(false);
+
   // Массив режимов для циклического переключения
   const modes = ["vortex-cube-1x", "vortex-cube-2x", "vortex-cube-3x"];
 
@@ -105,14 +108,14 @@ export const Project2 = () => {
             </button>
           </div>
 
-          <CanvasFullScreen canvasContainer={canvasContainer} />
+          <CanvasFullScreen canvasContainer={canvasContainer} onCanvasChange={setCanvasFullscreen}/>
           <ToggleFooterButton />
         </h1>
         <hr className="custom-line" />
 
-        {mode === "vortex-cube-1x" && <VortexCube1x ref={setCanvasRef} />}
-        {mode === "vortex-cube-2x" && <VortexCube2x ref={setCanvasRef} />}
-        {mode === "vortex-cube-3x" && <VortexCube3x ref={setCanvasRef} />}
+        {mode === "vortex-cube-1x" && <VortexCube1x ref={setCanvasRef} canvasFullscreen={canvasFullscreen} />}
+        {mode === "vortex-cube-2x" && <VortexCube2x ref={setCanvasRef} canvasFullscreen={canvasFullscreen} />}
+        {mode === "vortex-cube-3x" && <VortexCube3x ref={setCanvasRef} canvasFullscreen={canvasFullscreen} />}
 
       </div>
     </div>

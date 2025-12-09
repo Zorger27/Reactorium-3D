@@ -19,6 +19,9 @@ export const Project3 = () => {
   const canvasRef = useRef(null);
   const [canvasContainer, setCanvasContainer] = useState(null);
 
+  // Состояние для отслеживания полноэкранного режима
+  const [canvasFullscreen, setCanvasFullscreen] = useState(false);
+
   // Массив режимов для циклического переключения
   const modes = ["picto-cube-1x", "picto-cube-2x", "picto-cube-3x"];
 
@@ -105,14 +108,14 @@ export const Project3 = () => {
             </button>
           </div>
 
-          <CanvasFullScreen canvasContainer={canvasContainer} />
+          <CanvasFullScreen canvasContainer={canvasContainer} onCanvasChange={setCanvasFullscreen}/>
           <ToggleFooterButton />
         </h1>
         <hr className="custom-line" />
 
-        {mode === "picto-cube-1x" && <PictoCube1x ref={setCanvasRef} />}
-        {mode === "picto-cube-2x" && <PictoCube2x ref={setCanvasRef} />}
-        {mode === "picto-cube-3x" && <PictoCube3x ref={setCanvasRef} />}
+        {mode === "picto-cube-1x" && <PictoCube1x ref={setCanvasRef} canvasFullscreen={canvasFullscreen} />}
+        {mode === "picto-cube-2x" && <PictoCube2x ref={setCanvasRef} canvasFullscreen={canvasFullscreen} />}
+        {mode === "picto-cube-3x" && <PictoCube3x ref={setCanvasRef} canvasFullscreen={canvasFullscreen} />}
 
       </div>
     </div>

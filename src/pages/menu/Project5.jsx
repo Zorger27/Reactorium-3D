@@ -18,6 +18,9 @@ export const Project5 = () => {
   const canvasRef = useRef(null);
   const [canvasContainer, setCanvasContainer] = useState(null);
 
+  // Состояние для отслеживания полноэкранного режима
+  const [canvasFullscreen, setCanvasFullscreen] = useState(false);
+
   // Callback для установки контейнера
   const setCanvasRef = useCallback((element) => {
     canvasRef.current = element;
@@ -76,13 +79,13 @@ export const Project5 = () => {
             </button>
           </div>
 
-          <CanvasFullScreen canvasContainer={canvasContainer} />
+          <CanvasFullScreen canvasContainer={canvasContainer} onCanvasChange={setCanvasFullscreen}/>
           <ToggleFooterButton />
         </h1>
         <hr className="custom-line" />
 
-        {mode === "orbitron" && <Orbitron ref={setCanvasRef} />}
-        {mode === "cuboverse" && <CuboVerse ref={setCanvasRef} />}
+        {mode === "orbitron" && <Orbitron ref={setCanvasRef} canvasFullscreen={canvasFullscreen} />}
+        {mode === "cuboverse" && <CuboVerse ref={setCanvasRef} canvasFullscreen={canvasFullscreen} />}
 
       </div>
     </div>

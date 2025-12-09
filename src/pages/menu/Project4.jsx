@@ -85,7 +85,7 @@ export const Project4 = () => {
         <hr className="custom-line" />
 
         {mode === "single" && <SingleCubeForge ref={setCanvasRef} canvasFullscreen={canvasFullscreen} />}
-        {mode === "multi" && <MultiCubeForge ref={setCanvasRef} />}
+        {mode === "multi" && <MultiCubeForge ref={setCanvasRef} canvasFullscreen={canvasFullscreen} />}
 
       </div>
     </div>
