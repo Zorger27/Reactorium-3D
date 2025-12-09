@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import "@/components/util/ToggleFullScreen.scss";
+import "@/components/util/DocFullScreen.scss";
 
-export default function ToggleFullScreen({ className = "", style }) {
+export default function DocFullScreen({ className = "", style }) {
   const { t } = useTranslation();
   const [docFullscreen, setDocFullscreen] = useState(false);
 
@@ -74,7 +74,7 @@ export default function ToggleFullScreen({ className = "", style }) {
   }, [docFullscreen, enterDocFullScreen, exitDocFullScreen]);
 
   // Обработка клавиш (пробел и Backspace)
-  const keyPress = useCallback(
+  const onKeyPress = useCallback(
     (event) => {
       if ((event.key === " " || event.key === "Backspace") && docFullscreen) {
         toggleDocFullScreen();
@@ -85,20 +85,20 @@ export default function ToggleFullScreen({ className = "", style }) {
 
   // Подписка на события
   useEffect(() => {
-    document.addEventListener("keydown", keyPress);
+    document.addEventListener("keydown", onKeyPress);
     document.addEventListener("fullscreenchange", docFullScreenChange);
     document.addEventListener("webkitfullscreenchange", docFullScreenChange);
     document.addEventListener("mozfullscreenchange", docFullScreenChange);
     document.addEventListener("MSFullscreenChange", docFullScreenChange);
 
     return () => {
-      document.removeEventListener("keydown", keyPress);
+      document.removeEventListener("keydown", onKeyPress);
       document.removeEventListener("fullscreenchange", docFullScreenChange);
       document.removeEventListener("webkitfullscreenchange", docFullScreenChange);
       document.removeEventListener("mozfullscreenchange", docFullScreenChange);
       document.removeEventListener("MSFullscreenChange", docFullScreenChange);
     };
-  }, [keyPress, docFullScreenChange]);
+  }, [onKeyPress, docFullScreenChange]);
 
   return (
     <i

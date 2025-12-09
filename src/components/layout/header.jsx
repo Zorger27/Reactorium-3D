@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import '@/components/layout/header.scss';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '@/components/util/LanguageSwitcher.jsx';
-import ToggleFullScreen from "@/components/util/ToggleFullScreen.jsx";
+import DocFullScreen from "@/components/util/DocFullScreen.jsx";
 
 const Header = () => {
   const headerLogo = useSelector(selectHeaderLogo);
@@ -62,13 +62,9 @@ const Header = () => {
           </Link>
         </div>
 
-        <div className="language">
-          <LanguageSwitcher />
-        </div>
+        <div className="language"><LanguageSwitcher /></div>
 
-        <div className="full-screen">
-          <ToggleFullScreen />
-        </div>
+        <div className="full-screen"><DocFullScreen /></div>
       </div>
 
       {/* Выпадающее меню — позиционируется поверх, не ломая layout хедера */}
