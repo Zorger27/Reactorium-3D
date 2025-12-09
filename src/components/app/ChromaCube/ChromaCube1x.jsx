@@ -1,9 +1,12 @@
 import React, {forwardRef, useEffect, useRef} from "react";
 import '@/components/app/ChromaCube/ChromaCube1x.scss'
 import { useResponsiveStyle } from "@/hooks/useResponsiveStyle";
-import { Canvas, useFrame, useThree, extend } from '@react-three/fiber';
+import {Canvas, useFrame, useThree, extend, useLoader} from '@react-three/fiber';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { TextureLoader } from 'three';
 import * as THREE from "three";
+
+import small2Cube06 from "@/assets/app/VortexCube/cube3/cube3-20.webp";
 
 // Подключаем OrbitControls
 extend({ OrbitControls });
@@ -28,6 +31,21 @@ const CameraControls = () => {
     />
   );
 };
+
+// Компонент для установки фона
+function SceneBackground({ imagePath, canvasFullscreen }) {
+  // Хук R3F для загрузки ресурсов three.js
+  // const texture = useLoader(EXRLoader, imagePath);
+  const texture = useLoader(TextureLoader, imagePath);
+
+  // Если НЕ в fullscreen - НЕ устанавливаем фон вообще (прозрачный)
+  if (!canvasFullscreen) {
+    return null; // ⭐ Просто ничего не рендерим - фон будет прозрачным
+  }
+
+  // Возвращаем специальный элемент, который прикрепляет текстуру к фону сцены
+  return <primitive attach="background" object={texture} />;
+}
 
 // Куб с прозрачными гранями и свечением по контуру
 const Box = () => {
@@ -67,7 +85,7 @@ const Box = () => {
   );
 };
 
-const ChromaCube1x = forwardRef((props, ref) => {
+const ChromaCube1x = forwardRef(({ canvasFullscreen = false, ...props }, ref) => {
   // responsive inline-стили
   const canvasStyle = useResponsiveStyle({
     default: {
@@ -92,17 +110,13 @@ const ChromaCube1x = forwardRef((props, ref) => {
 
   return (
     <div ref={ref} className="chroma-cube1x-container">
-      {/* 3D сцена */}
-      <Canvas
-        style={canvasStyle} // responsive inline-стили
-        camera={{ fov: 75 }}
-        gl={{
-          antialias: true,
-          toneMapping: THREE.NoToneMapping // Убираем tone mapping для ярких цветов
-        }}
-      >
+      <Canvas style={canvasStyle} camera={{ fov: 75 }} gl={{antialias: true, toneMapping: THREE.NoToneMapping}}>
         <perspectiveCamera makeDefault position={[0, 0, 2.5]} />
         <ambientLight intensity={0.6} />
+
+        {/* Используем компонент с путём к картинке */}
+        <SceneBackground imagePath={small2Cube06} canvasFullscreen={canvasFullscreen} />
+
         <Box />
         <CameraControls />
       </Canvas>
