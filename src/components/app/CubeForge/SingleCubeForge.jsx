@@ -1407,7 +1407,6 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false 
           <ambientLight intensity={0.6} />
 
           {/* Используем компонент с путём к картинке */}
-          {/*<SceneBackground imagePath={small2Cube10} canvasFullscreen={canvasFullscreen} />*/}
           <SceneBackground imagePath={backgroundMap[canvasBackground]} canvasFullscreen={canvasFullscreen}/>
 
           <CubeGroup
