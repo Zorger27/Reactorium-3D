@@ -16,7 +16,7 @@ import small2Cube24 from "@/assets/app/VortexCube/cube3/cube3-24.webp";
  * @param {Function} props.onActivate - Callback для открытия fullscreen с выбранным фоном
  * @param {boolean} props.isOpen - Состояние открытия меню
  * @param {Function} props.onToggle - Callback для открытия/закрытия меню
- * @param {Object} props.canvasContainer - Ref на canvas контейнер для fullscreen
+ * @param {Object} props.canvasContainerRef - Ref на canvas контейнер для fullscreen
  */
 
 const CanvasBackgroundPanel = ({
@@ -25,7 +25,7 @@ const CanvasBackgroundPanel = ({
                                  onActivate,
                                  isOpen = false,
                                  onToggle,
-                                 canvasContainer
+                                 canvasContainerRef
                                }) => {
   const { t } = useTranslation();
 
@@ -45,7 +45,12 @@ const CanvasBackgroundPanel = ({
   };
 
   const openFullscreen = () => {
-    const canvasContainerElement = canvasContainer;
+    const canvasContainerElement = canvasContainerRef?.current;
+
+    if (!canvasContainerElement) {
+      console.error('❌ Canvas container not found!');
+      return;
+    }
 
     if (canvasContainerElement?.requestFullscreen) {
       canvasContainerElement.requestFullscreen().catch((error) => {
@@ -83,8 +88,7 @@ const CanvasBackgroundPanel = ({
           className={currentBackground === 'scene01' ? 'active' : ''}
           onClick={() => handleBackgroundClick('scene01')}
           title={t('canvas-background.scene01')}
-        >
-        </img>
+        />
 
         <img
           src={String(small2Cube15)}
@@ -92,8 +96,7 @@ const CanvasBackgroundPanel = ({
           className={currentBackground === 'scene02' ? 'active' : ''}
           onClick={() => handleBackgroundClick('scene02')}
           title={t('canvas-background.scene02')}
-        >
-        </img>
+        />
 
         <img
           src={String(small2Cube20)}
@@ -101,8 +104,7 @@ const CanvasBackgroundPanel = ({
           className={currentBackground === 'scene03' ? 'active' : ''}
           onClick={() => handleBackgroundClick('scene03')}
           title={t('canvas-background.scene03')}
-        >
-        </img>
+        />
 
         <img
           src={String(small2Cube24)}
@@ -110,8 +112,7 @@ const CanvasBackgroundPanel = ({
           onClick={() => handleBackgroundClick('scene04')}
           className={currentBackground === 'scene04' ? 'active' : ''}
           title={t('canvas-background.scene04')}
-        >
-        </img>
+        />
 
       </div>
     </div>
