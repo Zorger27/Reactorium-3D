@@ -4,11 +4,11 @@ import "@/components/util/ToggleFullScreen.scss";
 
 export default function ToggleFullScreen({ className = "", style }) {
   const { t } = useTranslation();
-  const [isFullScreen, setIsFullScreen] = useState(false);
+  const [docFullscreen, setDocFullscreen] = useState(false);
 
   // Проверка состояния при изменении fullscreen
-  const handleFullScreenChange = useCallback(() => {
-    setIsFullScreen(
+  const docFullScreenChange = useCallback(() => {
+    setDocFullscreen(
       !!(
         document.fullscreenElement ||
         document['mozFullScreenElement'] ||
@@ -19,7 +19,7 @@ export default function ToggleFullScreen({ className = "", style }) {
   }, []);
 
   // Вход в полноэкранный режим
-  const enterFullScreen = useCallback(() => {
+  const enterDocFullScreen = useCallback(() => {
     const element = document.documentElement;
 
     if (
@@ -43,7 +43,7 @@ export default function ToggleFullScreen({ className = "", style }) {
   }, []);
 
   // Выход из полноэкранного режима
-  const exitFullScreen = useCallback(() => {
+  const exitDocFullScreen = useCallback(() => {
     if (
       document.fullscreenElement ||
       document['mozFullScreenElement'] ||
@@ -65,49 +65,49 @@ export default function ToggleFullScreen({ className = "", style }) {
   }, []);
 
   // Переключатель
-  const toggleFullScreen = useCallback(() => {
-    if (!isFullScreen) {
-      enterFullScreen();
+  const toggleDocFullScreen = useCallback(() => {
+    if (!docFullscreen) {
+      enterDocFullScreen();
     } else {
-      exitFullScreen();
+      exitDocFullScreen();
     }
-  }, [isFullScreen, enterFullScreen, exitFullScreen]);
+  }, [docFullscreen, enterDocFullScreen, exitDocFullScreen]);
 
   // Обработка клавиш (пробел и Backspace)
-  const handleKeyPress = useCallback(
+  const keyPress = useCallback(
     (event) => {
-      if ((event.key === " " || event.key === "Backspace") && isFullScreen) {
-        toggleFullScreen();
+      if ((event.key === " " || event.key === "Backspace") && docFullscreen) {
+        toggleDocFullScreen();
       }
     },
-    [isFullScreen, toggleFullScreen]
+    [docFullscreen, toggleDocFullScreen]
   );
 
   // Подписка на события
   useEffect(() => {
-    document.addEventListener("keydown", handleKeyPress);
-    document.addEventListener("fullscreenchange", handleFullScreenChange);
-    document.addEventListener("webkitfullscreenchange", handleFullScreenChange);
-    document.addEventListener("mozfullscreenchange", handleFullScreenChange);
-    document.addEventListener("MSFullscreenChange", handleFullScreenChange);
+    document.addEventListener("keydown", keyPress);
+    document.addEventListener("fullscreenchange", docFullScreenChange);
+    document.addEventListener("webkitfullscreenchange", docFullScreenChange);
+    document.addEventListener("mozfullscreenchange", docFullScreenChange);
+    document.addEventListener("MSFullscreenChange", docFullScreenChange);
 
     return () => {
-      document.removeEventListener("keydown", handleKeyPress);
-      document.removeEventListener("fullscreenchange", handleFullScreenChange);
-      document.removeEventListener("webkitfullscreenchange", handleFullScreenChange);
-      document.removeEventListener("mozfullscreenchange", handleFullScreenChange);
-      document.removeEventListener("MSFullscreenChange", handleFullScreenChange);
+      document.removeEventListener("keydown", keyPress);
+      document.removeEventListener("fullscreenchange", docFullScreenChange);
+      document.removeEventListener("webkitfullscreenchange", docFullScreenChange);
+      document.removeEventListener("mozfullscreenchange", docFullScreenChange);
+      document.removeEventListener("MSFullscreenChange", docFullScreenChange);
     };
-  }, [handleKeyPress, handleFullScreenChange]);
+  }, [keyPress, docFullScreenChange]);
 
   return (
     <i
-      onClick={toggleFullScreen}
-      className={`toggle-fullScreen-btn ${className}`.trim()}
+      onClick={toggleDocFullScreen}
+      className={`doc-fullScreen-btn ${className}`.trim()}
       style={style}
-      title={isFullScreen ? t("extra.closeFullScreen") : t("extra.toggleFullScreen")}
+      title={docFullscreen ? t("extra.closeFullScreen") : t("extra.toggleFullScreen")}
     >
-      <span className={`fa ${isFullScreen ? "fa-compress-arrows-alt" : "fa-expand-arrows-alt"}`}></span>
+      <span className={`fa ${docFullscreen ? "fa-compress-arrows-alt" : "fa-expand-arrows-alt"}`}></span>
     </i>
   );
 }
