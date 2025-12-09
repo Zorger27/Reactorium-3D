@@ -11,12 +11,12 @@ import small2Cube24 from "@/assets/app/VortexCube/cube3/cube3-24.webp";
  * Панель выбора фона Canvas в fullscreen режиме
  *
  * @param {Object} props
- * @param {string} props.currentBackground - Текущий фон ('sky01' | 'sky02' | 'sky03' | 'desert01' | ...)
+ * @param {string} props.currentBackground - Текущий фон ('scene01' | 'scene02' | 'scene03' | 'scene04')
  * @param {Function} props.onBackgroundChange - Callback для изменения фона
  * @param {Function} props.onActivate - Callback для открытия fullscreen с выбранным фоном
  * @param {boolean} props.isOpen - Состояние открытия меню
  * @param {Function} props.onToggle - Callback для открытия/закрытия меню
- * @param {Object} props.canvasContainerRef - Ref на canvas контейнер для fullscreen
+ * @param {React.RefObject} props.canvasRef - Ref на canvas контейнер для fullscreen
  */
 
 const CanvasBackgroundPanel = ({
@@ -25,7 +25,7 @@ const CanvasBackgroundPanel = ({
                                  onActivate,
                                  isOpen = false,
                                  onToggle,
-                                 canvasContainerRef
+                                 canvasRef
                                }) => {
   const { t } = useTranslation();
 
@@ -45,7 +45,7 @@ const CanvasBackgroundPanel = ({
   };
 
   const openFullscreen = () => {
-    const canvasContainerElement = canvasContainerRef?.current;
+    const canvasContainerElement = canvasRef?.current;
 
     if (!canvasContainerElement) {
       console.error('❌ Canvas container not found!');
