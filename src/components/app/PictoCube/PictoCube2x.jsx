@@ -6,6 +6,7 @@ import ControlBlock from "@/components/util/ControlBlock.jsx";
 import { useTranslation } from 'react-i18next';
 import {Canvas, useFrame, useThree, extend, useLoader} from '@react-three/fiber';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { TextureLoader } from 'three';
 import * as THREE from "three";
 
 import topSmallCube from "@/assets/app/PictoCube/cube2/top01.webp"
@@ -18,6 +19,8 @@ import sideSmallCube05 from "@/assets/app/PictoCube/cube2/cube05.webp"
 import sideSmallCube06 from "@/assets/app/PictoCube/cube2/cube06.webp"
 import sideSmallCube07 from "@/assets/app/PictoCube/cube2/cube07.webp"
 import sideSmallCube08 from "@/assets/app/PictoCube/cube2/cube08.webp"
+
+import small2Cube01 from "@/assets/app/VortexCube/cube3/cube3-01.webp";
 
 extend({ OrbitControls });
 const degreesToRadians = (degrees) => degrees * (Math.PI / 180);
@@ -49,6 +52,21 @@ const CUBE_CONFIGS = [
   { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube07, sideSmallCube07, sideSmallCube07, sideSmallCube07] },
   { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube08, sideSmallCube08, sideSmallCube08, sideSmallCube08] },
 ];
+
+// Компонент для установки фона
+function SceneBackground({ imagePath, canvasFullscreen }) {
+  // Хук R3F для загрузки ресурсов three.js
+  // const texture = useLoader(EXRLoader, imagePath);
+  const texture = useLoader(TextureLoader, imagePath);
+
+  // Если НЕ в fullscreen - НЕ устанавливаем фон вообще (прозрачный)
+  if (!canvasFullscreen) {
+    return null; // ⭐ Просто ничего не рендерим - фон будет прозрачным
+  }
+
+  // Возвращаем специальный элемент, который прикрепляет текстуру к фону сцены
+  return <primitive attach="background" object={texture} />;
+}
 
 // ---- Настройка поворотов по умолчанию для граней (можно расширить/перенастроить) ----
 const DEFAULT_SIDE_ROTATIONS = {
@@ -374,7 +392,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
   );
 };
 
-const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
+const PictoCube2x = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref) => {
   const { t } = useTranslation();
 
   const canvasStyle = useResponsiveStyle({
@@ -665,6 +683,10 @@ const PictoCube2x = forwardRef(({ groupSize = 2.5 }, ref) => {
         <Canvas style={canvasStyle} camera={{ fov: 75 }} gl={{ antialias: true, toneMapping: THREE.NoToneMapping, logarithmicDepthBuffer: true }}>
           <perspectiveCamera makeDefault position={[0, 0, 2.5]} />
           <ambientLight intensity={0.6} />
+
+          {/* Используем компонент с путём к картинке */}
+          <SceneBackground imagePath={small2Cube01} canvasFullscreen={canvasFullscreen} />
+
           <CubeGroup
             groupSize={groupSize}
             gap={gap}
