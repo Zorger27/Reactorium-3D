@@ -2,17 +2,17 @@ import React, { useEffect, useCallback } from 'react';
 import '@/components/util/CanvasFullScreen.scss';
 import { useTranslation } from 'react-i18next';
 
-const CanvasFullScreen = ({ canvasContainer, onFullscreenChange }) => {
+const CanvasFullScreen = ({ canvasContainer, onCanvasChange }) => {
   const { t } = useTranslation();
 
-  const handleFullscreenChange = useCallback(() => {
+  const canvasFullscreenChange = useCallback(() => {
     const fullscreenActive = document.fullscreenElement === canvasContainer;
 
     // Уведомляем родителя об изменении
-    if (onFullscreenChange) {
-      onFullscreenChange(fullscreenActive);
+    if (onCanvasChange) {
+      onCanvasChange(fullscreenActive);
     }
-  }, [onFullscreenChange, canvasContainer]);
+  }, [onCanvasChange, canvasContainer]);
 
   const handleKeyDown = useCallback((event) => {
     if ((event.key === 'Backspace' || event.key === ' ') && document.fullscreenElement) {
@@ -24,24 +24,24 @@ const CanvasFullScreen = ({ canvasContainer, onFullscreenChange }) => {
 
   useEffect(() => {
     // Отслеживаем изменения fullscreen
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
-    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+    document.addEventListener('fullscreenchange', canvasFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', canvasFullscreenChange);
+    document.addEventListener('mozfullscreenchange', canvasFullscreenChange);
+    document.addEventListener('MSFullscreenChange', canvasFullscreenChange);
 
     // Отслеживаем клавиши
     window.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
-      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
-      document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
-      document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
+      document.removeEventListener('fullscreenchange', canvasFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', canvasFullscreenChange);
+      document.removeEventListener('mozfullscreenchange', canvasFullscreenChange);
+      document.removeEventListener('MSFullscreenChange', canvasFullscreenChange);
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [handleKeyDown, handleFullscreenChange]);
+  }, [handleKeyDown, canvasFullscreenChange]);
 
-  const fullScreenView = () => {
+  const canvasFullScreenView = () => {
     const canvasContainerElement = canvasContainer;
 
     if (document.fullscreenElement) {
@@ -65,7 +65,7 @@ const CanvasFullScreen = ({ canvasContainer, onFullscreenChange }) => {
 
   return (
     <button
-      onClick={fullScreenView}
+      onClick={canvasFullScreenView}
       className="canvas-full-screen"
       title={t('extra.canvasFullScreen')}
     >

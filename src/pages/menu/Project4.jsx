@@ -19,7 +19,7 @@ export const Project4 = () => {
   const [canvasContainer, setCanvasContainer] = useState(null);
 
   // Состояние для отслеживания полноэкранного режима
-  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [canvasFullscreen, setCanvasFullscreen] = useState(false);
 
   // Callback для установки контейнера
   const setCanvasRef = useCallback((element) => {
@@ -79,12 +79,12 @@ export const Project4 = () => {
             </button>
           </div>
 
-          <CanvasFullScreen canvasContainer={canvasContainer} onFullscreenChange={setIsFullscreen}/>
+          <CanvasFullScreen canvasContainer={canvasContainer} onCanvasChange={setCanvasFullscreen}/>
           <ToggleFooterButton />
         </h1>
         <hr className="custom-line" />
 
-        {mode === "single" && <SingleCubeForge ref={setCanvasRef} isFullscreen={isFullscreen} />}
+        {mode === "single" && <SingleCubeForge ref={setCanvasRef} canvasFullscreen={canvasFullscreen} />}
         {mode === "multi" && <MultiCubeForge ref={setCanvasRef} />}
 
       </div>
