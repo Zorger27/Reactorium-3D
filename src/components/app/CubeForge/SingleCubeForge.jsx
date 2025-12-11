@@ -1406,7 +1406,7 @@ const SingleCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false 
           <perspectiveCamera makeDefault position={[0, 0, 2.5]} />
           <ambientLight intensity={0.6} />
 
-          {/* Используем компонент с путём к картинке */}
+          {/* Компонент для Full Screen с путём к картинке */}
           <SceneBackground imagePath={backgroundMap[canvasBackground]} canvasFullscreen={canvasFullscreen}/>
 
           <CubeGroup
