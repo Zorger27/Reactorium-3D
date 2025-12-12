@@ -1,23 +1,57 @@
-// Основные стили для canvas контейнера
+@use "sass:color";
+
 .multi-cube-forge-container {
-  //height: 628px;
-  //height: calc(100vh - 225px); // 100% экрана минус место для header/footer
-  //width: 100%;
+  .cube-controls {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 2rem;
+  }
+
+  .special-buttons {
+    position: absolute;
+    top: 50%;
+    right: 1rem;
+    transform: translateY(-50%);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2rem;
+  }
 }
 
 @media(max-width: 1020px) {
   .multi-cube-forge-container {
-    //height: calc(100vh - 218px); // 100% экрана минус место для header/footer
+    .cube-controls {
+      left: 0.7rem;
+      gap: 1.6rem;
+    }
+
+    .special-buttons {
+      right: 0.7rem;
+      gap: 1.6rem;
+    }
   }
 }
 
 // Мобильная адаптация
 @media (max-width: 768px) {
   .multi-cube-forge-container {
-    //height: 68vh; // 68% высоты экрана - оставляет место для header/footer
-    //min-height: 300px; // Минимальная высота
-    //max-height: 440px; // Максимальная высота
+    .cube-controls {
+      left: 0.5rem;
+      gap: 1.3rem;
+    }
 
-    //height: calc(100vh - 206px); // 100% экрана минус место для header/footer
+    .special-buttons {
+      right: 0.5rem;
+      gap: 1.3rem;
+    }
   }
 }
