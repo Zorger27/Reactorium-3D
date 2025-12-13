@@ -253,6 +253,18 @@ const PHOTO_CONFIG_LEVEL_3 = [
 extend({ OrbitControls });
 const degreesToRadians = (degrees) => degrees * (Math.PI / 180);
 
+function SetupCamera() {
+  const { camera } = useThree();
+
+  useEffect(() => {
+    camera.fov = 75;
+    camera.position.set(0, 0, 12);
+    camera.updateProjectionMatrix();
+  }, [camera]);
+
+  return null;
+}
+
 const CameraControls = () => {
   const { camera, gl } = useThree();
   const controls = useRef(null);
@@ -294,7 +306,43 @@ const DEFAULT_SIDE_ROTATIONS = {
   bottom: 0
 };
 
-const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating, direction, speed, resetTrigger, flipTrigger, smallCubeScale, shuffleTrigger, setShuffleTrigger, positionsResetTrigger, cubeLevel, cubeStyle }) => {
+// Функция для выбора куба через клик
+export const useCubeSelection = (groupRefs, onSelect) => {
+  const { camera, gl, raycaster } = useThree();
+  const mouse = useMemo(() => new THREE.Vector2(), []);
+
+  useEffect(() => {
+    const handleClick = (event) => {
+      const rect = gl.domElement.getBoundingClientRect();
+
+      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+      raycaster.setFromCamera(
+        mouse,
+        /** @type {import('three').PerspectiveCamera} */ (camera)
+      );
+
+      for (let i = 0; i < groupRefs.length; i++) {
+        const group = groupRefs[i]?.current;
+        if (!group) continue;
+
+        const intersects = raycaster.intersectObjects(group.children, true);
+        if (intersects.length) {
+          onSelect(i + 1);
+          return;
+        }
+      }
+    };
+
+    gl.domElement.addEventListener('click', handleClick);
+    return () => gl.domElement.removeEventListener('click', handleClick);
+  }, [camera, gl, raycaster, mouse, groupRefs, onSelect]);
+};
+
+const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating, direction, speed,
+                     resetTrigger, flipTrigger, smallCubeScale, shuffleTrigger, setShuffleTrigger, positionsResetTrigger,
+                     cubeLevel, cubeStyle, cubePosition = [0, 0, 0], isSelected = false }) => {
   const groupRef = useRef(null);
 
   // Определяем сколько кубов в одной строке
@@ -1059,11 +1107,16 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
   const edgesGeometry = useMemo(() => new THREE.EdgesGeometry(geometry), [geometry]);
 
   return (
-    <group ref={groupRef}>
+    <group ref={groupRef} position={cubePosition}>
+      {isSelected && (
+        <mesh>
+          <boxGeometry args={[groupSize * 1.1, groupSize * 1.1, groupSize * 1.1]} />
+          <meshBasicMaterial color="#ffff00" wireframe opacity={0.3} transparent />
+        </mesh>
+      )}
       {basePositions.map((pos, i) => (
         <group key={i} position={pos}>
           <mesh geometry={geometry} material={cubeMaterials[i]} />
-
           {cubeStyle === 'color' && (
             <lineSegments geometry={edgesGeometry} onUpdate={(self) => self.position.multiplyScalar(1.0005)}>
               <lineBasicMaterial color="black" depthTest={true} />
@@ -1099,10 +1152,11 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
     }
   });
 
+  // Выбор активного куба
+  const [selectedCube, setSelectedCube] = useState(1);
+
   // states
   const [openBlock, setOpenBlock] = useState(null);
-  const [shuffleTrigger, setShuffleTrigger] = useState(0);
-  const [positionsResetTrigger, setPositionsResetTrigger] = useState(0);
   const [isShuffleMenuOpen, setIsShuffleMenuOpen] = useState(false);
   const [isClearMenuOpen, setIsClearMenuOpen] = useState(false);
   const [isSaveMenuOpen, setIsSaveMenuOpen] = useState(false);
@@ -1112,29 +1166,79 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
   // Состояние для записи видео
   const [isRecording, setIsRecording] = useState(false);
 
-  // Управление вращением
-  const [resetTrigger, setResetTrigger] = useState(false);
-  const [flipTrigger, setFlipTrigger] = useState(false);
+  // Refs для трёх кубов
+  const cube1Ref = useRef(null);
+  const cube2Ref = useRef(null);
+  const cube3Ref = useRef(null);
 
-  // Загрузка и сохранение в localStorage
-  const [gap, setGap, resetGap] = useLocalStorage("multiCubeForgeGap", 0.15, parseFloat);
-  const [smallCubeScale, setSmallCubeScale, resetSmallCubeScale] = useLocalStorage("multiCubeForgeSmallCubeScale", 0.85, parseFloat);
-  const [rotationX, setRotationX, resetRotationX] = useLocalStorage("multiCubeForgeRotX", 90, parseFloat);
-  const [rotationY, setRotationY, resetRotationY] = useLocalStorage("multiCubeForgeRotY", 0, parseFloat);
-  const [rotationZ, setRotationZ, resetRotationZ] = useLocalStorage("multiCubeForgeRotZ", 0, parseFloat);
-  const [speed, setSpeed, resetSpeed] = useLocalStorage("multiCubeForgeSpeed", 4, parseFloat);
-  const [direction, setDirection, resetDirection] = useLocalStorage("multiCubeForgeDirection", 1, v => parseInt(v, 10));
-  const [isRotating, setIsRotating, resetIsRotating] = useLocalStorage("multiCubeForgeIsRotating", true, v => v === "true");
-  const [cubeLevel, setCubeLevel, resetCubeLevel] = useLocalStorage("multiCubeForgeCubeLevel", 3, v => parseInt(v, 10));
-  const [cubeStyle, setCubeStyle, resetCubeStyle] = useLocalStorage("multiCubeForgeCubeStyle", "photo", v => v);
+  // Получаем настройки для каждого куба с правильным префиксом
+  const getCubeSettings = (cubeId) => {
+    const suffix = `Cube${cubeId}`;
+    const [gap, setGap, resetGap] = useLocalStorage(`multiCubeForgeGap${suffix}`, 0.15, parseFloat);
+    const [smallCubeScale, setSmallCubeScale, resetSmallCubeScale] = useLocalStorage(`multiCubeForgeSmallCubeScale${suffix}`, 0.85, parseFloat);
+    const [rotationX, setRotationX, resetRotationX] = useLocalStorage(`multiCubeForgeRotX${suffix}`, 90, parseFloat);
+    const [rotationY, setRotationY, resetRotationY] = useLocalStorage(`multiCubeForgeRotY${suffix}`, 0, parseFloat);
+    const [rotationZ, setRotationZ, resetRotationZ] = useLocalStorage(`multiCubeForgeRotZ${suffix}`, 0, parseFloat);
+    const [speed, setSpeed, resetSpeed] = useLocalStorage(`multiCubeForgeSpeed${suffix}`, 4, parseFloat);
+    const [direction, setDirection, resetDirection] = useLocalStorage(`multiCubeForgeDirection${suffix}`, 1, v => parseInt(v, 10));
+    const [isRotating, setIsRotating, resetIsRotating] = useLocalStorage(`multiCubeForgeIsRotating${suffix}`, true, v => v === "true");
+
+    // Уровень и стиль по умолчанию для каждого куба
+    let defaultLevel, defaultStyle;
+    if (cubeId === 1) {
+      defaultLevel = 1;
+      defaultStyle = "photo";
+    } else if (cubeId === 2) {
+      defaultLevel = 8;
+      defaultStyle = "texture";
+    } else {
+      defaultLevel = 27;
+      defaultStyle = "color";
+    }
+
+    const [cubeLevel, setCubeLevel, resetCubeLevel] = useLocalStorage(`multiCubeForgeCubeLevel${suffix}`, defaultLevel, v => parseInt(v, 10));
+    const [cubeStyle, setCubeStyle, resetCubeStyle] = useLocalStorage(`multiCubeForgeCubeStyle${suffix}`, defaultStyle, v => v);
+
+    const [shuffleTrigger, setShuffleTrigger] = useState(0);
+    const [positionsResetTrigger, setPositionsResetTrigger] = useState(0);
+
+    // Управление вращением
+    const [resetTrigger, setResetTrigger] = useState(false);
+    const [flipTrigger, setFlipTrigger] = useState(false);
+
+    return {
+      gap, setGap, resetGap,
+      smallCubeScale, setSmallCubeScale, resetSmallCubeScale,
+      rotationX, setRotationX, resetRotationX,
+      rotationY, setRotationY, resetRotationY,
+      rotationZ, setRotationZ, resetRotationZ,
+      speed, setSpeed, resetSpeed,
+      direction, setDirection, resetDirection,
+      isRotating, setIsRotating, resetIsRotating,
+      cubeLevel, setCubeLevel, resetCubeLevel,
+      cubeStyle, setCubeStyle, resetCubeStyle,
+      shuffleTrigger, setShuffleTrigger,
+      positionsResetTrigger, setPositionsResetTrigger,
+      resetTrigger, setResetTrigger,
+      flipTrigger, setFlipTrigger
+    };
+  };
+
+  const cube1Settings = getCubeSettings(1);
+  const cube2Settings = getCubeSettings(2);
+  const cube3Settings = getCubeSettings(3);
+
+  // Получаем настройки активного куба
+  const settings = selectedCube === 1 ? cube1Settings : selectedCube === 2 ? cube2Settings : cube3Settings;
+
   const [canvasBackground, setCanvasBackground, resetCanvasBackground] = useLocalStorage("multiCubeForgeCanvasBackground", "scene01", v => v);
 
   // Кнопки вращения
-  const handleClockwise = () => {setDirection(1);setIsRotating(true);};
-  const handleCounterClockwise = () => {setDirection(-1);setIsRotating(true);};
-  const handlePause = () => {setIsRotating(prev => !prev);};
-  const handleStop = () => {setIsRotating(false);setResetTrigger(prev => !prev);};
-  const handleFlip = () => {setFlipTrigger(prev => !prev);};
+  const handleClockwise = () => {settings.setDirection(1);settings.setIsRotating(true);};
+  const handleCounterClockwise = () => {settings.setDirection(-1);settings.setIsRotating(true);};
+  const handlePause = () => {settings.setIsRotating(prev => !prev);};
+  const handleStop = () => {settings.setIsRotating(false);settings.setResetTrigger(prev => !prev);};
+  const handleFlip = () => {settings.setFlipTrigger(prev => !prev);};
 
   // Фабрика хэндлеров для ControlBlock
   const makeHandlers = (setter, defaultValue, min, max, step = 1) => ({
@@ -1144,13 +1248,13 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
   });
 
   // Кнопки управления
-  const cubeLevelHandlers = makeHandlers(setCubeLevel, 3, 1, 3, 1);
-  const speedHandlers = makeHandlers(setSpeed, 4, 0, 10, 1);
-  const gapHandlers = makeHandlers(setGap, 0.15, 0, 0.5, 0.01);
-  const smallCubeScaleHandlers = makeHandlers(setSmallCubeScale, 0.85, 0.5, 1, 0.05);
-  const rotXHandlers = makeHandlers(setRotationX, 90, -180, 180);
-  const rotYHandlers = makeHandlers(setRotationY, 0, -180, 180);
-  const rotZHandlers = makeHandlers(setRotationZ, 0, -180, 180);
+  const cubeLevelHandlers = makeHandlers(settings.setCubeLevel, selectedCube === 1 ? 1 : selectedCube === 2 ? 8 : 27, 1, 3, 1);
+  const speedHandlers = makeHandlers(settings.setSpeed, 4, 0, 10, 1);
+  const gapHandlers = makeHandlers(settings.setGap, 0.15, 0, 0.5, 0.01);
+  const smallCubeScaleHandlers = makeHandlers(settings.setSmallCubeScale, 0.85, 0.5, 1, 0.05);
+  const rotXHandlers = makeHandlers(settings.setRotationX, 90, -180, 180);
+  const rotYHandlers = makeHandlers(settings.setRotationY, 0, -180, 180);
+  const rotZHandlers = makeHandlers(settings.setRotationZ, 0, -180, 180);
 
   // Объект для маппинга режима на количество кубов:
   const cubeLevelMap = {
@@ -1168,7 +1272,7 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
   };
 
   // Фактическое количество кубов:
-  const actualCubeCount = cubeLevelMap[cubeLevel];
+  const actualCubeCount = cubeLevelMap[settings.cubeLevel];
 
   // EFFECT 11: useEffect для закрытия при клике вне меню!!!!!
   useEffect(() => {
@@ -1255,22 +1359,21 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
     }
   }, [isCanvasBackgroundMenuOpen, isRecording]);
 
-  // Функция для сброса всех состояний
+  // Функция для сброса всех состояний активного куба
   const resetAllStates = () => {
-    resetGap();
-    resetSmallCubeScale();
-    resetRotationX();
-    resetRotationY();
-    resetRotationZ();
-    resetSpeed();
-    resetDirection();
-    resetIsRotating();
-    resetCubeLevel();
-    resetCubeStyle();
+    settings.resetGap();
+    settings.resetSmallCubeScale();
+    settings.resetRotationX();
+    settings.resetRotationY();
+    settings.resetRotationZ();
+    settings.resetSpeed();
+    settings.resetDirection();
+    settings.resetIsRotating();
+    settings.resetCubeLevel();
+    settings.resetCubeStyle();
     resetCanvasBackground();
-
-    setPositionsResetTrigger(prev => prev + 1);
-    setResetTrigger(prev => !prev);
+    settings.setPositionsResetTrigger(prev => prev + 1);
+    settings.setResetTrigger(prev => !prev);
   };
 
   // Внутренний ref для доступа к Canvas
@@ -1285,8 +1388,57 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
     }
   };
 
+  // Позиции для трёх кубов
+  const cubePositions = [
+    [-3.5, 0, 0],  // Куб 1 - слева
+    [0, 0, 0],     // Куб 2 - центр
+    [3.5, 0, 0]    // Куб 3 - справа
+  ];
+
+  // Компонент для обработки кликов
+  const CubeSelector = () => {
+    useCubeSelection([cube1Ref, cube2Ref, cube3Ref], setSelectedCube);
+    return null;
+  };
+
+
   return (
     <div className="multi-cube-forge-container">
+
+      {/* Панель выбора куба */}
+      <div style={{
+        position: 'absolute',
+        top: '10px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        zIndex: 100,
+        display: 'flex',
+        gap: '10px',
+        background: 'rgba(0,0,0,0.7)',
+        padding: '10px',
+        borderRadius: '12px'
+      }}>
+        {[1, 2, 3].map(id => (
+          <button
+            key={id}
+            onClick={() => setSelectedCube(id)}
+            style={{
+              padding: '10px 20px',
+              background: selectedCube === id ? '#4a9eff' : '#333',
+              border: selectedCube === id ? '2px solid #fff' : '2px solid #555',
+              borderRadius: '8px',
+              color: 'white',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+              fontSize: '14px',
+              transition: 'all 0.3s'
+            }}
+          >
+            Cube {id}
+          </button>
+        ))}
+      </div>
+
       {/* === Панели управления кубом === */}
       <div className="cube-controls">
 
@@ -1294,25 +1446,25 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
         {openBlock === null && (
           <>
             <ControlBlock label={t("control.level")} icon="fa-solid fa-cubes" isOpen={false} onToggle={() => setOpenBlock("cubeLevel")}
-                          gapConfig={{value: cubeLevel, min: 1, max: 3, step: 1, onChange: setCubeLevel, ...cubeLevelHandlers}}
+                          gapConfig={{value: settings.cubeLevel, min: 1, max: 3, step: 1, onChange: settings.setCubeLevel, ...cubeLevelHandlers}}
             />
 
             <ControlBlock label={t("control.speed")} icon="fa-solid fa-gauge-simple-high" isOpen={false} onToggle={() => setOpenBlock("speed")}
-                          gapConfig={{value: speed, min: 0, max: 10, step: 1, onChange: setSpeed, ...speedHandlers,}}
+                          gapConfig={{value: settings.speed, min: 0, max: 10, step: 1, onChange: settings.setSpeed, ...speedHandlers,}}
             />
             <ControlBlock label={t("control.gap")} icon="fa-solid fa-arrows-left-right" isOpen={false} onToggle={() => setOpenBlock("gap")}
-                          gapConfig={{value: gap, min: 0, max: 0.5, step: 0.01, onChange: setGap, ...gapHandlers}}
+                          gapConfig={{value: settings.gap, min: 0, max: 0.5, step: 0.01, onChange: settings.setGap, ...gapHandlers}}
             />
 
             <ControlBlock label={t("control.small-cube-size")} icon="fa-solid fa-up-right-and-down-left-from-center" isOpen={false} onToggle={() => setOpenBlock("smallCubeSize")}
-                          gapConfig={{value: smallCubeScale, min: 0.5, max: 1.0, step: 0.05, onChange: setSmallCubeScale, ...smallCubeScaleHandlers,}}
+                          gapConfig={{value: settings.smallCubeScale, min: 0.5, max: 1.0, step: 0.05, onChange: settings.setSmallCubeScale, ...smallCubeScaleHandlers,}}
             />
 
             <ControlBlock label={t("control.incline")} icon="fa-solid fa-compass" isOpen={false} onToggle={() => setOpenBlock("rotation")}
                           sliders={[
-                            { label: t("control.x-axis"), value: rotationX, min: -180, max: 180, handlers: { ...rotXHandlers, onChange: (v) => setRotationX(v) } },
-                            { label: t("control.y-axis"), value: rotationY, min: -180, max: 180, handlers: { ...rotYHandlers, onChange: (v) => setRotationY(v) } },
-                            { label: t("control.z-axis"), value: rotationZ, min: -180, max: 180, handlers: { ...rotZHandlers, onChange: (v) => setRotationZ(v) } },
+                            { label: t("control.x-axis"), value: settings.rotationX, min: -180, max: 180, handlers: { ...rotXHandlers, onChange: (v) => settings.setRotationX(v) } },
+                            { label: t("control.y-axis"), value: settings.rotationY, min: -180, max: 180, handlers: { ...rotYHandlers, onChange: (v) => settings.setRotationY(v) } },
+                            { label: t("control.z-axis"), value: settings.rotationZ, min: -180, max: 180, handlers: { ...rotZHandlers, onChange: (v) => settings.setRotationZ(v) } },
                           ]}
             />
           </>
@@ -1321,7 +1473,7 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
         {/* Состояние: открыт cubeLevel → показываем только его */}
         {openBlock === "cubeLevel" && (
           <ControlBlock label={t("control.level")} icon="fa-solid fa-cubes" isOpen={true} onToggle={() => setOpenBlock(null)}
-                        gapConfig={{value: cubeLevel, min: 1, max: 3, step: 1, onChange: setCubeLevel, ...cubeLevelHandlers
+                        gapConfig={{value: settings.cubeLevel, min: 1, max: 3, step: 1, onChange: settings.setCubeLevel, ...cubeLevelHandlers
                         }}
           />
         )}
@@ -1329,21 +1481,21 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
         {/* Состояние: открыт speed → показываем только его */}
         {openBlock === "speed" && (
           <ControlBlock label={t("control.speed")} icon="fa-solid fa-gauge-simple-high" isOpen={true} onToggle={() => setOpenBlock(null)}
-                        gapConfig={{value: speed, min: 0, max: 10, step: 1, onChange: setSpeed, ...speedHandlers,}}
+                        gapConfig={{value: settings.speed, min: 0, max: 10, step: 1, onChange: settings.setSpeed, ...speedHandlers,}}
           />
         )}
 
         {/* Состояние: открыт gap → показываем только его */}
         {openBlock === "gap" && (
           <ControlBlock label={t("control.gap")} icon="fa-solid fa-arrows-left-right" isOpen={true} onToggle={() => setOpenBlock(null)}
-                        gapConfig={{value: gap, min: 0, max: 0.5, step: 0.01, onChange: setGap, ...gapHandlers}}
+                        gapConfig={{value: settings.gap, min: 0, max: 0.5, step: 0.01, onChange: settings.setGap, ...gapHandlers}}
           />
         )}
 
         {/* Состояние: открыт smallCubeSize → показываем только его */}
         {openBlock === "smallCubeSize" && (
           <ControlBlock label={t("control.small-cube-size")} icon="fa-solid fa-up-right-and-down-left-from-center" isOpen={true} onToggle={() => setOpenBlock(null)}
-                        gapConfig={{value: smallCubeScale, min: 0.5, max: 1.0, step: 0.05, onChange: setSmallCubeScale, ...smallCubeScaleHandlers,}}
+                        gapConfig={{value: settings.smallCubeScale, min: 0.5, max: 1.0, step: 0.05, onChange: settings.setSmallCubeScale, ...smallCubeScaleHandlers,}}
           />
         )}
 
@@ -1351,9 +1503,9 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
         {openBlock === "rotation" && (
           <ControlBlock label={t("control.incline")} icon="fa-solid fa-compass" isOpen={true} onToggle={() => setOpenBlock(null)}
                         sliders={[
-                          { label: t("control.x-axis"), value: rotationX, min: -180, max: 180, handlers: { ...rotXHandlers, onChange: (v) => setRotationX(v) } },
-                          { label: t("control.y-axis"), value: rotationY, min: -180, max: 180, handlers: { ...rotYHandlers, onChange: (v) => setRotationY(v) } },
-                          { label: t("control.z-axis"), value: rotationZ, min: -180, max: 180, handlers: { ...rotZHandlers, onChange: (v) => setRotationZ(v) } },
+                          { label: t("control.x-axis"), value: settings.rotationX, min: -180, max: 180, handlers: { ...rotXHandlers, onChange: (v) => settings.setRotationX(v) } },
+                          { label: t("control.y-axis"), value: settings.rotationY, min: -180, max: 180, handlers: { ...rotYHandlers, onChange: (v) => settings.setRotationY(v) } },
+                          { label: t("control.z-axis"), value: settings.rotationZ, min: -180, max: 180, handlers: { ...rotZHandlers, onChange: (v) => settings.setRotationZ(v) } },
                         ]}
           />
         )}
@@ -1361,7 +1513,7 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
       </div>
 
       {/* === Панель кнопок управления вращением === */}
-      <RotationControlPanel isRotating={isRotating} onClockwise={handleClockwise} onCounterClockwise={handleCounterClockwise}
+      <RotationControlPanel isRotating={settings.isRotating} onClockwise={handleClockwise} onCounterClockwise={handleCounterClockwise}
                             onPause={handlePause} onStop={handleStop} onFlip={handleFlip}
       />
 
@@ -1374,12 +1526,12 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
         />
 
         {/* === Панель изменения стиля куба === */}
-        <CubeStylePanel currentStyle={cubeStyle} onStyleChange={setCubeStyle} isOpen={isCubeStyleMenuOpen} onToggle={setIsCubeStyleMenuOpen}/>
+        <CubeStylePanel currentStyle={settings.cubeStyle} onStyleChange={settings.setCubeStyle} isOpen={isCubeStyleMenuOpen} onToggle={setIsCubeStyleMenuOpen}/>
 
         {/* === Панель перемешивания кубов === */}
-        <ShufflePanel isVisible={cubeLevel !== 1} isOpen={isShuffleMenuOpen} onToggle={setIsShuffleMenuOpen}
-                      onShuffle={() => setShuffleTrigger(prev => prev + 1)}
-                      onReset={() => setPositionsResetTrigger(prev => prev + 1)}
+        <ShufflePanel isVisible={settings.cubeLevel !== 1} isOpen={isShuffleMenuOpen} onToggle={setIsShuffleMenuOpen}
+                      onShuffle={() => settings.setShuffleTrigger(prev => prev + 1)}
+                      onReset={() => settings.setPositionsResetTrigger(prev => prev + 1)}
         />
 
         {/* === Панель выбора фона канваса для просмотра куба === */}
@@ -1402,31 +1554,88 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
       </div>
 
       <div ref={setRefs}>
-        <Canvas style={canvasStyle} camera={{ fov: 75 }} gl={{ antialias: true, toneMapping: THREE.NoToneMapping, logarithmicDepthBuffer: true }}>
-          <perspectiveCamera makeDefault position={[0, 0, 2.5]} />
+        <Canvas style={canvasStyle} gl={{ antialias: true, toneMapping: THREE.NoToneMapping, logarithmicDepthBuffer: true }}>
+          <SetupCamera />
+          <perspectiveCamera makeDefault position={[0, 0, 12]} />
           <ambientLight intensity={0.6} />
 
-          {/* Компонент для Full Screen с путём к картинке */}
           <SceneBackground imagePath={backgroundMap[canvasBackground]} canvasFullscreen={canvasFullscreen}/>
 
+          <CubeSelector />
+
+          {/* Три куба */}
           <CubeGroup
+            key="cube1"
             groupSize={groupSize}
-            gap={gap}
-            rotationX={rotationX}
-            rotationY={rotationY}
-            rotationZ={rotationZ}
-            isRotating={isRotating}
-            direction={direction}
-            speed={speed}
-            resetTrigger={resetTrigger}
-            flipTrigger={flipTrigger}
-            smallCubeScale={smallCubeScale}
-            shuffleTrigger={shuffleTrigger}
-            setShuffleTrigger={setShuffleTrigger}
-            positionsResetTrigger={positionsResetTrigger}
-            cubeLevel={actualCubeCount}
-            cubeStyle={cubeStyle}
+            gap={cube1Settings.gap}
+            rotationX={cube1Settings.rotationX}
+            rotationY={cube1Settings.rotationY}
+            rotationZ={cube1Settings.rotationZ}
+            isRotating={cube1Settings.isRotating}
+            direction={cube1Settings.direction}
+            speed={cube1Settings.speed}
+            resetTrigger={cube1Settings.resetTrigger}
+            flipTrigger={cube1Settings.flipTrigger}
+            smallCubeScale={cube1Settings.smallCubeScale}
+            shuffleTrigger={cube1Settings.shuffleTrigger}
+            setShuffleTrigger={cube1Settings.setShuffleTrigger}
+            positionsResetTrigger={cube1Settings.positionsResetTrigger}
+            cubeLevel={cubeLevelMap[cube1Settings.cubeLevel]}
+            // cubeLevel={cubeLevelMap[actualCubeCount]}
+            cubeStyle={cube1Settings.cubeStyle}
+            cubePosition={cubePositions[0]}
+            isSelected={selectedCube === 1}
+            ref={cube1Ref}
           />
+
+          <CubeGroup
+            key="cube2"
+            groupSize={groupSize}
+            gap={cube2Settings.gap}
+            rotationX={cube2Settings.rotationX}
+            rotationY={cube2Settings.rotationY}
+            rotationZ={cube2Settings.rotationZ}
+            isRotating={cube2Settings.isRotating}
+            direction={cube2Settings.direction}
+            speed={cube2Settings.speed}
+            resetTrigger={cube2Settings.resetTrigger}
+            flipTrigger={cube2Settings.flipTrigger}
+            smallCubeScale={cube2Settings.smallCubeScale}
+            shuffleTrigger={cube2Settings.shuffleTrigger}
+            setShuffleTrigger={cube2Settings.setShuffleTrigger}
+            positionsResetTrigger={cube2Settings.positionsResetTrigger}
+            cubeLevel={cubeLevelMap[cube2Settings.cubeLevel]}
+            // cubeLevel={cubeLevelMap[actualCubeCount]}
+            cubeStyle={cube2Settings.cubeStyle}
+            cubePosition={cubePositions[1]}
+            isSelected={selectedCube === 2}
+            ref={cube2Ref}
+          />
+
+          <CubeGroup
+            key="cube3"
+            groupSize={groupSize}
+            gap={cube3Settings.gap}
+            rotationX={cube3Settings.rotationX}
+            rotationY={cube3Settings.rotationY}
+            rotationZ={cube3Settings.rotationZ}
+            isRotating={cube3Settings.isRotating}
+            direction={cube3Settings.direction}
+            speed={cube3Settings.speed}
+            resetTrigger={cube3Settings.resetTrigger}
+            flipTrigger={cube3Settings.flipTrigger}
+            smallCubeScale={cube3Settings.smallCubeScale}
+            shuffleTrigger={cube3Settings.shuffleTrigger}
+            setShuffleTrigger={cube3Settings.setShuffleTrigger}
+            positionsResetTrigger={cube3Settings.positionsResetTrigger}
+            // cubeLevel={cubeLevelMap[actualCubeCount]}
+            cubeLevel={cubeLevelMap[cube3Settings.cubeLevel]}
+            cubeStyle={cube3Settings.cubeStyle}
+            cubePosition={cubePositions[2]}
+            isSelected={selectedCube === 3}
+            ref={cube3Ref}
+          />
+
           <CameraControls />
         </Canvas>
       </div>
