@@ -15,7 +15,8 @@ const CubeStylePanel = ({
                           currentStyle = 'photo',
                           onStyleChange,
                           isOpen = false,
-                          onToggle
+                          onToggle,
+                          isVisible = true
                         }) => {
   const { t } = useTranslation();
 
@@ -23,6 +24,9 @@ const CubeStylePanel = ({
     if (onStyleChange) onStyleChange(style);
     // Меню остаётся открытым после выбора стиля
   };
+
+  // Если не видна - не рендерим
+  if (!isVisible) return null;
 
   return (
     <div className="cube-style-buttons">

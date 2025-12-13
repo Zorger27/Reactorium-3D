@@ -1512,10 +1512,11 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
         />
 
         {/* === Панель изменения стиля куба === */}
-        <CubeStylePanel currentStyle={settings.cubeStyle} onStyleChange={settings.setCubeStyle} isOpen={isCubeStyleMenuOpen} onToggle={setIsCubeStyleMenuOpen}/>
+        <CubeStylePanel isVisible={selectedCube} currentStyle={settings.cubeStyle} onStyleChange={settings.setCubeStyle}
+                        isOpen={isCubeStyleMenuOpen} onToggle={setIsCubeStyleMenuOpen}/>
 
         {/* === Панель перемешивания кубов === */}
-        <ShufflePanel isVisible={settings.cubeLevel !== 1} isOpen={isShuffleMenuOpen} onToggle={setIsShuffleMenuOpen}
+        <ShufflePanel isVisible={selectedCube && settings.cubeLevel !== 1} isOpen={isShuffleMenuOpen} onToggle={setIsShuffleMenuOpen}
                       onShuffle={() => settings.setShuffleTrigger(prev => prev + 1)}
                       onReset={() => settings.setPositionsResetTrigger(prev => prev + 1)}
         />
