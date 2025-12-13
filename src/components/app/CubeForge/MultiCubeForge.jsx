@@ -253,18 +253,6 @@ const PHOTO_CONFIG_LEVEL_3 = [
 extend({ OrbitControls });
 const degreesToRadians = (degrees) => degrees * (Math.PI / 180);
 
-function SetupCamera() {
-  const { camera } = useThree();
-
-  useEffect(() => {
-    camera.fov = 75;
-    camera.position.set(0, 0, 4.5);
-    camera.updateProjectionMatrix();
-  }, [camera]);
-
-  return null;
-}
-
 const CameraControls = () => {
   const { camera, gl } = useThree();
   const controls = useRef(null);
@@ -1542,8 +1530,9 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
 
       <div ref={setRefs}>
         <Canvas style={canvasStyle} gl={{ antialias: true, toneMapping: THREE.NoToneMapping, logarithmicDepthBuffer: true }}>
-          <SetupCamera />
-          <perspectiveCamera makeDefault position={[0, 0, 12]} />
+          <perspectiveCamera makeDefault position={[0, 0, 12]}
+            fov={75} near={0.1} far={1000}
+          />
           <ambientLight intensity={0.6} />
 
           <SceneBackground imagePath={backgroundMap[canvasBackground]} canvasFullscreen={canvasFullscreen}/>
