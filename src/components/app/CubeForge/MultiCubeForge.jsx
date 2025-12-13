@@ -339,7 +339,7 @@ const useCubeSelection = (groupRefs, selectedCube, onSelect) => {
 
 const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating, direction, speed,
                      resetTrigger, flipTrigger, smallCubeScale, shuffleTrigger, setShuffleTrigger, positionsResetTrigger,
-                     cubeLevel, cubeStyle, cubePosition = [0, 0, 0], groupRefProp }) => {
+                     cubeLevel, cubeStyle, cubePosition = [0, 0, 0], groupRefProp, cubeId }) => {
   const groupRef = useRef(null);
 
   // Синхронизируем с переданным рефом
@@ -473,35 +473,30 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     }
   }, [cubeSize, gap, cubeLevel]);
 
-  // Функция для получения ключа хранилища в зависимости от УРОВНЯ (1, 2, 3)
-  // Маппим режим (1-3) на количество кубиков (1, 8, 27) для более читаемых ключей
+  // Функция для получения ключа хранилища в зависимости от УРОВНЯ (1, 2, 3) и НОМЕРА КУБА
+  // Маппим количество кубиков (1, 8, 27) на режим (1-3) для более читаемых ключей
   const cubeLevelToCount = { 1: 1, 8: 2, 27: 3 };
-  const getStorageKey = (level) => `multiCubeForgePositionsOrder_level_${cubeLevelToCount[level]}`;
-
-  // Массив индексов позиций кубиков. Если null — значит кубики в естественном порядке (не перемешаны).
-  // Сохраняем ОТДЕЛЬНО для каждого уровня (1x1x1, 2x2x2, 3x3x3)
-  const STORAGE_KEY = useMemo(() => getStorageKey(cubeLevel), [cubeLevel]);
+  const getStorageKey = (level, cubeId) => `multiCubeForgePositionsOrder_cube${cubeId}_level_${cubeLevelToCount[level]}`;
 
   // === ИНИЦИАЛИЗАЦИЯ: Загружаем сохранённый порядок из localStorage для текущего режима
-  // Ленивая инициализация - выполняется один раз при первом рендере
   // Проверяем что сохранённые данные соответствуют текущему режиму (правильное количество кубиков)
   const [order, setOrder] = useState(() => {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const raw = localStorage.getItem(getStorageKey(cubeLevel, cubeId));
       if (raw) {
         const parsed = JSON.parse(raw);
         // Проверяем соответствие текущему режиму
         // (массив должен содержать ровно столько индексов, сколько кубиков в этом режиме)
         if (Array.isArray(parsed) && parsed.length === basePositions.length) {
-          console.log(`✅ Загружены сохранённые позиции для режима ${cubeLevelToCount[cubeLevel]} (${cubeLevel} кубиков)`);
+          console.log(`✅ Загружены сохранённые позиции для куба ${cubeId}, режима ${cubeLevelToCount[cubeLevel]} (${cubeLevel} кубиков)`);
           return parsed;
         }
       }
     } catch (e) {
       console.error('Ошибка чтения order из localStorage:', e);
     }
-    console.log(`📝 Новый порядок для режима ${cubeLevelToCount[cubeLevel]} (${cubeLevel} кубиков)`);
-    return null; // Возвращаем null, если нет сохранённых данных или они не совпадают
+    console.log(`📝 Новый порядок для куба ${cubeId}, режима ${cubeLevelToCount[cubeLevel]} (${cubeLevel} кубиков)`);
+    return null;  // Возвращаем null, если нет сохранённых данных или они не совпадают
   });
 
   const isInitializedRef = useRef(false); // Флаг инициализации
@@ -533,7 +528,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
   }, [basePositions, order]);
 
   // Функция для получения текущего order из localStorage (без state)
-  const getOrderFromStorage = (level = cubeLevel) => {
+  const getOrderFromStorage = (level = cubeLevel, id = cubeId) => {
 
     /**
      * Получает сохранённый порядок кубиков из localStorage
@@ -544,10 +539,11 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
      */
 
     try {
-      const key = getStorageKey(level);
+      const key = getStorageKey(level, id);
       const raw = localStorage.getItem(key);
       if (!raw) return null;
       const parsed = JSON.parse(raw);
+
       // Проверяем: массив ли это и совпадает ли длина с текущим режимом
       if (Array.isArray(parsed) && parsed.length === basePositions.length) {
         return parsed;
@@ -579,7 +575,6 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     isMovingRef.current = false;
     isLoadingFromStorageRef.current = true;
     currentTargetsRef.current = [];  // Очищаем старые позиции
-    // setOrder(null);  // Сбрасываем order при смене уровня
 
     queueMicrotask(() => {
       console.log('🔄 Микротаск: сброс завершён, можно загружать order');
@@ -692,8 +687,8 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     }
 
     // ✅ Сохраняем в localStorage
-    localStorage.setItem(getStorageKey(cubeLevel), JSON.stringify(arr));
-    console.log(`💾 Сохранён order для режима ${cubeLevelToCount[cubeLevel]} (${n} кубиков)`);
+    localStorage.setItem(getStorageKey(cubeLevel, cubeId), JSON.stringify(arr));
+    console.log(`💾 Сохранён order для куба ${cubeId}, режима ${cubeLevelToCount[cubeLevel]} (${n} кубиков)`);
 
     // ✅ Запускаем анимацию
     setOrder(arr);
@@ -727,8 +722,8 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
 
     if (positionsResetTrigger === 0) return;
 
-    // ⚠️ Проверяем ТЕКУЩИЙ режим (STORAGE_KEY может измениться)
-    const currentStorageKey = getStorageKey(cubeLevel);
+    // ⚠️ Проверяем ТЕКУЩИЙ режим
+    const currentStorageKey = getStorageKey(cubeLevel, cubeId);
     const raw = localStorage.getItem(currentStorageKey);
     const storedOrder = raw ? JSON.parse(raw) : null;
 
@@ -740,7 +735,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
 
     // Очищаем localStorage для ТЕКУЩЕГО режима
     localStorage.removeItem(currentStorageKey);
-    console.log(`🗑️ Очищен order для режима ${cubeLevelToCount[cubeLevel]} (${basePositions.length} кубиков)`);
+    console.log(`🗑️ Очищен order для куба ${cubeId}, режима ${cubeLevelToCount[cubeLevel]} (${basePositions.length} кубиков)`);
 
     // ⚠️ ДОПОЛНИТЕЛЬНАЯ ПРОВЕРКА: order уже null?
     if (order === null) {
@@ -1592,7 +1587,7 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
 
           {/* Три куба */}
           <CubeGroup
-            groupRefProp={cube1Ref} key="cube1" groupSize={groupSize}
+            cubeId={1} groupRefProp={cube1Ref} key="cube1" groupSize={groupSize}
             gap={cube1Settings.gap}
             rotationX={cube1Settings.rotationX} rotationY={cube1Settings.rotationY} rotationZ={cube1Settings.rotationZ}
             isRotating={cube1Settings.isRotating} direction={cube1Settings.direction} speed={cube1Settings.speed}
@@ -1604,7 +1599,7 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
           />
 
           <CubeGroup
-            groupRefProp={cube2Ref} key="cube2" groupSize={groupSize}
+            cubeId={2} groupRefProp={cube2Ref} key="cube2" groupSize={groupSize}
             gap={cube2Settings.gap}
             rotationX={cube2Settings.rotationX} rotationY={cube2Settings.rotationY} rotationZ={cube2Settings.rotationZ}
             isRotating={cube2Settings.isRotating} direction={cube2Settings.direction} speed={cube2Settings.speed}
@@ -1616,7 +1611,7 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
           />
 
           <CubeGroup
-            groupRefProp={cube3Ref} key="cube3" groupSize={groupSize}
+            cubeId={3} groupRefProp={cube3Ref} key="cube3" groupSize={groupSize}
             gap={cube3Settings.gap}
             rotationX={cube3Settings.rotationX} rotationY={cube3Settings.rotationY} rotationZ={cube3Settings.rotationZ}
             isRotating={cube3Settings.isRotating} direction={cube3Settings.direction} speed={cube3Settings.speed}
