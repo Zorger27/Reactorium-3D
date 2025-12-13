@@ -112,6 +112,7 @@ import small2Cube24 from "@/assets/app/VortexCube/cube3/cube3-24.webp";
 import small2Cube25 from "@/assets/app/VortexCube/cube3/cube3-25.webp";
 import small2Cube26 from "@/assets/app/VortexCube/cube3/cube3-26.webp";
 import small2Cube27 from "@/assets/app/VortexCube/cube3/cube3-27.webp";
+import canvasFullScreen from "@/components/util/CanvasFullScreen.jsx";
 
 // === Конфигурации текстур для разных уровней ===
 
@@ -258,7 +259,7 @@ function SetupCamera() {
 
   useEffect(() => {
     camera.fov = 75;
-    camera.position.set(0, 0, 12);
+    camera.position.set(0, 0, 4.5);
     camera.updateProjectionMatrix();
   }, [camera]);
 
@@ -1111,7 +1112,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
       {isSelected && (
         <mesh>
           <boxGeometry args={[groupSize * 1.1, groupSize * 1.1, groupSize * 1.1]} />
-          <meshBasicMaterial color="#ffff00" wireframe opacity={0.3} transparent />
+          <meshBasicMaterial color="#ffff00" wireframe opacity={0.9} transparent />
         </mesh>
       )}
       {basePositions.map((pos, i) => (
@@ -1271,9 +1272,6 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
     scene04: small2Cube24
   };
 
-  // Фактическое количество кубов:
-  // const actualCubeCount = cubeLevelMap[settings.cubeLevel];
-
   // EFFECT 11: useEffect для закрытия при клике вне меню!!!!!
   useEffect(() => {
     if (!isShuffleMenuOpen && !isClearMenuOpen && !isSaveMenuOpen && !isCubeStyleMenuOpen && !isCanvasBackgroundMenuOpen) return;
@@ -1390,9 +1388,9 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
 
   // Позиции для трёх кубов
   const cubePositions = [
-    [-3.5, 0, 0],  // Куб 1 - слева
+    [-5, 0, -4],  // Куб 1 - слева
     [0, 0, 0],     // Куб 2 - центр
-    [3.5, 0, 0]    // Куб 3 - справа
+    [5, 0, -4]    // Куб 3 - справа
   ];
 
   // Компонент для обработки кликов
@@ -1400,7 +1398,6 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
     useCubeSelection([cube1Ref, cube2Ref, cube3Ref], setSelectedCube);
     return null;
   };
-
 
   return (
     <div className="multi-cube-forge-container">
@@ -1581,7 +1578,6 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
             setShuffleTrigger={cube1Settings.setShuffleTrigger}
             positionsResetTrigger={cube1Settings.positionsResetTrigger}
             cubeLevel={cubeLevelMap[cube1Settings.cubeLevel]}
-            // cubeLevel={cubeLevelMap[actualCubeCount]}
             cubeStyle={cube1Settings.cubeStyle}
             cubePosition={cubePositions[0]}
             isSelected={selectedCube === 1}
@@ -1605,7 +1601,6 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
             setShuffleTrigger={cube2Settings.setShuffleTrigger}
             positionsResetTrigger={cube2Settings.positionsResetTrigger}
             cubeLevel={cubeLevelMap[cube2Settings.cubeLevel]}
-            // cubeLevel={cubeLevelMap[actualCubeCount]}
             cubeStyle={cube2Settings.cubeStyle}
             cubePosition={cubePositions[1]}
             isSelected={selectedCube === 2}
@@ -1628,7 +1623,6 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
             shuffleTrigger={cube3Settings.shuffleTrigger}
             setShuffleTrigger={cube3Settings.setShuffleTrigger}
             positionsResetTrigger={cube3Settings.positionsResetTrigger}
-            // cubeLevel={cubeLevelMap[actualCubeCount]}
             cubeLevel={cubeLevelMap[cube3Settings.cubeLevel]}
             cubeStyle={cube3Settings.cubeStyle}
             cubePosition={cubePositions[2]}
