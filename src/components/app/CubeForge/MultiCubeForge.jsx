@@ -1206,10 +1206,10 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
       defaultLevel = 1;
       defaultStyle = "photo";
     } else if (cubeId === 2) {
-      defaultLevel = 8;
+      defaultLevel = 2;
       defaultStyle = "texture";
     } else {
-      defaultLevel = 27;
+      defaultLevel = 3;
       defaultStyle = "color";
     }
 
