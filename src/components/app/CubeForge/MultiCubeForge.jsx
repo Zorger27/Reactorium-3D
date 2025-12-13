@@ -1529,47 +1529,61 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
           />
           <ambientLight intensity={0.6} />
 
-          {selectedCube ? (
-            <directionalLight
-              position={[
-                cubePositions[selectedCube - 1][0],
-                cubePositions[selectedCube - 1][1] + 5,
-                cubePositions[selectedCube - 1][2]
-              ]}
-              intensity={0.8}
-              castShadow
-              shadow-mapSize-width={2048}
-              shadow-mapSize-height={2048}
-              shadow-camera-far={50}
-              shadow-camera-left={-5}
-              shadow-camera-right={5}
-              shadow-camera-top={5}
-              shadow-camera-bottom={-5}
-            />
-          ) : null}
-
-          {/* Плоскость под кубом 1 */}
+          {/* Куб 1: свет + тень */}
           {selectedCube === 1 && (
-            <mesh position={[cubePositions[0][0], -groupSize / 2 - 0.5, cubePositions[0][2]]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-              <planeGeometry args={[5, 5]} />
-              <shadowMaterial opacity={0.3} />
-            </mesh>
+            <>
+              <pointLight
+                position={[cubePositions[0][0], cubePositions[0][1] + 7, cubePositions[0][2]]}
+                intensity={1.5}
+                distance={10}
+                decay={2}
+                castShadow
+                shadow-mapSize-width={2048}
+                shadow-mapSize-height={2048}
+              />
+              <mesh position={[cubePositions[0][0], -groupSize / 2 - 0.5, cubePositions[0][2]]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+                <planeGeometry args={[5, 5]} />
+                <shadowMaterial opacity={0.3} />
+              </mesh>
+            </>
           )}
 
-          {/* Плоскость под кубом 2 */}
+          {/* Куб 2: свет + тень */}
           {selectedCube === 2 && (
-            <mesh position={[cubePositions[1][0], -groupSize / 2 - 0.5, cubePositions[1][2]]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-              <planeGeometry args={[5, 5]} />
-              <shadowMaterial opacity={0.3} />
-            </mesh>
+            <>
+              <pointLight
+                position={[cubePositions[1][0], cubePositions[1][1] + 7, cubePositions[1][2]]}
+                intensity={1.5}
+                distance={10}
+                decay={2}
+                castShadow
+                shadow-mapSize-width={2048}
+                shadow-mapSize-height={2048}
+              />
+              <mesh position={[cubePositions[1][0], -groupSize / 2 - 0.5, cubePositions[1][2]]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+                <planeGeometry args={[5, 5]} />
+                <shadowMaterial opacity={0.3} />
+              </mesh>
+            </>
           )}
 
-          {/* Плоскость под кубом 3 */}
+          {/* Куб 3: свет + тень */}
           {selectedCube === 3 && (
-            <mesh position={[cubePositions[2][0], -groupSize / 2 - 0.5, cubePositions[2][2]]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-              <planeGeometry args={[5, 5]} />
-              <shadowMaterial opacity={0.3} />
-            </mesh>
+            <>
+              <pointLight
+                position={[cubePositions[2][0], cubePositions[2][1] + 7, cubePositions[2][2]]}
+                intensity={1.5}
+                distance={10}
+                decay={2}
+                castShadow
+                shadow-mapSize-width={2048}
+                shadow-mapSize-height={2048}
+              />
+              <mesh position={[cubePositions[2][0], -groupSize / 2 - 0.5, cubePositions[2][2]]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+                <planeGeometry args={[5, 5]} />
+                <shadowMaterial opacity={0.3} />
+              </mesh>
+            </>
           )}
 
           <SceneBackground imagePath={backgroundMap[canvasBackground]} canvasFullscreen={canvasFullscreen}/>
