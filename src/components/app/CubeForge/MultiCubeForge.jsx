@@ -112,7 +112,6 @@ import small2Cube24 from "@/assets/app/VortexCube/cube3/cube3-24.webp";
 import small2Cube25 from "@/assets/app/VortexCube/cube3/cube3-25.webp";
 import small2Cube26 from "@/assets/app/VortexCube/cube3/cube3-26.webp";
 import small2Cube27 from "@/assets/app/VortexCube/cube3/cube3-27.webp";
-import canvasFullScreen from "@/components/util/CanvasFullScreen.jsx";
 
 // === Конфигурации текстур для разных уровней ===
 
