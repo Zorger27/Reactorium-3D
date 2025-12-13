@@ -307,14 +307,13 @@ const DEFAULT_SIDE_ROTATIONS = {
 };
 
 // Функция для выбора куба через клик
-export const useCubeSelection = (groupRefs, onSelect) => {
+const useCubeSelection = (groupRefs, selectedCube, onSelect) => {
   const { camera, gl, raycaster } = useThree();
   const mouse = useMemo(() => new THREE.Vector2(), []);
 
   useEffect(() => {
     const handleClick = (event) => {
       const rect = gl.domElement.getBoundingClientRect();
-
       mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
@@ -323,27 +322,45 @@ export const useCubeSelection = (groupRefs, onSelect) => {
         /** @type {import('three').PerspectiveCamera} */ (camera)
       );
 
+      // Проверяем клик по каждой группе кубов
       for (let i = 0; i < groupRefs.length; i++) {
         const group = groupRefs[i]?.current;
         if (!group) continue;
 
         const intersects = raycaster.intersectObjects(group.children, true);
-        if (intersects.length) {
-          onSelect(i + 1);
+        if (intersects.length > 0) {
+          // Если кликнули по уже выбранному кубу - снимаем выделение
+          if (selectedCube === i + 1) {
+            onSelect(null);
+          } else {
+            // Иначе - выбираем этот куб
+            onSelect(i + 1);
+          }
           return;
         }
       }
+
+      // Если кликнули вне всех кубов - снимаем выделение
+      onSelect(null);
     };
 
     gl.domElement.addEventListener('click', handleClick);
     return () => gl.domElement.removeEventListener('click', handleClick);
-  }, [camera, gl, raycaster, mouse, groupRefs, onSelect]);
+  }, [camera, gl, raycaster, mouse, groupRefs, onSelect, selectedCube]);
 };
 
 const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating, direction, speed,
                      resetTrigger, flipTrigger, smallCubeScale, shuffleTrigger, setShuffleTrigger, positionsResetTrigger,
-                     cubeLevel, cubeStyle, cubePosition = [0, 0, 0], isSelected = false }) => {
+                     cubeLevel, cubeStyle, cubePosition = [0, 0, 0], isSelected = false, groupRefProp }) => {
   const groupRef = useRef(null);
+
+  // Синхронизируем с переданным рефом
+  useEffect(() => {
+    if (groupRefProp && groupRef.current) {
+      groupRefProp.current = groupRef.current;
+    }
+  }, [groupRefProp]);
+
 
   // Определяем сколько кубов в одной строке
   const cubesPerSide = cubeLevel === 1 ? 1 : (cubeLevel === 8 ? 2 : 3);
@@ -1152,8 +1169,8 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
     }
   });
 
-  // Выбор активного куба
-  const [selectedCube, setSelectedCube] = useState(1);
+  // Выбор активного куба (null - ничего не выбрано)
+  const [selectedCube, setSelectedCube] = useState(null);
 
   // states
   const [openBlock, setOpenBlock] = useState(null);
@@ -1228,8 +1245,11 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
   const cube2Settings = getCubeSettings(2);
   const cube3Settings = getCubeSettings(3);
 
-  // Получаем настройки активного куба
-  const settings = selectedCube === 1 ? cube1Settings : selectedCube === 2 ? cube2Settings : cube3Settings;
+  // Получаем настройки активного куба (если куб выбран)
+  const settings = selectedCube === 1 ? cube1Settings
+    : selectedCube === 2 ? cube2Settings
+      : selectedCube === 3 ? cube3Settings
+        : cube1Settings; // По умолчанию - настройки первого куба
 
   const [canvasBackground, setCanvasBackground, resetCanvasBackground] = useLocalStorage("multiCubeForgeCanvasBackground", "scene01", v => v);
 
@@ -1394,124 +1414,94 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
 
   // Компонент для обработки кликов
   const CubeSelector = () => {
-    useCubeSelection([cube1Ref, cube2Ref, cube3Ref], setSelectedCube);
+    useCubeSelection([cube1Ref, cube2Ref, cube3Ref], selectedCube, setSelectedCube);
     return null;
   };
 
   return (
     <div className="multi-cube-forge-container">
 
-      {/* Панель выбора куба */}
-      <div style={{
-        position: 'absolute',
-        top: '10px',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        zIndex: 100,
-        display: 'flex',
-        gap: '10px',
-        background: 'rgba(0,0,0,0.7)',
-        padding: '10px',
-        borderRadius: '12px'
-      }}>
-        {[1, 2, 3].map(id => (
-          <button
-            key={id}
-            onClick={() => setSelectedCube(id)}
-            style={{
-              padding: '10px 20px',
-              background: selectedCube === id ? '#4a9eff' : '#333',
-              border: selectedCube === id ? '2px solid #fff' : '2px solid #555',
-              borderRadius: '8px',
-              color: 'white',
-              cursor: 'pointer',
-              fontWeight: 'bold',
-              fontSize: '14px',
-              transition: 'all 0.3s'
-            }}
-          >
-            Cube {id}
-          </button>
-        ))}
-      </div>
-
       {/* === Панели управления кубом === */}
-      <div className="cube-controls">
+      {selectedCube && (
+        <div className="cube-controls">
 
-        {/* Состояние: ничего не открыто → показываем ВСЕ блоки (закрытые) */}
-        {openBlock === null && (
-          <>
-            <ControlBlock label={t("control.level")} icon="fa-solid fa-cubes" isOpen={false} onToggle={() => setOpenBlock("cubeLevel")}
-                          gapConfig={{value: settings.cubeLevel, min: 1, max: 3, step: 1, onChange: settings.setCubeLevel, ...cubeLevelHandlers}}
+          {/* Состояние: ничего не открыто → показываем ВСЕ блоки (закрытые) */}
+          {openBlock === null && (
+            <>
+              <ControlBlock label={t("control.level")} icon="fa-solid fa-cubes" isOpen={false} onToggle={() => setOpenBlock("cubeLevel")}
+                            gapConfig={{value: settings.cubeLevel, min: 1, max: 3, step: 1, onChange: settings.setCubeLevel, ...cubeLevelHandlers}}
+              />
+
+              <ControlBlock label={t("control.speed")} icon="fa-solid fa-gauge-simple-high" isOpen={false} onToggle={() => setOpenBlock("speed")}
+                            gapConfig={{value: settings.speed, min: 0, max: 10, step: 1, onChange: settings.setSpeed, ...speedHandlers,}}
+              />
+              <ControlBlock label={t("control.gap")} icon="fa-solid fa-arrows-left-right" isOpen={false} onToggle={() => setOpenBlock("gap")}
+                            gapConfig={{value: settings.gap, min: 0, max: 0.5, step: 0.01, onChange: settings.setGap, ...gapHandlers}}
+              />
+
+              <ControlBlock label={t("control.small-cube-size")} icon="fa-solid fa-up-right-and-down-left-from-center" isOpen={false} onToggle={() => setOpenBlock("smallCubeSize")}
+                            gapConfig={{value: settings.smallCubeScale, min: 0.5, max: 1.0, step: 0.05, onChange: settings.setSmallCubeScale, ...smallCubeScaleHandlers,}}
+              />
+
+              <ControlBlock label={t("control.incline")} icon="fa-solid fa-compass" isOpen={false} onToggle={() => setOpenBlock("rotation")}
+                            sliders={[
+                              { label: t("control.x-axis"), value: settings.rotationX, min: -180, max: 180, handlers: { ...rotXHandlers, onChange: (v) => settings.setRotationX(v) } },
+                              { label: t("control.y-axis"), value: settings.rotationY, min: -180, max: 180, handlers: { ...rotYHandlers, onChange: (v) => settings.setRotationY(v) } },
+                              { label: t("control.z-axis"), value: settings.rotationZ, min: -180, max: 180, handlers: { ...rotZHandlers, onChange: (v) => settings.setRotationZ(v) } },
+                            ]}
+              />
+            </>
+          )}
+
+          {/* Состояние: открыт cubeLevel → показываем только его */}
+          {openBlock === "cubeLevel" && (
+            <ControlBlock label={t("control.level")} icon="fa-solid fa-cubes" isOpen={true} onToggle={() => setOpenBlock(null)}
+                          gapConfig={{value: settings.cubeLevel, min: 1, max: 3, step: 1, onChange: settings.setCubeLevel, ...cubeLevelHandlers
+                          }}
             />
+          )}
 
-            <ControlBlock label={t("control.speed")} icon="fa-solid fa-gauge-simple-high" isOpen={false} onToggle={() => setOpenBlock("speed")}
+          {/* Состояние: открыт speed → показываем только его */}
+          {openBlock === "speed" && (
+            <ControlBlock label={t("control.speed")} icon="fa-solid fa-gauge-simple-high" isOpen={true} onToggle={() => setOpenBlock(null)}
                           gapConfig={{value: settings.speed, min: 0, max: 10, step: 1, onChange: settings.setSpeed, ...speedHandlers,}}
             />
-            <ControlBlock label={t("control.gap")} icon="fa-solid fa-arrows-left-right" isOpen={false} onToggle={() => setOpenBlock("gap")}
+          )}
+
+          {/* Состояние: открыт gap → показываем только его */}
+          {openBlock === "gap" && (
+            <ControlBlock label={t("control.gap")} icon="fa-solid fa-arrows-left-right" isOpen={true} onToggle={() => setOpenBlock(null)}
                           gapConfig={{value: settings.gap, min: 0, max: 0.5, step: 0.01, onChange: settings.setGap, ...gapHandlers}}
             />
+          )}
 
-            <ControlBlock label={t("control.small-cube-size")} icon="fa-solid fa-up-right-and-down-left-from-center" isOpen={false} onToggle={() => setOpenBlock("smallCubeSize")}
+          {/* Состояние: открыт smallCubeSize → показываем только его */}
+          {openBlock === "smallCubeSize" && (
+            <ControlBlock label={t("control.small-cube-size")} icon="fa-solid fa-up-right-and-down-left-from-center" isOpen={true} onToggle={() => setOpenBlock(null)}
                           gapConfig={{value: settings.smallCubeScale, min: 0.5, max: 1.0, step: 0.05, onChange: settings.setSmallCubeScale, ...smallCubeScaleHandlers,}}
             />
+          )}
 
-            <ControlBlock label={t("control.incline")} icon="fa-solid fa-compass" isOpen={false} onToggle={() => setOpenBlock("rotation")}
+          {/* Состояние: открыт rotation → показываем только его */}
+          {openBlock === "rotation" && (
+            <ControlBlock label={t("control.incline")} icon="fa-solid fa-compass" isOpen={true} onToggle={() => setOpenBlock(null)}
                           sliders={[
                             { label: t("control.x-axis"), value: settings.rotationX, min: -180, max: 180, handlers: { ...rotXHandlers, onChange: (v) => settings.setRotationX(v) } },
                             { label: t("control.y-axis"), value: settings.rotationY, min: -180, max: 180, handlers: { ...rotYHandlers, onChange: (v) => settings.setRotationY(v) } },
                             { label: t("control.z-axis"), value: settings.rotationZ, min: -180, max: 180, handlers: { ...rotZHandlers, onChange: (v) => settings.setRotationZ(v) } },
                           ]}
             />
-          </>
-        )}
+          )}
 
-        {/* Состояние: открыт cubeLevel → показываем только его */}
-        {openBlock === "cubeLevel" && (
-          <ControlBlock label={t("control.level")} icon="fa-solid fa-cubes" isOpen={true} onToggle={() => setOpenBlock(null)}
-                        gapConfig={{value: settings.cubeLevel, min: 1, max: 3, step: 1, onChange: settings.setCubeLevel, ...cubeLevelHandlers
-                        }}
-          />
-        )}
-
-        {/* Состояние: открыт speed → показываем только его */}
-        {openBlock === "speed" && (
-          <ControlBlock label={t("control.speed")} icon="fa-solid fa-gauge-simple-high" isOpen={true} onToggle={() => setOpenBlock(null)}
-                        gapConfig={{value: settings.speed, min: 0, max: 10, step: 1, onChange: settings.setSpeed, ...speedHandlers,}}
-          />
-        )}
-
-        {/* Состояние: открыт gap → показываем только его */}
-        {openBlock === "gap" && (
-          <ControlBlock label={t("control.gap")} icon="fa-solid fa-arrows-left-right" isOpen={true} onToggle={() => setOpenBlock(null)}
-                        gapConfig={{value: settings.gap, min: 0, max: 0.5, step: 0.01, onChange: settings.setGap, ...gapHandlers}}
-          />
-        )}
-
-        {/* Состояние: открыт smallCubeSize → показываем только его */}
-        {openBlock === "smallCubeSize" && (
-          <ControlBlock label={t("control.small-cube-size")} icon="fa-solid fa-up-right-and-down-left-from-center" isOpen={true} onToggle={() => setOpenBlock(null)}
-                        gapConfig={{value: settings.smallCubeScale, min: 0.5, max: 1.0, step: 0.05, onChange: settings.setSmallCubeScale, ...smallCubeScaleHandlers,}}
-          />
-        )}
-
-        {/* Состояние: открыт rotation → показываем только его */}
-        {openBlock === "rotation" && (
-          <ControlBlock label={t("control.incline")} icon="fa-solid fa-compass" isOpen={true} onToggle={() => setOpenBlock(null)}
-                        sliders={[
-                          { label: t("control.x-axis"), value: settings.rotationX, min: -180, max: 180, handlers: { ...rotXHandlers, onChange: (v) => settings.setRotationX(v) } },
-                          { label: t("control.y-axis"), value: settings.rotationY, min: -180, max: 180, handlers: { ...rotYHandlers, onChange: (v) => settings.setRotationY(v) } },
-                          { label: t("control.z-axis"), value: settings.rotationZ, min: -180, max: 180, handlers: { ...rotZHandlers, onChange: (v) => settings.setRotationZ(v) } },
-                        ]}
-          />
-        )}
-
-      </div>
+        </div>
+      )}
 
       {/* === Панель кнопок управления вращением === */}
-      <RotationControlPanel isRotating={settings.isRotating} onClockwise={handleClockwise} onCounterClockwise={handleCounterClockwise}
-                            onPause={handlePause} onStop={handleStop} onFlip={handleFlip}
-      />
+      {selectedCube && (
+        <RotationControlPanel isRotating={settings.isRotating} onClockwise={handleClockwise} onCounterClockwise={handleCounterClockwise}
+          onPause={handlePause} onStop={handleStop} onFlip={handleFlip}
+        />
+      )}
 
       {/* === Панель специальных кнопок === */}
       <div className="special-buttons">
@@ -1561,6 +1551,7 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
 
           {/* Три куба */}
           <CubeGroup
+            groupRefProp={cube1Ref}
             key="cube1"
             groupSize={groupSize}
             gap={cube1Settings.gap}
@@ -1580,10 +1571,10 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
             cubeStyle={cube1Settings.cubeStyle}
             cubePosition={cubePositions[0]}
             isSelected={selectedCube === 1}
-            ref={cube1Ref}
           />
 
           <CubeGroup
+            groupRefProp={cube2Ref}
             key="cube2"
             groupSize={groupSize}
             gap={cube2Settings.gap}
@@ -1603,10 +1594,10 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
             cubeStyle={cube2Settings.cubeStyle}
             cubePosition={cubePositions[1]}
             isSelected={selectedCube === 2}
-            ref={cube2Ref}
           />
 
           <CubeGroup
+            groupRefProp={cube3Ref}
             key="cube3"
             groupSize={groupSize}
             gap={cube3Settings.gap}
@@ -1626,7 +1617,6 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
             cubeStyle={cube3Settings.cubeStyle}
             cubePosition={cubePositions[2]}
             isSelected={selectedCube === 3}
-            ref={cube3Ref}
           />
 
           <CameraControls />
