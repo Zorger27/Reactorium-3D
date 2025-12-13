@@ -1121,7 +1121,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
       {/*)}*/}
 
       {isSelected && (
-        <mesh position={[0, 0, groupSize / 1.6 - 0.1]} rotation={[0, 0, 0]}> {/* Вертикально перед кубом */}
+        <mesh position={[0, 0, groupSize / 1.5 - 0.1]} rotation={[0, 0, 0]}> {/* Вертикально перед кубом */}
           <circleGeometry args={[groupSize * 0.8, 32]} />
           <meshBasicMaterial color="#333333" opacity={0.5} transparent />
         </mesh>
