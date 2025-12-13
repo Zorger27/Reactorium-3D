@@ -1113,12 +1113,20 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
 
   return (
     <group ref={groupRef} position={cubePosition}>
+      {/*{isSelected && (*/}
+      {/*  <mesh>*/}
+      {/*    <boxGeometry args={[groupSize * 1.1, groupSize * 1.1, groupSize * 1.1]} />*/}
+      {/*    <meshBasicMaterial color="#ffff00" wireframe opacity={0.9} transparent />*/}
+      {/*  </mesh>*/}
+      {/*)}*/}
+
       {isSelected && (
-        <mesh>
-          <boxGeometry args={[groupSize * 1.1, groupSize * 1.1, groupSize * 1.1]} />
-          <meshBasicMaterial color="#ffff00" wireframe opacity={0.9} transparent />
+        <mesh position={[0, 0, groupSize / 1.6 - 0.1]} rotation={[0, 0, 0]}> {/* Вертикально перед кубом */}
+          <circleGeometry args={[groupSize * 0.8, 32]} />
+          <meshBasicMaterial color="#333333" opacity={0.5} transparent />
         </mesh>
       )}
+
       {basePositions.map((pos, i) => (
         <group key={i} position={pos}>
           <mesh geometry={geometry} material={cubeMaterials[i]} />
