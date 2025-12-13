@@ -1592,68 +1592,38 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
 
           {/* Три куба */}
           <CubeGroup
-            groupRefProp={cube1Ref}
-            key="cube1"
-            groupSize={groupSize}
+            groupRefProp={cube1Ref} key="cube1" groupSize={groupSize}
             gap={cube1Settings.gap}
-            rotationX={cube1Settings.rotationX}
-            rotationY={cube1Settings.rotationY}
-            rotationZ={cube1Settings.rotationZ}
-            isRotating={cube1Settings.isRotating}
-            direction={cube1Settings.direction}
-            speed={cube1Settings.speed}
-            resetTrigger={cube1Settings.resetTrigger}
-            flipTrigger={cube1Settings.flipTrigger}
+            rotationX={cube1Settings.rotationX} rotationY={cube1Settings.rotationY} rotationZ={cube1Settings.rotationZ}
+            isRotating={cube1Settings.isRotating} direction={cube1Settings.direction} speed={cube1Settings.speed}
+            resetTrigger={cube1Settings.resetTrigger} flipTrigger={cube1Settings.flipTrigger}
             smallCubeScale={cube1Settings.smallCubeScale}
-            shuffleTrigger={cube1Settings.shuffleTrigger}
-            setShuffleTrigger={cube1Settings.setShuffleTrigger}
-            positionsResetTrigger={cube1Settings.positionsResetTrigger}
-            cubeLevel={cubeLevelMap[cube1Settings.cubeLevel]}
-            cubeStyle={cube1Settings.cubeStyle}
+            shuffleTrigger={cube1Settings.shuffleTrigger} setShuffleTrigger={cube1Settings.setShuffleTrigger} positionsResetTrigger={cube1Settings.positionsResetTrigger}
+            cubeLevel={cubeLevelMap[cube1Settings.cubeLevel]} cubeStyle={cube1Settings.cubeStyle}
             cubePosition={cubePositions[0]}
           />
 
           <CubeGroup
-            groupRefProp={cube2Ref}
-            key="cube2"
-            groupSize={groupSize}
+            groupRefProp={cube2Ref} key="cube2" groupSize={groupSize}
             gap={cube2Settings.gap}
-            rotationX={cube2Settings.rotationX}
-            rotationY={cube2Settings.rotationY}
-            rotationZ={cube2Settings.rotationZ}
-            isRotating={cube2Settings.isRotating}
-            direction={cube2Settings.direction}
-            speed={cube2Settings.speed}
-            resetTrigger={cube2Settings.resetTrigger}
-            flipTrigger={cube2Settings.flipTrigger}
+            rotationX={cube2Settings.rotationX} rotationY={cube2Settings.rotationY} rotationZ={cube2Settings.rotationZ}
+            isRotating={cube2Settings.isRotating} direction={cube2Settings.direction} speed={cube2Settings.speed}
+            resetTrigger={cube2Settings.resetTrigger} flipTrigger={cube2Settings.flipTrigger}
             smallCubeScale={cube2Settings.smallCubeScale}
-            shuffleTrigger={cube2Settings.shuffleTrigger}
-            setShuffleTrigger={cube2Settings.setShuffleTrigger}
-            positionsResetTrigger={cube2Settings.positionsResetTrigger}
-            cubeLevel={cubeLevelMap[cube2Settings.cubeLevel]}
-            cubeStyle={cube2Settings.cubeStyle}
+            shuffleTrigger={cube2Settings.shuffleTrigger} setShuffleTrigger={cube2Settings.setShuffleTrigger} positionsResetTrigger={cube2Settings.positionsResetTrigger}
+            cubeLevel={cubeLevelMap[cube2Settings.cubeLevel]} cubeStyle={cube2Settings.cubeStyle}
             cubePosition={cubePositions[1]}
           />
 
           <CubeGroup
-            groupRefProp={cube3Ref}
-            key="cube3"
-            groupSize={groupSize}
+            groupRefProp={cube3Ref} key="cube3" groupSize={groupSize}
             gap={cube3Settings.gap}
-            rotationX={cube3Settings.rotationX}
-            rotationY={cube3Settings.rotationY}
-            rotationZ={cube3Settings.rotationZ}
-            isRotating={cube3Settings.isRotating}
-            direction={cube3Settings.direction}
-            speed={cube3Settings.speed}
-            resetTrigger={cube3Settings.resetTrigger}
-            flipTrigger={cube3Settings.flipTrigger}
+            rotationX={cube3Settings.rotationX} rotationY={cube3Settings.rotationY} rotationZ={cube3Settings.rotationZ}
+            isRotating={cube3Settings.isRotating} direction={cube3Settings.direction} speed={cube3Settings.speed}
+            resetTrigger={cube3Settings.resetTrigger} flipTrigger={cube3Settings.flipTrigger}
             smallCubeScale={cube3Settings.smallCubeScale}
-            shuffleTrigger={cube3Settings.shuffleTrigger}
-            setShuffleTrigger={cube3Settings.setShuffleTrigger}
-            positionsResetTrigger={cube3Settings.positionsResetTrigger}
-            cubeLevel={cubeLevelMap[cube3Settings.cubeLevel]}
-            cubeStyle={cube3Settings.cubeStyle}
+            shuffleTrigger={cube3Settings.shuffleTrigger} setShuffleTrigger={cube3Settings.setShuffleTrigger} positionsResetTrigger={cube3Settings.positionsResetTrigger}
+            cubeLevel={cubeLevelMap[cube3Settings.cubeLevel]} cubeStyle={cube3Settings.cubeStyle}
             cubePosition={cubePositions[2]}
           />
 
