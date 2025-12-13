@@ -339,7 +339,7 @@ const useCubeSelection = (groupRefs, selectedCube, onSelect) => {
 
 const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating, direction, speed,
                      resetTrigger, flipTrigger, smallCubeScale, shuffleTrigger, setShuffleTrigger, positionsResetTrigger,
-                     cubeLevel, cubeStyle, cubePosition = [0, 0, 0], isSelected = false, groupRefProp }) => {
+                     cubeLevel, cubeStyle, cubePosition = [0, 0, 0], groupRefProp }) => {
   const groupRef = useRef(null);
 
   // Синхронизируем с переданным рефом
@@ -1113,23 +1113,9 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
 
   return (
     <group ref={groupRef} position={cubePosition}>
-      {/*{isSelected && (*/}
-      {/*  <mesh>*/}
-      {/*    <boxGeometry args={[groupSize * 1.1, groupSize * 1.1, groupSize * 1.1]} />*/}
-      {/*    <meshBasicMaterial color="#ffff00" wireframe opacity={0.9} transparent />*/}
-      {/*  </mesh>*/}
-      {/*)}*/}
-
-      {isSelected && (
-        <mesh position={[0, 0, groupSize / 1.5 - 0.1]} rotation={[0, 0, 0]}> {/* Вертикально перед кубом */}
-          <circleGeometry args={[groupSize * 0.8, 32]} />
-          <meshBasicMaterial color="#333333" opacity={0.5} transparent />
-        </mesh>
-      )}
-
       {basePositions.map((pos, i) => (
         <group key={i} position={pos}>
-          <mesh geometry={geometry} material={cubeMaterials[i]} />
+          <mesh geometry={geometry} material={cubeMaterials[i]} castShadow />
           {cubeStyle === 'color' && (
             <lineSegments geometry={edgesGeometry} onUpdate={(self) => self.position.multiplyScalar(1.0005)}>
               <lineBasicMaterial color="black" depthTest={true} />
@@ -1537,11 +1523,54 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
       </div>
 
       <div ref={setRefs}>
-        <Canvas style={canvasStyle} gl={{ antialias: true, toneMapping: THREE.NoToneMapping, logarithmicDepthBuffer: true }}>
+        <Canvas shadows style={canvasStyle} gl={{ antialias: true, toneMapping: THREE.NoToneMapping, logarithmicDepthBuffer: true }}>
           <perspectiveCamera makeDefault position={[0, 0, 12]}
             fov={75} near={0.1} far={1000}
           />
           <ambientLight intensity={0.6} />
+
+          {selectedCube ? (
+            <directionalLight
+              position={[
+                cubePositions[selectedCube - 1][0],
+                cubePositions[selectedCube - 1][1] + 5,
+                cubePositions[selectedCube - 1][2]
+              ]}
+              intensity={0.8}
+              castShadow
+              shadow-mapSize-width={2048}
+              shadow-mapSize-height={2048}
+              shadow-camera-far={50}
+              shadow-camera-left={-5}
+              shadow-camera-right={5}
+              shadow-camera-top={5}
+              shadow-camera-bottom={-5}
+            />
+          ) : null}
+
+          {/* Плоскость под кубом 1 */}
+          {selectedCube === 1 && (
+            <mesh position={[cubePositions[0][0], -groupSize / 2 - 0.5, cubePositions[0][2]]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+              <planeGeometry args={[5, 5]} />
+              <shadowMaterial opacity={0.3} />
+            </mesh>
+          )}
+
+          {/* Плоскость под кубом 2 */}
+          {selectedCube === 2 && (
+            <mesh position={[cubePositions[1][0], -groupSize / 2 - 0.5, cubePositions[1][2]]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+              <planeGeometry args={[5, 5]} />
+              <shadowMaterial opacity={0.3} />
+            </mesh>
+          )}
+
+          {/* Плоскость под кубом 3 */}
+          {selectedCube === 3 && (
+            <mesh position={[cubePositions[2][0], -groupSize / 2 - 0.5, cubePositions[2][2]]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+              <planeGeometry args={[5, 5]} />
+              <shadowMaterial opacity={0.3} />
+            </mesh>
+          )}
 
           <SceneBackground imagePath={backgroundMap[canvasBackground]} canvasFullscreen={canvasFullscreen}/>
 
@@ -1568,7 +1597,6 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
             cubeLevel={cubeLevelMap[cube1Settings.cubeLevel]}
             cubeStyle={cube1Settings.cubeStyle}
             cubePosition={cubePositions[0]}
-            isSelected={selectedCube === 1}
           />
 
           <CubeGroup
@@ -1591,7 +1619,6 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
             cubeLevel={cubeLevelMap[cube2Settings.cubeLevel]}
             cubeStyle={cube2Settings.cubeStyle}
             cubePosition={cubePositions[1]}
-            isSelected={selectedCube === 2}
           />
 
           <CubeGroup
@@ -1614,7 +1641,6 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
             cubeLevel={cubeLevelMap[cube3Settings.cubeLevel]}
             cubeStyle={cube3Settings.cubeStyle}
             cubePosition={cubePositions[2]}
-            isSelected={selectedCube === 3}
           />
 
           <CameraControls />
