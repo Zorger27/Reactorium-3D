@@ -1272,7 +1272,7 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
   };
 
   // Фактическое количество кубов:
-  const actualCubeCount = cubeLevelMap[settings.cubeLevel];
+  // const actualCubeCount = cubeLevelMap[settings.cubeLevel];
 
   // EFFECT 11: useEffect для закрытия при клике вне меню!!!!!
   useEffect(() => {
