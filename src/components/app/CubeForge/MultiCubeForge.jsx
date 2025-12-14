@@ -1353,21 +1353,52 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
     }
   }, [isCanvasBackgroundMenuOpen, isRecording]);
 
-  // Функция для сброса всех состояний активного куба
-  const resetAllStates = () => {
-    settings.resetGap();
-    settings.resetSmallCubeScale();
-    settings.resetRotationX();
-    settings.resetRotationY();
-    settings.resetRotationZ();
-    settings.resetSpeed();
-    settings.resetDirection();
-    settings.resetIsRotating();
-    settings.resetCubeLevel();
-    settings.resetCubeStyle();
+  // Функция для сброса всех состояний ВСЕХ трёх кубов
+  const resetAllCubes = () => {
+    // Сброс Куба 1
+    cube1Settings.resetGap();
+    cube1Settings.resetSmallCubeScale();
+    cube1Settings.resetRotationX();
+    cube1Settings.resetRotationY();
+    cube1Settings.resetRotationZ();
+    cube1Settings.resetSpeed();
+    cube1Settings.resetDirection();
+    cube1Settings.resetIsRotating();
+    cube1Settings.resetCubeLevel();
+    cube1Settings.resetCubeStyle();
+    cube1Settings.setPositionsResetTrigger(prev => prev + 1);
+    cube1Settings.setResetTrigger(prev => !prev);
+
+    // Сброс Куба 2
+    cube2Settings.resetGap();
+    cube2Settings.resetSmallCubeScale();
+    cube2Settings.resetRotationX();
+    cube2Settings.resetRotationY();
+    cube2Settings.resetRotationZ();
+    cube2Settings.resetSpeed();
+    cube2Settings.resetDirection();
+    cube2Settings.resetIsRotating();
+    cube2Settings.resetCubeLevel();
+    cube2Settings.resetCubeStyle();
+    cube2Settings.setPositionsResetTrigger(prev => prev + 1);
+    cube2Settings.setResetTrigger(prev => !prev);
+
+    // Сброс Куба 3
+    cube3Settings.resetGap();
+    cube3Settings.resetSmallCubeScale();
+    cube3Settings.resetRotationX();
+    cube3Settings.resetRotationY();
+    cube3Settings.resetRotationZ();
+    cube3Settings.resetSpeed();
+    cube3Settings.resetDirection();
+    cube3Settings.resetIsRotating();
+    cube3Settings.resetCubeLevel();
+    cube3Settings.resetCubeStyle();
+    cube3Settings.setPositionsResetTrigger(prev => prev + 1);
+    cube3Settings.setResetTrigger(prev => !prev);
+
+    // Сброс фона
     resetCanvasBackground();
-    settings.setPositionsResetTrigger(prev => prev + 1);
-    settings.setResetTrigger(prev => !prev);
   };
 
   // Внутренний ref для доступа к Canvas
@@ -1485,7 +1516,7 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
 
         {/* === Панель очистки localStorage === */}
         <ClearStoragePanel isOpen={isClearMenuOpen} onToggle={setIsClearMenuOpen} storagePrefix="multiCubeForge"
-          onClearCurrent={resetAllStates} onClearAll={resetAllStates}
+          onClearCurrent={resetAllCubes} onClearAll={resetAllCubes}
         />
 
         {/* === Панель изменения стиля куба === */}
