@@ -1484,8 +1484,8 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
       <div className="special-buttons">
 
         {/* === Панель очистки localStorage === */}
-        <ClearStoragePanel onClearCurrent={resetAllStates} onClearAll={resetAllStates} isOpen={isClearMenuOpen} onToggle={setIsClearMenuOpen}
-                           storagePrefix="multiCubeForge"
+        <ClearStoragePanel isOpen={isClearMenuOpen} onToggle={setIsClearMenuOpen} storagePrefix="multiCubeForge"
+          onClearCurrent={resetAllStates} onClearAll={resetAllStates}
         />
 
         {/* === Панель изменения стиля куба === */}
