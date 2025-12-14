@@ -339,7 +339,7 @@ const useCubeSelection = (groupRefs, selectedCube, onSelect) => {
 
 const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating, direction, speed,
                      resetTrigger, flipTrigger, smallCubeScale, shuffleTrigger, setShuffleTrigger, positionsResetTrigger,
-                     cubeLevel, cubeStyle, cubePosition = [0, 0, 0], groupRefProp, cubeId }) => {
+                     cubeLevel, cubeStyle, cubePosition = [0, 0, 0], groupRefProp, cubeId, onHover }) => {
   const groupRef = useRef(null);
 
   // Синхронизируем с переданным рефом
@@ -1107,7 +1107,10 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
   const edgesGeometry = useMemo(() => new THREE.EdgesGeometry(geometry), [geometry]);
 
   return (
-    <group ref={groupRef} position={cubePosition}>
+    <group ref={groupRef} position={cubePosition}
+           onPointerOver={(e) => {e.stopPropagation(); if (onHover) onHover(cubeId);}}
+           onPointerOut={(e) => {e.stopPropagation(); if (onHover) onHover(null);}}
+    >
       {basePositions.map((pos, i) => (
         <group key={i} position={pos}>
           <mesh geometry={geometry} material={cubeMaterials[i]} castShadow />
@@ -1148,6 +1151,9 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
 
   // Выбор активного куба (null - ничего не выбрано)
   const [selectedCube, setSelectedCube] = useState(null);
+
+  // Состояние для отслеживания куба под курсором
+  const [hoveredCube, setHoveredCube] = useState(null);
 
   // states
   const [openBlock, setOpenBlock] = useState(null);
@@ -1426,6 +1432,24 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
     return null;
   };
 
+  // Компонент стрелки над кубом
+  const ArrowIndicator = ({ position }) => {
+    return (
+      <group position={[position[0], position[1] + 2.3, position[2]]}>
+        {/* Конус стрелки */}
+        <mesh rotation={[Math.PI, 0, 0]}>
+          <coneGeometry args={[0.15, 0.4, 8]} />
+          <meshBasicMaterial color="red" />
+        </mesh>
+        {/* Стержень стрелки */}
+        <mesh position={[0, 0.4, 0]}>
+          <cylinderGeometry args={[0.05, 0.05, 0.6, 8]} />
+          <meshBasicMaterial color="black" />
+        </mesh>
+      </group>
+    );
+  };
+
   return (
     <div className="multi-cube-forge-container">
 
@@ -1614,11 +1638,16 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
 
           <SceneBackground imagePath={backgroundMap[canvasBackground]} canvasFullscreen={canvasFullscreen}/>
 
+          {/* Стрелка над кубом при hover */}
+          {hoveredCube !== null && (
+            <ArrowIndicator position={cubePositions[hoveredCube - 1]} />
+          )}
+
           <CubeSelector />
 
           {/* Три куба */}
           <CubeGroup
-            cubeId={1} groupRefProp={cube1Ref} key="cube1" groupSize={groupSize}
+            cubeId={1} onHover={setHoveredCube} groupRefProp={cube1Ref} key="cube1" groupSize={groupSize}
             gap={cube1Settings.gap}
             rotationX={cube1Settings.rotationX} rotationY={cube1Settings.rotationY} rotationZ={cube1Settings.rotationZ}
             isRotating={cube1Settings.isRotating} direction={cube1Settings.direction} speed={cube1Settings.speed}
@@ -1630,7 +1659,7 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
           />
 
           <CubeGroup
-            cubeId={2} groupRefProp={cube2Ref} key="cube2" groupSize={groupSize}
+            cubeId={2} onHover={setHoveredCube} groupRefProp={cube2Ref} key="cube2" groupSize={groupSize}
             gap={cube2Settings.gap}
             rotationX={cube2Settings.rotationX} rotationY={cube2Settings.rotationY} rotationZ={cube2Settings.rotationZ}
             isRotating={cube2Settings.isRotating} direction={cube2Settings.direction} speed={cube2Settings.speed}
@@ -1642,7 +1671,7 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
           />
 
           <CubeGroup
-            cubeId={3} groupRefProp={cube3Ref} key="cube3" groupSize={groupSize}
+            cubeId={3} onHover={setHoveredCube} groupRefProp={cube3Ref} key="cube3" groupSize={groupSize}
             gap={cube3Settings.gap}
             rotationX={cube3Settings.rotationX} rotationY={cube3Settings.rotationY} rotationZ={cube3Settings.rotationZ}
             isRotating={cube3Settings.isRotating} direction={cube3Settings.direction} speed={cube3Settings.speed}
