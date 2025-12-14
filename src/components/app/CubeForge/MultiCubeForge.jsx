@@ -1435,9 +1435,9 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
   // Компонент стрелки над кубом
   const ArrowIndicator = ({ position }) => {
     // Загружаем текстуру (Конус стрелки)
-    const coneTexture = useLoader(THREE.TextureLoader, String(smallCube04));
+    const coneTexture = useLoader(TextureLoader, String(smallCube04));
     // Загружаем текстуру (Стержень стрелки)
-    const shaftTexture = useLoader(THREE.TextureLoader, String(small2Cube25));
+    const shaftTexture = useLoader(TextureLoader, String(small2Cube25));
 
     return (
       <group position={[position[0], position[1] + 2.3, position[2]]}>
