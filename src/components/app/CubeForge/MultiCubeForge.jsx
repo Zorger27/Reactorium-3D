@@ -1434,17 +1434,24 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
 
   // Компонент стрелки над кубом
   const ArrowIndicator = ({ position }) => {
+    // Загружаем текстуру (Конус стрелки)
+    const coneTexture = useLoader(THREE.TextureLoader, String(smallCube04));
+    // Загружаем текстуру (Стержень стрелки)
+    const shaftTexture = useLoader(THREE.TextureLoader, String(small2Cube25));
+
     return (
       <group position={[position[0], position[1] + 2.3, position[2]]}>
         {/* Конус стрелки */}
         <mesh rotation={[Math.PI, 0, 0]}>
           <coneGeometry args={[0.15, 0.4, 8]} />
-          <meshBasicMaterial color="red" />
+          {/*<meshBasicMaterial color="red" />*/}
+          <meshBasicMaterial map={coneTexture} />
         </mesh>
         {/* Стержень стрелки */}
         <mesh position={[0, 0.4, 0]}>
           <cylinderGeometry args={[0.05, 0.05, 0.6, 8]} />
-          <meshBasicMaterial color="black" />
+          {/*<meshBasicMaterial color="black" />*/}
+          <meshBasicMaterial map={shaftTexture} />
         </mesh>
       </group>
     );
