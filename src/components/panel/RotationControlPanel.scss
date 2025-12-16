@@ -2,7 +2,7 @@
 
 .rotation-buttons {
   position: absolute;
-  bottom: 90px; // Перемещаем вниз
+  bottom: 45px; // Перемещаем вниз
   left: 50%; // Центрируем
   transform: translateX(-50%); // Смещаем на половину ширины
   z-index: 10;
@@ -28,11 +28,20 @@
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
   }
+
+  &.scene-variant button {
+    background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+
+    &:hover {
+      background: linear-gradient(135deg, #ff8fb3 0%, #d65a7f 100%);
+    }
+  }
 }
+
 
 @media(max-width: 1020px) {
   .rotation-buttons {
-    bottom: 85px; // Перемещаем вниз
+    bottom: 42px; // Перемещаем вниз
     gap: 1.2rem; // Отступ между кнопками
 
     button {
@@ -46,14 +55,14 @@
 
 @media (max-width: 768px) {
   .rotation-buttons {
-    bottom: 50px; // Перемещаем вниз
+    bottom: 48px; // Перемещаем вниз
     gap: 1rem; // Отступ между кнопками
 
     button {
       height: 2.6rem;
       width: 3rem;
       font-size: 1.4rem;
-      border: 1px solid skyblue;
+      //border: 1px solid skyblue;
       //box-shadow: none;
     }
   }

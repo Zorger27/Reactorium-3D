@@ -253,9 +253,21 @@ const PHOTO_CONFIG_LEVEL_3 = [
 extend({ OrbitControls });
 const degreesToRadians = (degrees) => degrees * (Math.PI / 180);
 
-const CameraControls = ({ rotating, direction, speed, controlsRef }) => {
+const CameraControls = ({ rotating, direction, speed, controlsRef, sceneResetTrigger, targetAngle, onAngleReached }) => {
   const { camera, gl } = useThree();
   const controls = useRef(null);
+  const initialPosition = useRef(null);
+
+  // Сохраняем начальную позицию камеры
+  useEffect(() => {
+    if (controls.current && !initialPosition.current) {
+      initialPosition.current = {
+        x: camera.position.x,
+        y: camera.position.y,
+        z: camera.position.z
+      };
+    }
+  }, [camera]);
 
   // Синхронизируем внутренний ref с внешним
   useEffect(() => {
@@ -264,20 +276,54 @@ const CameraControls = ({ rotating, direction, speed, controlsRef }) => {
     }
   }, [controlsRef]);
 
+  // Сброс камеры в начальную позицию
+  useEffect(() => {
+    if (sceneResetTrigger > 0 && controls.current && initialPosition.current) {
+      camera.position.set(
+        initialPosition.current.x,
+        initialPosition.current.y,
+        initialPosition.current.z
+      );
+      controls.current.reset();
+    }
+  }, [sceneResetTrigger, camera]);
+
   // Обновляем autoRotate при изменении параметров
   useEffect(() => {
     if (controls.current) {
       controls.current.autoRotate = rotating;
       if (rotating) {
-        const actualSpeed = (speed / 10) * 2; // коэффициент для OrbitControls
+        const actualSpeed = (speed / 10) * 5;
         controls.current.autoRotateSpeed = direction * actualSpeed;
       }
     }
   }, [rotating, direction, speed]);
 
-  useFrame(() => {
+  useFrame((_, delta) => {
     if (controls.current) {
       controls.current.update();
+
+      // Плавный поворот к целевому углу (аналог flip для куба)
+      if (targetAngle !== null) {
+        const currentTheta = Math.atan2(
+          camera.position.x - controls.current.target.x,
+          camera.position.z - controls.current.target.z
+        );
+
+        const diff = targetAngle - currentTheta;
+        const normalizedDiff = ((diff + Math.PI) % (2 * Math.PI)) - Math.PI;
+
+        if (Math.abs(normalizedDiff) > 0.01) {
+          const newTheta = currentTheta + normalizedDiff * Math.min(10 * delta, 1);
+          const radius = camera.position.distanceTo(controls.current.target);
+
+          camera.position.x = controls.current.target.x + radius * Math.sin(newTheta);
+          camera.position.z = controls.current.target.z + radius * Math.cos(newTheta);
+        } else {
+          // Достигли цели
+          if (onAngleReached) onAngleReached();
+        }
+      }
     }
   });
 
@@ -289,7 +335,7 @@ const CameraControls = ({ rotating, direction, speed, controlsRef }) => {
       enablePan={false}
       enableZoom={true}
       autoRotate={rotating}
-      autoRotateSpeed={direction * ((speed / 10) * 2)}
+      autoRotateSpeed={direction * ((speed / 10) * 5)}
     />
   );
 };
@@ -1133,8 +1179,8 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
 
   return (
     <group ref={groupRef} position={cubePosition}
-           onPointerOver={(e) => {e.stopPropagation(); if (onHover) onHover(cubeId);}}
-           onPointerOut={(e) => {e.stopPropagation(); if (onHover) onHover(null);}}
+           onPointerOver={(e) => {e.stopPropagation();document.body.style.cursor = 'pointer';if (onHover) onHover(cubeId);}}
+           onPointerOut={(e) => {e.stopPropagation();document.body.style.cursor = 'default';if (onHover) onHover(null);}}
     >
       {basePositions.map((pos, i) => (
         <group key={i} position={pos}>
@@ -1180,8 +1226,15 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
   // Состояние для отслеживания куба под курсором
   const [hoveredCube, setHoveredCube] = useState(null);
 
+  // Триггер для сброса камеры
+  const [sceneResetTrigger, setSceneResetTrigger] = useState(false);
+
+  // Состояние для целевого угла поворота камеры
+  const [targetCameraAngle, setTargetCameraAngle] = useState(null);
+
   // states
   const [openBlock, setOpenBlock] = useState(null);
+  const [openSceneBlock, setOpenSceneBlock] = useState(null);
   const [isShuffleMenuOpen, setIsShuffleMenuOpen] = useState(false);
   const [isClearMenuOpen, setIsClearMenuOpen] = useState(false);
   const [isSaveMenuOpen, setIsSaveMenuOpen] = useState(false);
@@ -1267,7 +1320,7 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
   // Состояния для вращения всей сцены (с сохранением в localStorage)
   const [sceneRotating, setSceneRotating, resetSceneRotating] = useLocalStorage("multiCubeForgeSceneRotating", false, v => v === "true");
   const [sceneDirection, setSceneDirection, resetSceneDirection] = useLocalStorage("multiCubeForgeSceneDirection", 1, v => parseInt(v, 10));
-  const [sceneSpeed, ,resetSceneSpeed] = useLocalStorage("multiCubeForgeSceneSpeed", 4, parseFloat);
+  const [sceneSpeed, setSceneSpeed,resetSceneSpeed] = useLocalStorage("multiCubeForgeSceneSpeed", 4, parseFloat);
 
   // Кнопки вращения
   const handleClockwise = () => {settings.setDirection(1);settings.setIsRotating(true);};
@@ -1280,22 +1333,16 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
   const handleSceneClockwise = () => {setSceneDirection(1);setSceneRotating(true);};
   const handleSceneCounterClockwise = () => {setSceneDirection(-1);setSceneRotating(true);};
   const handleScenePause = () => {setSceneRotating(prev => !prev);};
-  const handleSceneStop = () => {setSceneRotating(false);};
+  const handleSceneStop = () => {setSceneRotating(false);setSceneResetTrigger(prev => !prev);};
   const handleSceneFlip = () => {
     if (cameraControlsRef.current) {
       // Получаем текущую позицию камеры
       const controls = cameraControlsRef.current;
-      const theta = Math.atan2(
+      const currentTheta = Math.atan2(
         controls.object.position.x - controls.target.x,
         controls.object.position.z - controls.target.z
       );
-
-      // Поворачиваем на 180°
-      const newTheta = theta + Math.PI;
-      const radius = controls.object.position.distanceTo(controls.target);
-
-      controls.object.position.x = controls.target.x + radius * Math.sin(newTheta);
-      controls.object.position.z = controls.target.z + radius * Math.cos(newTheta);
+      setTargetCameraAngle(currentTheta + Math.PI);
     }
   };
 
@@ -1314,6 +1361,7 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
   const rotXHandlers = makeHandlers(settings.setRotationX, 90, -180, 180);
   const rotYHandlers = makeHandlers(settings.setRotationY, 0, -180, 180);
   const rotZHandlers = makeHandlers(settings.setRotationZ, 0, -180, 180);
+  const sceneSpeedHandlers = makeHandlers(setSceneSpeed, 4, 0, 10, 1);
 
   // Объект для маппинга режима на количество кубов:
   const cubeLevelMap = {
@@ -1495,24 +1543,24 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
 
   // Компонент стрелки над кубом
   const ArrowIndicator = ({ position }) => {
-    // Загружаем текстуру (Конус стрелки)
-    const coneTexture = useLoader(TextureLoader, String(smallCube04));
-    // Загружаем текстуру (Стержень стрелки)
-    const shaftTexture = useLoader(TextureLoader, String(small2Cube25));
+    // // Загружаем текстуру (Конус стрелки)
+    // const coneTexture = useLoader(TextureLoader, String(smallCube04));
+    // // Загружаем текстуру (Стержень стрелки)
+    // const shaftTexture = useLoader(TextureLoader, String(small2Cube25));
 
     return (
       <group position={[position[0], position[1] + 2.3, position[2]]}>
         {/* Конус стрелки */}
         <mesh rotation={[Math.PI, 0, 0]}>
           <coneGeometry args={[0.15, 0.4, 8]} />
-          {/*<meshBasicMaterial color="red" />*/}
-          <meshBasicMaterial map={coneTexture} />
+          <meshBasicMaterial color="red" />
+          {/*<meshBasicMaterial map={coneTexture} />*/}
         </mesh>
         {/* Стержень стрелки */}
         <mesh position={[0, 0.4, 0]}>
           <cylinderGeometry args={[0.05, 0.05, 0.6, 8]} />
-          {/*<meshBasicMaterial color="black" />*/}
-          <meshBasicMaterial map={shaftTexture} />
+          <meshBasicMaterial color="black" />
+          {/*<meshBasicMaterial map={shaftTexture} />*/}
         </mesh>
       </group>
     );
@@ -1596,6 +1644,23 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
         </div>
       )}
 
+      {/* === Панель управления скоростью СЦЕНЫ === */}
+      {!selectedCube && (
+        <div className="cube-controls">
+          {openSceneBlock === null && (
+            <ControlBlock label={t("control.scene-speed")} icon="fa-solid fa-gauge-simple-high" isOpen={false} onToggle={() => setOpenSceneBlock("speed")}
+              gapConfig={{value: sceneSpeed, min: 0, max: 10, step: 1, onChange: setSceneSpeed, ...sceneSpeedHandlers}}
+            />
+          )}
+
+          {openSceneBlock === "speed" && (
+            <ControlBlock label={t("control.scene-speed")} icon="fa-solid fa-gauge-simple-high" isOpen={true} onToggle={() => setOpenSceneBlock(null)}
+              gapConfig={{value: sceneSpeed, min: 0, max: 10, step: 1, onChange: setSceneSpeed, ...sceneSpeedHandlers}}
+            />
+          )}
+        </div>
+      )}
+
       {/* === Панель кнопок управления вращением КУБА === */}
       {selectedCube && (
         <RotationControlPanel isRotating={settings.isRotating} onClockwise={handleClockwise} onCounterClockwise={handleCounterClockwise}
@@ -1606,7 +1671,7 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
       {/* === Панель кнопок управления вращением СЦЕНЫ === */}
       {!selectedCube && (
         <RotationControlPanel isRotating={sceneRotating} onClockwise={handleSceneClockwise} onCounterClockwise={handleSceneCounterClockwise}
-          onPause={handleScenePause} onStop={handleSceneStop} onFlip={handleSceneFlip}
+          onPause={handleScenePause} onStop={handleSceneStop} onFlip={handleSceneFlip} variant="scene"
         />
       )}
 
@@ -1714,7 +1779,7 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
           <SceneBackground imagePath={backgroundMap[canvasBackground]} canvasFullscreen={canvasFullscreen}/>
 
           {/* Стрелка над кубом при hover */}
-          {hoveredCube !== null && (
+          {hoveredCube !== null && hoveredCube > 0 && (
             <ArrowIndicator position={cubePositions[hoveredCube - 1]} />
           )}
 
@@ -1757,7 +1822,10 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
             cubePosition={cubePositions[2]}
           />
 
-          <CameraControls rotating={sceneRotating} direction={sceneDirection} speed={sceneSpeed} controlsRef={cameraControlsRef}/>
+          <CameraControls rotating={sceneRotating} direction={sceneDirection} speed={sceneSpeed} sceneResetTrigger={sceneResetTrigger}
+            controlsRef={cameraControlsRef} targetAngle={targetCameraAngle} onAngleReached={() => setTargetCameraAngle(null)}
+          />
+
         </Canvas>
       </div>
     </div>

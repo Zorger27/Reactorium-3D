@@ -150,7 +150,8 @@
     "pause": "Pause rotation",
     "continue": "Continue rotating",
     "stop": "Stop rotation",
-    "180": "Rotate 180°"
+    "180": "Rotate 180°",
+    "scene-speed": "Spinrate"
   },
   "extra": {
     "loading": "Loading...",

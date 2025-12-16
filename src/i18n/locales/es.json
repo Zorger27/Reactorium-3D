@@ -150,7 +150,8 @@
     "pause": "Pausa la rotación",
     "continue": "Continuar girando",
     "stop": "Dejar de rotar",
-    "180": "Girar 180°"
+    "180": "Girar 180°",
+    "scene-speed": "Giro"
   },
   "extra": {
     "loading": "Cargando...",

@@ -19,31 +19,34 @@ const RotationControlPanel = ({
                                 onCounterClockwise,
                                 onPause,
                                 onStop,
-                                onFlip
+                                onFlip,
+                                variant = "default"
                               }) => {
   const { t } = useTranslation();
 
   return (
-    <div className="rotation-buttons">
-      <button onClick={onClockwise} title={t('control.clockwise')}>
-        <i className="fa-solid fa-left-long"></i>
-      </button>
+    <div className={`rotation-buttons ${variant === "scene" ? "scene-variant" : ""}`}>
+      <div className="rotation-buttons">
+        <button onClick={onClockwise} title={t('control.clockwise')}>
+          <i className="fa-solid fa-left-long"></i>
+        </button>
 
-      <button onClick={onPause} title={isRotating ? t('control.pause') : t('control.continue')}>
-        <i className={`fas ${isRotating ? "fa-pause" : "fa-play"}`}></i>
-      </button>
+        <button onClick={onPause} title={isRotating ? t('control.pause') : t('control.continue')}>
+          <i className={`fas ${isRotating ? "fa-pause" : "fa-play"}`}></i>
+        </button>
 
-      <button onClick={onStop} title={t('control.stop')}>
-        <i className="fas fa-stop"></i>
-      </button>
+        <button onClick={onStop} title={t('control.stop')}>
+          <i className="fas fa-stop"></i>
+        </button>
 
-      <button onClick={onFlip} title={t('control.180')}>
-        <i className="fas fa-sync-alt"></i>
-      </button>
+        <button onClick={onFlip} title={t('control.180')}>
+          <i className="fas fa-sync-alt"></i>
+        </button>
 
-      <button onClick={onCounterClockwise} title={t('control.counterclockwise')}>
-        <i className="fa-solid fa-right-long"></i>
-      </button>
+        <button onClick={onCounterClockwise} title={t('control.counterclockwise')}>
+          <i className="fa-solid fa-right-long"></i>
+        </button>
+      </div>
     </div>
   );
 };
