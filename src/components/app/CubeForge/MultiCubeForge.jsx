@@ -1541,26 +1541,26 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
     return null;
   };
 
-  // Компонент стрелки над кубом
-  const ArrowIndicator = ({ position }) => {
-    // // Загружаем текстуру (Конус стрелки)
-    // const coneTexture = useLoader(TextureLoader, String(smallCube04));
-    // // Загружаем текстуру (Стержень стрелки)
-    // const shaftTexture = useLoader(TextureLoader, String(small2Cube25));
+  // Загружаем текстуру (Конус стрелки)
+  const arrowConeTexture = useLoader(TextureLoader, String(smallCube04));
+  // Загружаем текстуру (Стержень стрелки)
+  const arrowShaftTexture = useLoader(TextureLoader, String(small2Cube25));
 
+  // Компонент стрелки над кубом
+  const ArrowIndicator = ({ position, coneTexture, shaftTexture }) => {
     return (
       <group position={[position[0], position[1] + 2.3, position[2]]}>
         {/* Конус стрелки */}
         <mesh rotation={[Math.PI, 0, 0]}>
           <coneGeometry args={[0.15, 0.4, 8]} />
-          <meshBasicMaterial color="red" />
-          {/*<meshBasicMaterial map={coneTexture} />*/}
+          {/*<meshBasicMaterial color="red" />*/}
+          <meshBasicMaterial map={coneTexture} />
         </mesh>
         {/* Стержень стрелки */}
         <mesh position={[0, 0.4, 0]}>
           <cylinderGeometry args={[0.05, 0.05, 0.6, 8]} />
-          <meshBasicMaterial color="black" />
-          {/*<meshBasicMaterial map={shaftTexture} />*/}
+          {/*<meshBasicMaterial color="black" />*/}
+          <meshBasicMaterial map={shaftTexture} />
         </mesh>
       </group>
     );
@@ -1779,8 +1779,8 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
           <SceneBackground imagePath={backgroundMap[canvasBackground]} canvasFullscreen={canvasFullscreen}/>
 
           {/* Стрелка над кубом при hover */}
-          {hoveredCube !== null && hoveredCube > 0 && (
-            <ArrowIndicator position={cubePositions[hoveredCube - 1]} />
+          {hoveredCube > 0 && (
+            <ArrowIndicator position={cubePositions[hoveredCube - 1]} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture}/>
           )}
 
           <CubeSelector />
