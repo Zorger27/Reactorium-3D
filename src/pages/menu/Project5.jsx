@@ -14,7 +14,7 @@ export const Project5 = () => {
   const siteUrl = import.meta.env.VITE_SITE_URL;
   useSpaCleanup();
 
-  const [mode, setMode] = useState("orbitron"); // "orbitron" | "cuboverse"
+  const [mode, setMode] = useState("cuboverse"); // "orbitron" | "cuboverse"
   const canvasRef = useRef(null);
   const [canvasContainer, setCanvasContainer] = useState(null);
 
