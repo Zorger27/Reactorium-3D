@@ -253,7 +253,8 @@ const PHOTO_CONFIG_LEVEL_3 = [
 extend({ OrbitControls });
 const degreesToRadians = (degrees) => degrees * (Math.PI / 180);
 
-const CameraControls = ({ rotating, direction, speed, controlsRef, sceneResetTrigger, targetAngle, onAngleReached }) => {
+const CameraControls = ({ rotating, direction, speed, controlsRef,
+                          sceneResetTrigger, targetAngle, onAngleReached }) => {
   const { camera, gl } = useThree();
   const controls = useRef(null);
   const initialPosition = useRef(null);
@@ -278,13 +279,22 @@ const CameraControls = ({ rotating, direction, speed, controlsRef, sceneResetTri
 
   // Сброс камеры в начальную позицию
   useEffect(() => {
-    if (sceneResetTrigger > 0 && controls.current && initialPosition.current) {
+    if (controls.current && initialPosition.current) {
+      // Сбрасываем к начальным значениям
       camera.position.set(
         initialPosition.current.x,
         initialPosition.current.y,
         initialPosition.current.z
       );
+
+      // Полный сброс OrbitControls
       controls.current.reset();
+      controls.current.target.set(0, 0, 0);
+
+      // Обнуляем внутренние velocity OrbitControls
+      controls.current.saveState(); // сохраняем текущее как дефолтное
+
+      controls.current.update();
     }
   }, [sceneResetTrigger, camera]);
 
@@ -1322,14 +1332,14 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
   const [sceneDirection, setSceneDirection, resetSceneDirection] = useLocalStorage("multiCubeForgeSceneDirection", 1, v => parseInt(v, 10));
   const [sceneSpeed, setSceneSpeed,resetSceneSpeed] = useLocalStorage("multiCubeForgeSceneSpeed", 4, parseFloat);
 
-  // Кнопки вращения
+  // Кнопки вращения КУБА
   const handleClockwise = () => {settings.setDirection(1);settings.setIsRotating(true);};
   const handleCounterClockwise = () => {settings.setDirection(-1);settings.setIsRotating(true);};
   const handlePause = () => {settings.setIsRotating(prev => !prev);};
   const handleStop = () => {settings.setIsRotating(false);settings.setResetTrigger(prev => !prev);};
   const handleFlip = () => {settings.setFlipTrigger(prev => !prev);};
 
-  // Обработчики для вращения сцены
+  // Кнопки вращения СЦЕНЫ
   const handleSceneClockwise = () => {setSceneDirection(1);setSceneRotating(true);};
   const handleSceneCounterClockwise = () => {setSceneDirection(-1);setSceneRotating(true);};
   const handleScenePause = () => {setSceneRotating(prev => !prev);};
@@ -1822,8 +1832,8 @@ const MultiCubeForge = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }
             cubePosition={cubePositions[2]}
           />
 
-          <CameraControls rotating={sceneRotating} direction={sceneDirection} speed={sceneSpeed} sceneResetTrigger={sceneResetTrigger}
-            controlsRef={cameraControlsRef} targetAngle={targetCameraAngle} onAngleReached={() => setTargetCameraAngle(null)}
+          <CameraControls rotating={sceneRotating} direction={sceneDirection} speed={sceneSpeed} sceneResetTrigger={sceneResetTrigger} controlsRef={cameraControlsRef}
+                          targetAngle={targetCameraAngle} onAngleReached={() => setTargetCameraAngle(null)}
           />
 
         </Canvas>
