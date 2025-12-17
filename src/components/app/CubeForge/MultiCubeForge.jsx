@@ -258,6 +258,7 @@ const CameraControls = ({ rotating, direction, speed, controlsRef,
   const { camera, gl } = useThree();
   const controls = useRef(null);
   const initialPosition = useRef(null);
+  const [key, setKey] = useState(0);
 
   // Сохраняем начальную позицию камеры
   useEffect(() => {
@@ -277,24 +278,19 @@ const CameraControls = ({ rotating, direction, speed, controlsRef,
     }
   }, [controlsRef]);
 
-  // Сброс камеры в начальную позицию
+  // Сброс через пересоздание controls
   useEffect(() => {
-    if (controls.current && initialPosition.current) {
-      // Сбрасываем к начальным значениям
-      camera.position.set(
-        initialPosition.current.x,
-        initialPosition.current.y,
-        initialPosition.current.z
-      );
+    if (sceneResetTrigger > 0 || sceneResetTrigger === true || sceneResetTrigger === false) {
+      setKey(prev => prev + 1); // пересоздаём OrbitControls
 
-      // Полный сброс OrbitControls
-      controls.current.reset();
-      controls.current.target.set(0, 0, 0);
-
-      // Обнуляем внутренние velocity OrbitControls
-      controls.current.saveState(); // сохраняем текущее как дефолтное
-
-      controls.current.update();
+      // Сбрасываем позицию камеры
+      if (initialPosition.current) {
+        camera.position.set(
+          initialPosition.current.x,
+          initialPosition.current.y,
+          initialPosition.current.z
+        );
+      }
     }
   }, [sceneResetTrigger, camera]);
 
@@ -339,6 +335,7 @@ const CameraControls = ({ rotating, direction, speed, controlsRef,
 
   return (
     <orbitControls
+      key={key} // <- key для пересоздания
       ref={controls}
       args={[camera, gl.domElement]}
       enableDamping
