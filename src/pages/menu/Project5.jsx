@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import '@/pages/menu/Project5.scss';
 import Orbitron from "@/components/app/Compositions/Orbitron.jsx";
-import CuboVerse from "@/components/app/Compositions/CuboVerse.jsx";
+import CuboVerse2 from "@/components/app/Compositions/CuboVerse2.jsx";
 import { useTranslation } from 'react-i18next';
 import {Link} from "react-router-dom";
 import {useSpaCleanup} from "@/hooks/useSpaCleanup.js";
@@ -14,7 +14,7 @@ export const Project5 = () => {
   const siteUrl = import.meta.env.VITE_SITE_URL;
   useSpaCleanup();
 
-  const [mode, setMode] = useState("cuboverse"); // "orbitron" | "cuboverse"
+  const [mode, setMode] = useState("cuboverse2"); // "orbitron" | "cuboverse2"
   const canvasRef = useRef(null);
   const [canvasContainer, setCanvasContainer] = useState(null);
 
@@ -30,7 +30,7 @@ export const Project5 = () => {
   // Загружаем сохранённый режим при первом рендере
   useEffect(() => {
     const savedMode = localStorage.getItem("compositionMode");
-    if (savedMode === "orbitron" || savedMode === "cuboverse") {
+    if (savedMode === "orbitron" || savedMode === "cuboverse2") {
       setMode(savedMode);
     }
   }, []);
@@ -74,8 +74,8 @@ export const Project5 = () => {
           {t('project5.name')}
 
           <div className="mode-switch">
-            <button className={mode} onClick={() => setMode(mode === "orbitron" ? "cuboverse" : "orbitron")}>
-              {mode === "orbitron" ? t("project5.name-cuboverse") : t("project5.name-orbitron")}
+            <button className={mode} onClick={() => setMode(mode === "orbitron" ? "cuboverse2" : "orbitron")}>
+              {mode === "orbitron" ? t("project5.name-cuboverse2") : t("project5.name-orbitron")}
             </button>
           </div>
 
@@ -85,7 +85,7 @@ export const Project5 = () => {
         <hr className="custom-line" />
 
         {mode === "orbitron" && <Orbitron ref={setCanvasRef} canvasFullscreen={canvasFullscreen} />}
-        {mode === "cuboverse" && <CuboVerse ref={setCanvasRef} canvasFullscreen={canvasFullscreen} />}
+        {mode === "cuboverse2" && <CuboVerse2 ref={setCanvasRef} canvasFullscreen={canvasFullscreen} />}
 
       </div>
     </div>
