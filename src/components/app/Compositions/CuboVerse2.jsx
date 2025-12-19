@@ -1259,7 +1259,7 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
   // Ref для управления камерой
   const cameraControlsRef = useRef(null);
 
-  // Получаем настройки для каждого куба с правильным префиксом
+  // ✅ Получаем настройки для каждого куба с правильным префиксом ✅
   const getCubeSettings = (cubeId) => {
     const suffix = `Cube${cubeId}`;
     const [gap, setGap, resetGap] = useLocalStorage(`cuboVerse2Gap${suffix}`, 0.15, parseFloat);
