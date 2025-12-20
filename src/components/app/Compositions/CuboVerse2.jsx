@@ -250,6 +250,28 @@ const PHOTO_CONFIG_LEVEL_3 = [
   { top: topSmallCube, bottom: bottomSmallCube, sides: [sideSmallCube27, sideSmallCube27, sideSmallCube27, sideSmallCube27] },
 ];
 
+// Дефолтные значения для КУБОВ
+const DEFAULT_CUBE_CONFIGS = {
+  1: {
+    gap: 0.25, smallCubeScale: 1,
+    rotationX: 90, rotationY: 0, rotationZ: 0,
+    speed: 2, direction: 1, isRotating: true,
+    cubeLevel: 1, cubeStyle: "photo"
+  },
+  2: {
+    gap: 0.2, smallCubeScale: 0.8,
+    rotationX: 90, rotationY: 20, rotationZ: 0,
+    speed: 3, direction: -1, isRotating: true,
+    cubeLevel: 3, cubeStyle: "texture"
+  },
+  3: {
+    gap: 0, smallCubeScale: 1,
+    rotationX: 100, rotationY: 120, rotationZ: 0,
+    speed: 8, direction: 1, isRotating: true,
+    cubeLevel: 3, cubeStyle: "color"
+  }
+};
+
 extend({ OrbitControls });
 const degreesToRadians = (degrees) => degrees * (Math.PI / 180);
 
@@ -1262,41 +1284,30 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
   // ✅ Получаем настройки для каждого куба с правильным префиксом ✅
   const getCubeSettings = (cubeId) => {
     const suffix = `Cube${cubeId}`;
+    const defaults = DEFAULT_CUBE_CONFIGS[cubeId];
 
-    // 🎯 Дефолтные настройки для каждого куба
-    const defaultConfigs = {
-      1: {
-        gap: 0.25, smallCubeScale: 1,
-        rotationX: 90, rotationY: 0, rotationZ: 0,
-        speed: 2, direction: 1, isRotating: true,
-        cubeLevel: 1, cubeStyle: "photo"
-      },
-      2: {
-        gap: 0.2, smallCubeScale: 0.8,
-        rotationX: 90, rotationY: 20, rotationZ: 0,
-        speed: 3, direction: -1, isRotating: true,
-        cubeLevel: 3, cubeStyle: "texture"
-      },
-      3: {
-        gap: 0, smallCubeScale: 1,
-        rotationX: 100, rotationY: 120, rotationZ: 0,
-        speed: 8, direction: 1, isRotating: true,
-        cubeLevel: 3, cubeStyle: "color"
-      }
-    };
+    const [gap, setGap] = useLocalStorage(`cuboVerse2Gap${suffix}`, defaults.gap, parseFloat);
+    const [smallCubeScale, setSmallCubeScale] = useLocalStorage(`cuboVerse2SmallCubeScale${suffix}`, defaults.smallCubeScale, parseFloat);
+    const [rotationX, setRotationX] = useLocalStorage(`cuboVerse2RotX${suffix}`, defaults.rotationX, parseFloat);
+    const [rotationY, setRotationY] = useLocalStorage(`cuboVerse2RotY${suffix}`, defaults.rotationY, parseFloat);
+    const [rotationZ, setRotationZ] = useLocalStorage(`cuboVerse2RotZ${suffix}`, defaults.rotationZ, parseFloat);
+    const [speed, setSpeed] = useLocalStorage(`cuboVerse2Speed${suffix}`, defaults.speed, parseFloat);
+    const [direction, setDirection] = useLocalStorage(`cuboVerse2Direction${suffix}`, defaults.direction, v => parseInt(v, 10));
+    const [isRotating, setIsRotating] = useLocalStorage(`cuboVerse2IsRotating${suffix}`, defaults.isRotating, v => v === "true");
+    const [cubeLevel, setCubeLevel] = useLocalStorage(`cuboVerse2CubeLevel${suffix}`, defaults.cubeLevel, v => parseInt(v, 10));
+    const [cubeStyle, setCubeStyle] = useLocalStorage(`cuboVerse2CubeStyle${suffix}`, defaults.cubeStyle, v => v);
 
-    const defaults = defaultConfigs[cubeId];
-
-    const [gap, setGap, resetGap] = useLocalStorage(`cuboVerse2Gap${suffix}`, defaults.gap, parseFloat);
-    const [smallCubeScale, setSmallCubeScale, resetSmallCubeScale] = useLocalStorage(`cuboVerse2SmallCubeScale${suffix}`, defaults.smallCubeScale, parseFloat);
-    const [rotationX, setRotationX, resetRotationX] = useLocalStorage(`cuboVerse2RotX${suffix}`, defaults.rotationX, parseFloat);
-    const [rotationY, setRotationY, resetRotationY] = useLocalStorage(`cuboVerse2RotY${suffix}`, defaults.rotationY, parseFloat);
-    const [rotationZ, setRotationZ, resetRotationZ] = useLocalStorage(`cuboVerse2RotZ${suffix}`, defaults.rotationZ, parseFloat);
-    const [speed, setSpeed, resetSpeed] = useLocalStorage(`cuboVerse2Speed${suffix}`, defaults.speed, parseFloat);
-    const [direction, setDirection, resetDirection] = useLocalStorage(`cuboVerse2Direction${suffix}`, defaults.direction, v => parseInt(v, 10));
-    const [isRotating, setIsRotating, resetIsRotating] = useLocalStorage(`cuboVerse2IsRotating${suffix}`, defaults.isRotating, v => v === "true");
-    const [cubeLevel, setCubeLevel, resetCubeLevel] = useLocalStorage(`cuboVerse2CubeLevel${suffix}`, defaults.cubeLevel, v => parseInt(v, 10));
-    const [cubeStyle, setCubeStyle, resetCubeStyle] = useLocalStorage(`cuboVerse2CubeStyle${suffix}`, defaults.cubeStyle, v => v);
+    // 🎯 КАСТОМНЫЕ RESET-ФУНКЦИИ с правильными дефолтами
+    const resetGap = () => setGap(defaults.gap);
+    const resetSmallCubeScale = () => setSmallCubeScale(defaults.smallCubeScale);
+    const resetRotationX = () => setRotationX(defaults.rotationX);
+    const resetRotationY = () => setRotationY(defaults.rotationY);
+    const resetRotationZ = () => setRotationZ(defaults.rotationZ);
+    const resetSpeed = () => setSpeed(defaults.speed);
+    const resetDirection = () => setDirection(defaults.direction);
+    const resetIsRotating = () => setIsRotating(defaults.isRotating);
+    const resetCubeLevel = () => setCubeLevel(defaults.cubeLevel);
+    const resetCubeStyle = () => setCubeStyle(defaults.cubeStyle);
 
     const [shuffleTrigger, setShuffleTrigger] = useState(0);
     const [positionsResetTrigger, setPositionsResetTrigger] = useState(0);
@@ -1371,14 +1382,19 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
     decrease: () => setter(prev => Math.max(min, +(prev - step).toFixed(2))),
   });
 
-  // Кнопки управления
-  const cubeLevelHandlers = makeHandlers(settings.setCubeLevel, selectedCube === 1 ? 1 : selectedCube === 2 ? 8 : 27, 1, 3, 1);
-  const speedHandlers = makeHandlers(settings.setSpeed, 4, 0, 10, 1);
-  const gapHandlers = makeHandlers(settings.setGap, 0.15, 0, 0.5, 0.01);
-  const smallCubeScaleHandlers = makeHandlers(settings.setSmallCubeScale, 0.85, 0.5, 1, 0.05);
-  const rotXHandlers = makeHandlers(settings.setRotationX, 90, -180, 180);
-  const rotYHandlers = makeHandlers(settings.setRotationY, 0, -180, 180);
-  const rotZHandlers = makeHandlers(settings.setRotationZ, 0, -180, 180);
+  // Получаем дефолты для активного куба
+  const currentDefaults = selectedCube ? DEFAULT_CUBE_CONFIGS[selectedCube] : DEFAULT_CUBE_CONFIGS[1];
+
+  // Кнопки управления куба
+  const cubeLevelHandlers = makeHandlers(settings.setCubeLevel, currentDefaults.cubeLevel, 1, 3, 1);
+  const speedHandlers = makeHandlers(settings.setSpeed, currentDefaults.speed, 0, 10, 1);
+  const gapHandlers = makeHandlers(settings.setGap, currentDefaults.gap, 0, 0.5, 0.01);
+  const smallCubeScaleHandlers = makeHandlers(settings.setSmallCubeScale, currentDefaults.smallCubeScale, 0.5, 1, 0.05);
+  const rotXHandlers = makeHandlers(settings.setRotationX, currentDefaults.rotationX, -180, 180);
+  const rotYHandlers = makeHandlers(settings.setRotationY, currentDefaults.rotationY, -180, 180);
+  const rotZHandlers = makeHandlers(settings.setRotationZ, currentDefaults.rotationZ, -180, 180);
+
+  // Кнопки управления сцены
   const sceneSpeedHandlers = makeHandlers(setSceneSpeed, 4, 0, 10, 1);
 
   // Объект для маппинга режима на количество кубов:
