@@ -1262,30 +1262,41 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
   // ✅ Получаем настройки для каждого куба с правильным префиксом ✅
   const getCubeSettings = (cubeId) => {
     const suffix = `Cube${cubeId}`;
-    const [gap, setGap, resetGap] = useLocalStorage(`cuboVerse2Gap${suffix}`, 0.15, parseFloat);
-    const [smallCubeScale, setSmallCubeScale, resetSmallCubeScale] = useLocalStorage(`cuboVerse2SmallCubeScale${suffix}`, 0.85, parseFloat);
-    const [rotationX, setRotationX, resetRotationX] = useLocalStorage(`cuboVerse2RotX${suffix}`, 90, parseFloat);
-    const [rotationY, setRotationY, resetRotationY] = useLocalStorage(`cuboVerse2RotY${suffix}`, 0, parseFloat);
-    const [rotationZ, setRotationZ, resetRotationZ] = useLocalStorage(`cuboVerse2RotZ${suffix}`, 0, parseFloat);
-    const [speed, setSpeed, resetSpeed] = useLocalStorage(`cuboVerse2Speed${suffix}`, 4, parseFloat);
-    const [direction, setDirection, resetDirection] = useLocalStorage(`cuboVerse2Direction${suffix}`, 1, v => parseInt(v, 10));
-    const [isRotating, setIsRotating, resetIsRotating] = useLocalStorage(`cuboVerse2IsRotating${suffix}`, true, v => v === "true");
 
-    // Уровень и стиль по умолчанию для каждого куба
-    let defaultLevel, defaultStyle;
-    if (cubeId === 1) {
-      defaultLevel = 1;
-      defaultStyle = "photo";
-    } else if (cubeId === 2) {
-      defaultLevel = 3;
-      defaultStyle = "texture";
-    } else {
-      defaultLevel = 3;
-      defaultStyle = "color";
-    }
+    // 🎯 Дефолтные настройки для каждого куба
+    const defaultConfigs = {
+      1: {
+        gap: 0, smallCubeScale: 1,
+        rotationX: 90, rotationY: 0, rotationZ: 0,
+        speed: 2, direction: 1, isRotating: true,
+        cubeLevel: 1, cubeStyle: "photo"
+      },
+      2: {
+        gap: 0.2, smallCubeScale: 0.8,
+        rotationX: 90, rotationY: 20, rotationZ: 0,
+        speed: 3, direction: -1, isRotating: true,
+        cubeLevel: 3, cubeStyle: "texture"
+      },
+      3: {
+        gap: 0, smallCubeScale: 1,
+        rotationX: 100, rotationY: 120, rotationZ: 0,
+        speed: 8, direction: 1, isRotating: true,
+        cubeLevel: 3, cubeStyle: "color"
+      }
+    };
 
-    const [cubeLevel, setCubeLevel, resetCubeLevel] = useLocalStorage(`cuboVerse2CubeLevel${suffix}`, defaultLevel, v => parseInt(v, 10));
-    const [cubeStyle, setCubeStyle, resetCubeStyle] = useLocalStorage(`cuboVerse2CubeStyle${suffix}`, defaultStyle, v => v);
+    const defaults = defaultConfigs[cubeId];
+
+    const [gap, setGap, resetGap] = useLocalStorage(`cuboVerse2Gap${suffix}`, defaults.gap, parseFloat);
+    const [smallCubeScale, setSmallCubeScale, resetSmallCubeScale] = useLocalStorage(`cuboVerse2SmallCubeScale${suffix}`, defaults.smallCubeScale, parseFloat);
+    const [rotationX, setRotationX, resetRotationX] = useLocalStorage(`cuboVerse2RotX${suffix}`, defaults.rotationX, parseFloat);
+    const [rotationY, setRotationY, resetRotationY] = useLocalStorage(`cuboVerse2RotY${suffix}`, defaults.rotationY, parseFloat);
+    const [rotationZ, setRotationZ, resetRotationZ] = useLocalStorage(`cuboVerse2RotZ${suffix}`, defaults.rotationZ, parseFloat);
+    const [speed, setSpeed, resetSpeed] = useLocalStorage(`cuboVerse2Speed${suffix}`, defaults.speed, parseFloat);
+    const [direction, setDirection, resetDirection] = useLocalStorage(`cuboVerse2Direction${suffix}`, defaults.direction, v => parseInt(v, 10));
+    const [isRotating, setIsRotating, resetIsRotating] = useLocalStorage(`cuboVerse2IsRotating${suffix}`, defaults.isRotating, v => v === "true");
+    const [cubeLevel, setCubeLevel, resetCubeLevel] = useLocalStorage(`cuboVerse2CubeLevel${suffix}`, defaults.cubeLevel, v => parseInt(v, 10));
+    const [cubeStyle, setCubeStyle, resetCubeStyle] = useLocalStorage(`cuboVerse2CubeStyle${suffix}`, defaults.cubeStyle, v => v);
 
     const [shuffleTrigger, setShuffleTrigger] = useState(0);
     const [positionsResetTrigger, setPositionsResetTrigger] = useState(0);
