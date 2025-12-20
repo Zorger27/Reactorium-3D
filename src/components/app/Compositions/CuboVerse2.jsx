@@ -255,13 +255,13 @@ const DEFAULT_CUBE_CONFIGS = {
   1: {
     gap: 0.25, smallCubeScale: 1,
     rotationX: 90, rotationY: 0, rotationZ: 0,
-    speed: 2, direction: 1, isRotating: true,
+    speed: 5, direction: 1, isRotating: true,
     cubeLevel: 1, cubeStyle: "photo"
   },
   2: {
     gap: 0.2, smallCubeScale: 0.8,
     rotationX: 90, rotationY: 20, rotationZ: 0,
-    speed: 3, direction: -1, isRotating: true,
+    speed: 2, direction: -1, isRotating: true,
     cubeLevel: 3, cubeStyle: "texture"
   },
   3: {
@@ -439,7 +439,20 @@ const useCubeSelection = (groupRefs, selectedCube, onSelect) => {
 
 const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating, direction, speed,
                      resetTrigger, flipTrigger, smallCubeScale, shuffleTrigger, setShuffleTrigger, positionsResetTrigger,
-                     cubeLevel, cubeStyle, cubePosition = [0, 0, 0], groupRefProp, cubeId, onHover }) => {
+                     cubeLevel, cubeStyle, cubePosition = [0, 0, 0], groupRefProp, cubeId, onHover,
+                     // Параметры для орбиты
+                     hasOrbit = false,
+                     orbitSemiMajorAxis = 0,
+                     orbitSemiMinorAxis = 0,
+                     orbitSpeed = 0,
+                     orbitDirection = 1,
+                     orbitPlane = 'xy', // 'xy' или 'xz'
+                     // Параметры для масштабирования
+                     baseScale = 1,           // Базовый масштаб куба
+                     scaleWithDistance = false, // Масштабировать ли в зависимости от расстояния
+                     minScale = 0.5,          // Минимальный масштаб (на дальней точке)
+                     maxScale = 1.0           // Максимальный масштаб (на ближней точке)
+                   }) => {
   const groupRef = useRef(null);
 
   // Синхронизируем с переданным рефом
@@ -935,6 +948,12 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
   // а на последующих кадрах применять обычную плавную интерполяцию.
   const firstFlipFrameRef = useRef(true);
 
+  // Состояние для угла орбиты
+  const orbitAngleRef = useRef(0);
+
+  // Состояние для динамического масштаба
+  const [dynamicScale, setDynamicScale] = useState(baseScale);
+
   // === ОСНОВНАЯ ФУНКЦИЯ АНИМАЦИИ СЦЕНЫ (useFrame) ===
   useFrame((_, delta) => {
 
@@ -951,6 +970,45 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
 
     // Скорость плавной анимации перемещения кубиков (выше = быстрее)
     const smoothSpeed = 3.0;
+
+    // === БЛОК ОРБИТАЛЬНОГО ДВИЖЕНИЯ ===
+    if (hasOrbit && groupRef.current) {
+      orbitAngleRef.current += orbitDirection * orbitSpeed * delta;
+
+      let x, y, z;
+      if (orbitPlane === 'xy') {
+        x = orbitSemiMajorAxis * Math.cos(orbitAngleRef.current);
+        y = orbitSemiMinorAxis * Math.sin(orbitAngleRef.current);
+        z = 0;
+      } else {
+        x = orbitSemiMajorAxis * Math.cos(orbitAngleRef.current);
+        y = 0;
+        z = orbitSemiMinorAxis * Math.sin(orbitAngleRef.current);
+      }
+
+      groupRef.current.position.set(x, y, z);
+
+      // === ДИНАМИЧЕСКОЕ МАСШТАБИРОВАНИЕ В ЗАВИСИМОСТИ ОТ Z-КООРДИНАТЫ ===
+      if (scaleWithDistance) {
+        // Для горизонтальной орбиты (XZ) используем z-координату
+        // Для вертикальной орбиты (XY) тоже можем использовать z, если нужно
+        let distanceFactor;
+
+        if (orbitPlane === 'xz') {
+          // Нормализуем z от -orbitSemiMinorAxis до +orbitSemiMinorAxis
+          // z = -orbitSemiMinorAxis (дальше) -> scale = minScale
+          // z = +orbitSemiMinorAxis (ближе) -> scale = maxScale
+          distanceFactor = (z + orbitSemiMinorAxis) / (2 * orbitSemiMinorAxis);
+        } else {
+          // Для вертикальной орбиты можно использовать x-координату
+          distanceFactor = (x + orbitSemiMajorAxis) / (2 * orbitSemiMajorAxis);
+        }
+
+        // Интерполируем между minScale и maxScale
+        const targetScale = minScale + (maxScale - minScale) * distanceFactor;
+        setDynamicScale(targetScale * baseScale);
+      }
+    }
 
     // === БЛОК 1: Анимация перемещения кубиков (shuffle/reset) ===
     if (isMovingRef.current) {
@@ -1207,9 +1265,12 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
   const edgesGeometry = useMemo(() => new THREE.EdgesGeometry(geometry), [geometry]);
 
   return (
-    <group ref={groupRef} position={cubePosition}
-           onPointerOver={(e) => {e.stopPropagation();document.body.style.cursor = 'pointer';if (onHover) onHover(cubeId);}}
-           onPointerOut={(e) => {e.stopPropagation();document.body.style.cursor = 'default';if (onHover) onHover(null);}}
+    <group
+      ref={groupRef}
+      position={hasOrbit ? [0, 0, 0] : cubePosition}
+      scale={[dynamicScale, dynamicScale, dynamicScale]}
+      onPointerOver={(e) => {e.stopPropagation();document.body.style.cursor = 'pointer';if (onHover) onHover(cubeId);}}
+      onPointerOut={(e) => {e.stopPropagation();document.body.style.cursor = 'default';if (onHover) onHover(null);}}
     >
       {basePositions.map((pos, i) => (
         <group key={i} position={pos}>
@@ -1562,11 +1623,11 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
     }
   };
 
-  // Позиции для трёх кубов
+  // Позиции только для визуальных элементов (свет, тени, стрелки)
   const cubePositions = [
-    [-7, 0, -4],  // Куб 1 - слева
+    [-7, 0, -4],   // Куб 1 - начальная точка орбиты (не используется для самого куба)
     [0, 0, 0],     // Куб 2 - центр
-    [7, 0, -4]    // Куб 3 - справа
+    [7, 0, -4]     // Куб 3 - начальная точка орбиты (не используется для самого куба)
   ];
 
   // Компонент для обработки кликов
@@ -1600,6 +1661,73 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
           <meshBasicMaterial map={shaftTexture} />
         </mesh>
       </group>
+    );
+  };
+
+  // Компонент для отображения орбит
+  const OrbitLines = () => {
+    // Параметры орбиты для куба 2 (правый)
+    const semiMajorAxis2 = 3;
+    const semiMinorAxis2 = 2.5;
+
+    // Параметры орбиты для куба 1 (левый)
+    const semiMajorAxis1 = 4.0;
+    const semiMinorAxis1 = 3.0;
+
+    // Создаём точки для орбиты куба 2 (вертикальная орбита в плоскости XY)
+    const orbitPoints2 = useMemo(() => {
+      const points = [];
+      for (let i = 0; i <= 360; i++) {
+        const angle = (i * Math.PI) / 180;
+        const x = semiMajorAxis2 * Math.cos(angle);
+        const y = semiMinorAxis2 * Math.sin(angle);
+        const z = 0;
+        points.push(x, y, z);
+      }
+      return new Float32Array(points);
+    }, []);
+
+    // Создаём точки для орбиты куба 3 (горизонтальная орбита в плоскости XZ)
+    const orbitPoints1 = useMemo(() => {
+      const points = [];
+      for (let i = 0; i <= 360; i++) {
+        const angle = (i * Math.PI) / 180;
+        const x = semiMajorAxis1 * Math.cos(angle);
+        const y = 0;
+        const z = semiMinorAxis1 * Math.sin(angle);
+        points.push(x, y, z);
+      }
+      return new Float32Array(points);
+    }, []);
+
+    return (
+      <>
+        {/* Орбита для куба 3 (вертикальная) */}
+        <line>
+          <bufferGeometry>
+            <bufferAttribute
+              attach="attributes-position"
+              count={orbitPoints2.length / 3}
+              array={orbitPoints2}
+              itemSize={3}
+            />
+          </bufferGeometry>
+          <lineBasicMaterial color={0x00aaff} linewidth={2} />
+        </line>
+
+        {/* Орбита для куба 1 (горизонтальная) */}
+        <line>
+          <bufferGeometry>
+            <bufferAttribute
+              attach="attributes-position"
+              count={orbitPoints1.length / 3}
+              array={orbitPoints1}
+              itemSize={3}
+            />
+          </bufferGeometry>
+          <lineBasicMaterial color={0x8a2be2} linewidth={2} />
+        </line>
+      </>
     );
   };
 
@@ -1815,14 +1943,18 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
 
           <SceneBackground imagePath={backgroundMap[canvasBackground]} canvasFullscreen={canvasFullscreen}/>
 
+          <CubeSelector />
+
+          {/* Орбиты для кубов 2 и 3 */}
+          <OrbitLines />
+
           {/* Стрелка над кубом при hover */}
           {hoveredCube > 0 && (
             <ArrowIndicator position={cubePositions[hoveredCube - 1]} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture}/>
           )}
 
-          <CubeSelector />
-
           {/* Три куба */}
+          {/* Куб 1 - горизонтальная орбита, маленький */}
           <CubeGroup
             cubeId={1} onHover={setHoveredCube} groupRefProp={cube1Ref} key="cube1" groupSize={groupSize}
             gap={cube1Settings.gap}
@@ -1833,20 +1965,36 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
             shuffleTrigger={cube1Settings.shuffleTrigger} setShuffleTrigger={cube1Settings.setShuffleTrigger} positionsResetTrigger={cube1Settings.positionsResetTrigger}
             cubeLevel={cubeLevelMap[cube1Settings.cubeLevel]} cubeStyle={cube1Settings.cubeStyle}
             cubePosition={cubePositions[0]}
+            hasOrbit={true}
+            orbitSemiMajorAxis={4.0}
+            orbitSemiMinorAxis={3.0}
+            orbitSpeed={0.3}
+            orbitDirection={-1}
+            orbitPlane="xz"
+            baseScale={0.5}
+            scaleWithDistance={true}
+            minScale={0.40}
+            maxScale={0.70}
           />
 
-          <CubeGroup
-            cubeId={2} onHover={setHoveredCube} groupRefProp={cube2Ref} key="cube2" groupSize={groupSize}
-            gap={cube2Settings.gap}
-            rotationX={cube2Settings.rotationX} rotationY={cube2Settings.rotationY} rotationZ={cube2Settings.rotationZ}
-            isRotating={cube2Settings.isRotating} direction={cube2Settings.direction} speed={cube2Settings.speed}
-            resetTrigger={cube2Settings.resetTrigger} flipTrigger={cube2Settings.flipTrigger}
-            smallCubeScale={cube2Settings.smallCubeScale}
-            shuffleTrigger={cube2Settings.shuffleTrigger} setShuffleTrigger={cube2Settings.setShuffleTrigger} positionsResetTrigger={cube2Settings.positionsResetTrigger}
-            cubeLevel={cubeLevelMap[cube2Settings.cubeLevel]} cubeStyle={cube2Settings.cubeStyle}
-            cubePosition={cubePositions[1]}
-          />
+          {/* Куб 2 - в центре, самый большой */}
+          <group scale={[0.75, 0.75, 0.75]}>
+            <CubeGroup
+              cubeId={2} onHover={setHoveredCube} groupRefProp={cube2Ref} key="cube2" groupSize={groupSize}
+              gap={cube2Settings.gap}
+              rotationX={cube2Settings.rotationX} rotationY={cube2Settings.rotationY} rotationZ={cube2Settings.rotationZ}
+              isRotating={cube2Settings.isRotating} direction={cube2Settings.direction} speed={cube2Settings.speed}
+              resetTrigger={cube2Settings.resetTrigger} flipTrigger={cube2Settings.flipTrigger}
+              smallCubeScale={cube2Settings.smallCubeScale}
+              shuffleTrigger={cube2Settings.shuffleTrigger} setShuffleTrigger={cube2Settings.setShuffleTrigger} positionsResetTrigger={cube2Settings.positionsResetTrigger}
+              cubeLevel={cubeLevelMap[cube2Settings.cubeLevel]} cubeStyle={cube2Settings.cubeStyle}
+              cubePosition={cubePositions[1]}
+              hasOrbit={false}
+              baseScale={1.0}
+            />
+          </group>
 
+          {/* Куб 3 - вертикальная орбита, маленький */}
           <CubeGroup
             cubeId={3} onHover={setHoveredCube} groupRefProp={cube3Ref} key="cube3" groupSize={groupSize}
             gap={cube3Settings.gap}
@@ -1857,6 +2005,16 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
             shuffleTrigger={cube3Settings.shuffleTrigger} setShuffleTrigger={cube3Settings.setShuffleTrigger} positionsResetTrigger={cube3Settings.positionsResetTrigger}
             cubeLevel={cubeLevelMap[cube3Settings.cubeLevel]} cubeStyle={cube3Settings.cubeStyle}
             cubePosition={cubePositions[2]}
+            hasOrbit={true}
+            orbitSemiMajorAxis={3}
+            orbitSemiMinorAxis={2.5}
+            orbitSpeed={0.3}
+            orbitDirection={1}
+            orbitPlane="xy"
+            baseScale={0.5}
+            scaleWithDistance={true}
+            minScale={0.40}
+            maxScale={0.60}
           />
 
           <CameraControls rotating={sceneRotating} direction={sceneDirection} speed={sceneSpeed} sceneResetTrigger={sceneResetTrigger} controlsRef={cameraControlsRef}
