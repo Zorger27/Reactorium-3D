@@ -1266,7 +1266,7 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
     // 🎯 Дефолтные настройки для каждого куба
     const defaultConfigs = {
       1: {
-        gap: 0, smallCubeScale: 1,
+        gap: 0.25, smallCubeScale: 1,
         rotationX: 90, rotationY: 0, rotationZ: 0,
         speed: 2, direction: 1, isRotating: true,
         cubeLevel: 1, cubeStyle: "photo"
