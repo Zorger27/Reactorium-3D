@@ -1277,7 +1277,7 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
       defaultLevel = 1;
       defaultStyle = "photo";
     } else if (cubeId === 2) {
-      defaultLevel = 2;
+      defaultLevel = 3;
       defaultStyle = "texture";
     } else {
       defaultLevel = 3;
@@ -1537,9 +1537,9 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
 
   // Позиции для трёх кубов
   const cubePositions = [
-    [-5, 0, -4],  // Куб 1 - слева
+    [-7, 0, -4],  // Куб 1 - слева
     [0, 0, 0],     // Куб 2 - центр
-    [5, 0, -4]    // Куб 3 - справа
+    [7, 0, -4]    // Куб 3 - справа
   ];
 
   // Компонент для обработки кликов
