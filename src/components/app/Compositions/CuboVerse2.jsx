@@ -373,7 +373,7 @@ const CameraControls = ({ rotating, direction, speed, controlsRef,
 const SceneRotation = ({ rotating, direction, speed, groupRef }) => {
   useFrame((_, delta) => {
     if (groupRef.current && rotating) {
-      const actualSpeed = (speed / 10) * 0.025;
+      const actualSpeed = (speed / 10) * 0.025 * delta;
       groupRef.current.rotation.y += direction * actualSpeed;
     }
   });
