@@ -1469,7 +1469,7 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
   const rotZHandlers = makeHandlers(settings.setRotationZ, currentDefaults.rotationZ, -180, 180);
 
   // Кнопки управления сцены
-  const sceneSpeedHandlers = makeHandlers(setSceneSpeed, 4, 0, 10, 1);
+  const sceneSpeedHandlers = makeHandlers(setSceneSpeed, 1, 0, 10, 1);
 
   // Объект для маппинга режима на количество кубов:
   const cubeLevelMap = {
