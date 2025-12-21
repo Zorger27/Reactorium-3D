@@ -369,6 +369,17 @@ const CameraControls = ({ rotating, direction, speed, controlsRef,
   );
 };
 
+// Компонент для управления вращением сцены
+const SceneRotation = ({ rotating, direction, speed, groupRef }) => {
+  useFrame((_, delta) => {
+    if (groupRef.current && rotating) {
+      const actualSpeed = (speed / 10) * 0.025;
+      groupRef.current.rotation.y += direction * actualSpeed;
+    }
+  });
+  return null;
+};
+
 // Компонент для установки фона (условно рендерит загрузчик)
 function SceneBackground({ imagePath, canvasFullscreen }) {
   if (!canvasFullscreen) {
@@ -1310,6 +1321,8 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
     }
   });
 
+  const sceneGroupRef = useRef(null);
+
   // Выбор активного куба (null - ничего не выбрано)
   const [selectedCube, setSelectedCube] = useState(null);
 
@@ -1410,7 +1423,7 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
   // Состояния для вращения всей сцены (с сохранением в localStorage)
   const [sceneRotating, setSceneRotating, resetSceneRotating] = useLocalStorage("cuboVerse2SceneRotating", false, v => v === "true");
   const [sceneDirection, setSceneDirection, resetSceneDirection] = useLocalStorage("cuboVerse2SceneDirection", 1, v => parseInt(v, 10));
-  const [sceneSpeed, setSceneSpeed,resetSceneSpeed] = useLocalStorage("cuboVerse2SceneSpeed", 4, parseFloat);
+  const [sceneSpeed, setSceneSpeed,resetSceneSpeed] = useLocalStorage("cuboVerse2SceneSpeed", 1, parseFloat);
 
   // Кнопки вращения КУБА
   const handleClockwise = () => {settings.setDirection(1);settings.setIsRotating(true);};
@@ -1666,7 +1679,7 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
 
   // Компонент для отображения орбит
   const OrbitLines = () => {
-    // Параметры орбиты для куба 2 (правый)
+    // Параметры орбиты для куба 3 (правый)
     const semiMajorAxis2 = 3;
     const semiMinorAxis2 = 2.5;
 
@@ -1674,7 +1687,7 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
     const semiMajorAxis1 = 4.0;
     const semiMinorAxis1 = 3.0;
 
-    // Создаём точки для орбиты куба 2 (вертикальная орбита в плоскости XY)
+    // Создаём точки для орбиты куба 3 (вертикальная орбита в плоскости XY)
     const orbitPoints2 = useMemo(() => {
       const points = [];
       for (let i = 0; i <= 360; i++) {
@@ -1687,7 +1700,7 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
       return new Float32Array(points);
     }, []);
 
-    // Создаём точки для орбиты куба 3 (горизонтальная орбита в плоскости XZ)
+    // Создаём точки для орбиты куба 1 (горизонтальная орбита в плоскости XZ)
     const orbitPoints1 = useMemo(() => {
       const points = [];
       for (let i = 0; i <= 360; i++) {
@@ -1945,80 +1958,92 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
 
           <CubeSelector />
 
-          {/* Орбиты для кубов 2 и 3 */}
-          <OrbitLines />
+          {/* Группа для всей сцены с кубами и орбитами */}
+          <group ref={sceneGroupRef} rotation={[degreesToRadians(10), 0, 0]}>
+
+            {/* Орбиты для кубов 2 и 3 */}
+            <OrbitLines />
+
+            {/* Три куба */}
+            {/* Куб 1 - горизонтальная орбита, маленький */}
+            <CubeGroup
+              cubeId={1} onHover={setHoveredCube} groupRefProp={cube1Ref} key="cube1" groupSize={groupSize}
+              gap={cube1Settings.gap}
+              rotationX={cube1Settings.rotationX} rotationY={cube1Settings.rotationY} rotationZ={cube1Settings.rotationZ}
+              isRotating={cube1Settings.isRotating} direction={cube1Settings.direction} speed={cube1Settings.speed}
+              resetTrigger={cube1Settings.resetTrigger} flipTrigger={cube1Settings.flipTrigger}
+              smallCubeScale={cube1Settings.smallCubeScale}
+              shuffleTrigger={cube1Settings.shuffleTrigger} setShuffleTrigger={cube1Settings.setShuffleTrigger} positionsResetTrigger={cube1Settings.positionsResetTrigger}
+              cubeLevel={cubeLevelMap[cube1Settings.cubeLevel]} cubeStyle={cube1Settings.cubeStyle}
+              cubePosition={cubePositions[0]}
+              hasOrbit={true}
+              orbitSemiMajorAxis={4.0}
+              orbitSemiMinorAxis={3.0}
+              orbitSpeed={0.3}
+              orbitDirection={-1}
+              orbitPlane="xz"
+              baseScale={0.5}
+              scaleWithDistance={true}
+              minScale={0.40}
+              maxScale={0.60}
+            />
+
+            {/* Куб 2 - в центре, самый большой */}
+            <group scale={[0.7, 0.7, 0.7]}>
+              <CubeGroup
+                cubeId={2} onHover={setHoveredCube} groupRefProp={cube2Ref} key="cube2" groupSize={groupSize}
+                gap={cube2Settings.gap}
+                rotationX={cube2Settings.rotationX} rotationY={cube2Settings.rotationY} rotationZ={cube2Settings.rotationZ}
+                isRotating={cube2Settings.isRotating} direction={cube2Settings.direction} speed={cube2Settings.speed}
+                resetTrigger={cube2Settings.resetTrigger} flipTrigger={cube2Settings.flipTrigger}
+                smallCubeScale={cube2Settings.smallCubeScale}
+                shuffleTrigger={cube2Settings.shuffleTrigger} setShuffleTrigger={cube2Settings.setShuffleTrigger} positionsResetTrigger={cube2Settings.positionsResetTrigger}
+                cubeLevel={cubeLevelMap[cube2Settings.cubeLevel]} cubeStyle={cube2Settings.cubeStyle}
+                cubePosition={cubePositions[1]}
+                hasOrbit={false}
+                baseScale={1.0}
+              />
+            </group>
+
+            {/* Куб 3 - вертикальная орбита, маленький */}
+            <CubeGroup
+              cubeId={3} onHover={setHoveredCube} groupRefProp={cube3Ref} key="cube3" groupSize={groupSize}
+              gap={cube3Settings.gap}
+              rotationX={cube3Settings.rotationX} rotationY={cube3Settings.rotationY} rotationZ={cube3Settings.rotationZ}
+              isRotating={cube3Settings.isRotating} direction={cube3Settings.direction} speed={cube3Settings.speed}
+              resetTrigger={cube3Settings.resetTrigger} flipTrigger={cube3Settings.flipTrigger}
+              smallCubeScale={cube3Settings.smallCubeScale}
+              shuffleTrigger={cube3Settings.shuffleTrigger} setShuffleTrigger={cube3Settings.setShuffleTrigger} positionsResetTrigger={cube3Settings.positionsResetTrigger}
+              cubeLevel={cubeLevelMap[cube3Settings.cubeLevel]} cubeStyle={cube3Settings.cubeStyle}
+              cubePosition={cubePositions[2]}
+              hasOrbit={true}
+              orbitSemiMajorAxis={3}
+              orbitSemiMinorAxis={2.5}
+              orbitSpeed={0.3}
+              orbitDirection={1}
+              orbitPlane="xy"
+              baseScale={0.35}
+              scaleWithDistance={true}
+              minScale={0.40}
+              maxScale={0.60}
+            />
+
+          </group>
 
           {/* Стрелка над кубом при hover */}
           {hoveredCube > 0 && (
             <ArrowIndicator position={cubePositions[hoveredCube - 1]} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture}/>
           )}
 
-          {/* Три куба */}
-          {/* Куб 1 - горизонтальная орбита, маленький */}
-          <CubeGroup
-            cubeId={1} onHover={setHoveredCube} groupRefProp={cube1Ref} key="cube1" groupSize={groupSize}
-            gap={cube1Settings.gap}
-            rotationX={cube1Settings.rotationX} rotationY={cube1Settings.rotationY} rotationZ={cube1Settings.rotationZ}
-            isRotating={cube1Settings.isRotating} direction={cube1Settings.direction} speed={cube1Settings.speed}
-            resetTrigger={cube1Settings.resetTrigger} flipTrigger={cube1Settings.flipTrigger}
-            smallCubeScale={cube1Settings.smallCubeScale}
-            shuffleTrigger={cube1Settings.shuffleTrigger} setShuffleTrigger={cube1Settings.setShuffleTrigger} positionsResetTrigger={cube1Settings.positionsResetTrigger}
-            cubeLevel={cubeLevelMap[cube1Settings.cubeLevel]} cubeStyle={cube1Settings.cubeStyle}
-            cubePosition={cubePositions[0]}
-            hasOrbit={true}
-            orbitSemiMajorAxis={4.0}
-            orbitSemiMinorAxis={3.0}
-            orbitSpeed={0.3}
-            orbitDirection={-1}
-            orbitPlane="xz"
-            baseScale={0.5}
-            scaleWithDistance={true}
-            minScale={0.40}
-            maxScale={0.70}
-          />
-
-          {/* Куб 2 - в центре, самый большой */}
-          <group scale={[0.75, 0.75, 0.75]}>
-            <CubeGroup
-              cubeId={2} onHover={setHoveredCube} groupRefProp={cube2Ref} key="cube2" groupSize={groupSize}
-              gap={cube2Settings.gap}
-              rotationX={cube2Settings.rotationX} rotationY={cube2Settings.rotationY} rotationZ={cube2Settings.rotationZ}
-              isRotating={cube2Settings.isRotating} direction={cube2Settings.direction} speed={cube2Settings.speed}
-              resetTrigger={cube2Settings.resetTrigger} flipTrigger={cube2Settings.flipTrigger}
-              smallCubeScale={cube2Settings.smallCubeScale}
-              shuffleTrigger={cube2Settings.shuffleTrigger} setShuffleTrigger={cube2Settings.setShuffleTrigger} positionsResetTrigger={cube2Settings.positionsResetTrigger}
-              cubeLevel={cubeLevelMap[cube2Settings.cubeLevel]} cubeStyle={cube2Settings.cubeStyle}
-              cubePosition={cubePositions[1]}
-              hasOrbit={false}
-              baseScale={1.0}
-            />
-          </group>
-
-          {/* Куб 3 - вертикальная орбита, маленький */}
-          <CubeGroup
-            cubeId={3} onHover={setHoveredCube} groupRefProp={cube3Ref} key="cube3" groupSize={groupSize}
-            gap={cube3Settings.gap}
-            rotationX={cube3Settings.rotationX} rotationY={cube3Settings.rotationY} rotationZ={cube3Settings.rotationZ}
-            isRotating={cube3Settings.isRotating} direction={cube3Settings.direction} speed={cube3Settings.speed}
-            resetTrigger={cube3Settings.resetTrigger} flipTrigger={cube3Settings.flipTrigger}
-            smallCubeScale={cube3Settings.smallCubeScale}
-            shuffleTrigger={cube3Settings.shuffleTrigger} setShuffleTrigger={cube3Settings.setShuffleTrigger} positionsResetTrigger={cube3Settings.positionsResetTrigger}
-            cubeLevel={cubeLevelMap[cube3Settings.cubeLevel]} cubeStyle={cube3Settings.cubeStyle}
-            cubePosition={cubePositions[2]}
-            hasOrbit={true}
-            orbitSemiMajorAxis={3}
-            orbitSemiMinorAxis={2.5}
-            orbitSpeed={0.3}
-            orbitDirection={1}
-            orbitPlane="xy"
-            baseScale={0.5}
-            scaleWithDistance={true}
-            minScale={0.40}
-            maxScale={0.60}
-          />
-
           <CameraControls rotating={sceneRotating} direction={sceneDirection} speed={sceneSpeed} sceneResetTrigger={sceneResetTrigger} controlsRef={cameraControlsRef}
                           targetAngle={targetCameraAngle} onAngleReached={() => setTargetCameraAngle(null)}
+          />
+
+          <SceneRotation
+            rotating={sceneRotating}
+            direction={sceneDirection}
+            speed={sceneSpeed}
+            groupRef={sceneGroupRef}
           />
 
         </Canvas>
