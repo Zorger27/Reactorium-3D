@@ -1985,7 +1985,7 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
               baseScale={0.5}
               scaleWithDistance={true}
               minScale={0.40}
-              maxScale={0.60}
+              maxScale={0.50}
             />
 
             {/* Куб 2 - в центре, самый большой */}
