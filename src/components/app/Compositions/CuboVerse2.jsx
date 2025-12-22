@@ -1982,7 +1982,7 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
               orbitSpeed={0.3}
               orbitDirection={-1}
               orbitPlane="xz"
-              baseScale={0.5}
+              baseScale={0.45}
               scaleWithDistance={true}
               minScale={0.40}
               maxScale={0.50}
@@ -2025,7 +2025,7 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
               baseScale={0.35}
               scaleWithDistance={true}
               minScale={0.40}
-              maxScale={0.60}
+              maxScale={0.50}
             />
 
           </group>
