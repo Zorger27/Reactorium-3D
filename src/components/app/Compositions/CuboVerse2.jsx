@@ -1961,7 +1961,7 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
           {/* Группа для всей сцены с кубами и орбитами */}
           <group ref={sceneGroupRef} rotation={[degreesToRadians(10), 0, 0]}>
 
-            {/* Орбиты для кубов 2 и 3 */}
+            {/* Орбиты для кубов 1 и 3 */}
             <OrbitLines />
 
             {/* Три куба */}
