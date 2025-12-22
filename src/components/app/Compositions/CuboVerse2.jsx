@@ -1680,12 +1680,12 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
   // Компонент для отображения орбит
   const OrbitLines = () => {
     // Параметры орбиты для куба 3 (правый)
-    const semiMajorAxis2 = 3;
-    const semiMinorAxis2 = 2.5;
+    const semiMajorAxis2 = 2.5;
+    const semiMinorAxis2 = 2;
 
     // Параметры орбиты для куба 1 (левый)
-    const semiMajorAxis1 = 4.0;
-    const semiMinorAxis1 = 3.0;
+    const semiMajorAxis1 = 3.5;
+    const semiMinorAxis1 = 2.5;
 
     // Создаём точки для орбиты куба 3 (вертикальная орбита в плоскости XY)
     const orbitPoints2 = useMemo(() => {
@@ -1977,8 +1977,8 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
               cubeLevel={cubeLevelMap[cube1Settings.cubeLevel]} cubeStyle={cube1Settings.cubeStyle}
               cubePosition={cubePositions[0]}
               hasOrbit={true}
-              orbitSemiMajorAxis={4.0}
-              orbitSemiMinorAxis={3.0}
+              orbitSemiMajorAxis={3.5}
+              orbitSemiMinorAxis={2.5}
               orbitSpeed={0.3}
               orbitDirection={-1}
               orbitPlane="xz"
@@ -1989,7 +1989,7 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
             />
 
             {/* Куб 2 - в центре, самый большой */}
-            <group scale={[0.7, 0.7, 0.7]}>
+            <group scale={[0.6, 0.6, 0.6]}>
               <CubeGroup
                 cubeId={2} onHover={setHoveredCube} groupRefProp={cube2Ref} key="cube2" groupSize={groupSize}
                 gap={cube2Settings.gap}
@@ -2017,8 +2017,8 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
               cubeLevel={cubeLevelMap[cube3Settings.cubeLevel]} cubeStyle={cube3Settings.cubeStyle}
               cubePosition={cubePositions[2]}
               hasOrbit={true}
-              orbitSemiMajorAxis={3}
-              orbitSemiMinorAxis={2.5}
+              orbitSemiMajorAxis={2.5}
+              orbitSemiMinorAxis={2}
               orbitSpeed={0.3}
               orbitDirection={1}
               orbitPlane="xy"
