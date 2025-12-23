@@ -1346,9 +1346,7 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
   useEffect(() => {
     const checkMobile = () => {
       // Проверяем по ширине экрана и наличию touch events
-      const mobileCheck = window.innerWidth <= 768 ||
-        ('ontouchstart' in window) ||
-        (navigator.maxTouchPoints > 0);
+      const mobileCheck = window.innerWidth <= 768 || ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
       setIsMobile(mobileCheck);
     };
 
@@ -1716,7 +1714,7 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
   const arrowShaftTexture = useLoader(TextureLoader, String(smallCube06));
 
   // Компонент стрелки над кубом
-  const ArrowIndicator = ({ cubeRef, coneTexture, shaftTexture, baseArrowHeight = 1.3, arrowSizeMultiplier = 1.2 }) => {
+  const ArrowIndicator = ({ cubeRef, coneTexture, shaftTexture, baseArrowHeight = 1.3, arrowSizeMultiplier = 1.2, minArrowHeight = 0.8, minArrowScale = 0.3 }) => {
     const arrowRef = useRef(null);
 
     useFrame(() => {
@@ -1727,12 +1725,14 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
         // Получаем масштаб куба
         const cubeScale = cubeRef.current.scale.x;
 
-        // Адаптивная высота стрелки с индивидуальным базовым значением
-        const arrowHeight = baseArrowHeight * cubeScale;
+        // Адаптивная высота: baseArrowHeight масштабируется, но не меньше minArrowHeight
+        const scaledHeight = baseArrowHeight * cubeScale;
+        const arrowHeight = Math.max(scaledHeight, minArrowHeight);
         arrowRef.current.position.y += arrowHeight;
 
-        // Масштаб стрелки с индивидуальным множителем
-        const arrowScale = cubeScale * arrowSizeMultiplier;
+        // Масштаб стрелки: arrowSizeMultiplier масштабируется, но не меньше minArrowScale
+        const scaledSize = cubeScale * arrowSizeMultiplier;
+        const arrowScale = Math.max(scaledSize, minArrowScale);
         arrowRef.current.scale.set(arrowScale, arrowScale, arrowScale);
       }
     });
@@ -2039,17 +2039,20 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
           {/* Стрелка над кубом при hover - ВНЕ группы sceneGroupRef */}
           {!isMobile && hoveredCube === 1 && (
             <ArrowIndicator
-              cubeRef={cube1Ref} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture} baseArrowHeight={1.6} arrowSizeMultiplier={2.0}
+              cubeRef={cube1Ref} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture}
+              baseArrowHeight={0.88} arrowSizeMultiplier={0.8} minArrowHeight={0.88} minArrowScale={0.4}
             />
           )}
           {!isMobile && hoveredCube === 2 && (
             <ArrowIndicator
-              cubeRef={cube2Ref} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture} baseArrowHeight={1.9} arrowSizeMultiplier={0.9}
+              cubeRef={cube2Ref} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture}
+              baseArrowHeight={1.9} arrowSizeMultiplier={0.9} minArrowHeight={1.0} minArrowScale={0.8}
             />
           )}
           {!isMobile && hoveredCube === 3 && (
             <ArrowIndicator
-              cubeRef={cube3Ref} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture} baseArrowHeight={3.0} arrowSizeMultiplier={3.0}
+              cubeRef={cube3Ref} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture}
+              baseArrowHeight={0.6} arrowSizeMultiplier={0.8} minArrowHeight={0.6} minArrowScale={0.4}
             />
           )}
 
