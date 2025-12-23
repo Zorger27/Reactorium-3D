@@ -1984,16 +1984,8 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
               shuffleTrigger={cube1Settings.shuffleTrigger} setShuffleTrigger={cube1Settings.setShuffleTrigger} positionsResetTrigger={cube1Settings.positionsResetTrigger}
               cubeLevel={cubeLevelMap[cube1Settings.cubeLevel]} cubeStyle={cube1Settings.cubeStyle}
               cubePosition={cubePositions[0]}
-              hasOrbit={true}
-              orbitSemiMajorAxis={3.5}
-              orbitSemiMinorAxis={2.5}
-              orbitSpeed={0.3}
-              orbitDirection={-1}
-              orbitPlane="xz"
-              baseScale={0.45}
-              scaleWithDistance={true}
-              minScale={0.40}
-              maxScale={0.50}
+              hasOrbit={true} orbitSemiMajorAxis={3.5} orbitSemiMinorAxis={2.5} orbitSpeed={0.3} orbitDirection={-1} orbitPlane="xz"
+              baseScale={0.45} scaleWithDistance={true} minScale={0.40} maxScale={0.50}
               showFrame={selectedCube === 1}
             />
 
@@ -2026,16 +2018,8 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
               shuffleTrigger={cube3Settings.shuffleTrigger} setShuffleTrigger={cube3Settings.setShuffleTrigger} positionsResetTrigger={cube3Settings.positionsResetTrigger}
               cubeLevel={cubeLevelMap[cube3Settings.cubeLevel]} cubeStyle={cube3Settings.cubeStyle}
               cubePosition={cubePositions[2]}
-              hasOrbit={true}
-              orbitSemiMajorAxis={2.5}
-              orbitSemiMinorAxis={2}
-              orbitSpeed={0.3}
-              orbitDirection={1}
-              orbitPlane="xy"
-              baseScale={0.35}
-              scaleWithDistance={true}
-              minScale={0.40}
-              maxScale={0.50}
+              hasOrbit={true} orbitSemiMajorAxis={2.5} orbitSemiMinorAxis={2} orbitSpeed={0.3} orbitDirection={1} orbitPlane="xy"
+              baseScale={0.35} scaleWithDistance={true} minScale={0.40} maxScale={0.50}
               showFrame={selectedCube === 3}
             />
 
