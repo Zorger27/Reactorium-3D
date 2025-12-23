@@ -1293,7 +1293,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
 
     let size;
     if (cubeLevel === 1) {
-      // Один куб: просто размер одного кубика
+      // Один куб
       size = (1.3 * singleCubeSize + smallCubeScale + gap) * 0.6;
     } else if (cubeLevel === 8) {
       // 2x2x2: 2 кубика
@@ -1333,13 +1333,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
       {/* Красный каркас выделения */}
       {showFrame && (
         <lineSegments geometry={frameGeometry}>
-          <lineBasicMaterial
-            color="red"
-            transparent
-            opacity={0.9}
-            linewidth={2}
-            depthTest={true}
-          />
+          <lineBasicMaterial color="red" transparent opacity={0.9} linewidth={2} depthTest={true}/>
         </lineSegments>
       )}
 
