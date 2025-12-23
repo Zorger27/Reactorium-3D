@@ -370,13 +370,20 @@ const CameraControls = ({ rotating, direction, speed, controlsRef,
 };
 
 // Компонент для управления вращением сцены
-const SceneRotation = ({ rotating, direction, speed, groupRef }) => {
-  useFrame((_, delta) => {
+const SceneRotation = ({ rotating, direction, speed, groupRef, resetTrigger }) => {
+  useFrame(() => {
     if (groupRef.current && rotating) {
-      const actualSpeed = (speed / 10) * 0.025 * delta;
+      const actualSpeed = (speed / 10) * 0.025;
       groupRef.current.rotation.y += direction * actualSpeed;
     }
   });
+
+  useEffect(() => {
+    if (groupRef.current) {
+      groupRef.current.rotation.y = 0;
+    }
+  }, [resetTrigger, groupRef]);
+
   return null;
 };
 
@@ -462,7 +469,9 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
                      baseScale = 1,           // Базовый масштаб куба
                      scaleWithDistance = false, // Масштабировать ли в зависимости от расстояния
                      minScale = 0.5,          // Минимальный масштаб (на дальней точке)
-                     maxScale = 1.0           // Максимальный масштаб (на ближней точке)
+                     maxScale = 1.0,           // Максимальный масштаб (на ближней точке)
+                     // Новый параметр для отображения каркаса
+                     showFrame = false
                    }) => {
   const groupRef = useRef(null);
 
@@ -1275,6 +1284,41 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
 
   const edgesGeometry = useMemo(() => new THREE.EdgesGeometry(geometry), [geometry]);
 
+  // Вычисляем размер каркаса для выделения всей группы
+  const frameSize = useMemo(() => {
+    const cubesPerSide = cubeLevel === 1 ? 1 : (cubeLevel === 8 ? 2 : 3);
+
+    // ВАЖНО: используем те же формулы, что и для расчёта cubeSize в basePositions
+    // const step = ((groupSize - gap * (cubesPerSide - 1)) / cubesPerSide) * smallCubeScale + gap;
+
+    const step = (groupSize - gap * (cubesPerSide - 1)) / cubesPerSide + gap / cubesPerSide * 2
+
+      let size;
+    if (cubeLevel === 1) {
+      // Один куб: просто размер одного кубика с учётом scale
+      size = step * 1.05;
+    } else if (cubeLevel === 8) {
+      // 2x2x2: 2 кубика + 1 gap между ними
+      // const singleCubeSize = ((groupSize - gap * (cubesPerSide - 1)) / cubesPerSide) * smallCubeScale;
+      // size = (2 * singleCubeSize + gap) * 1.02;
+
+      size = 2 * step * 1.05;
+    } else {
+      // 3x3x3: 3 кубика + 2 gap между ними
+      // const singleCubeSize = ((groupSize - gap * (cubesPerSide - 1)) / cubesPerSide) * smallCubeScale;
+      // size = (3 * singleCubeSize + 2 * gap) * 1.02;
+
+      size = 3 * step * 1.05;
+    }
+
+    return size;
+  }, [cubeLevel, groupSize, gap, smallCubeScale]);
+
+  // Создаём геометрию каркаса
+  const frameGeometry = useMemo(() => {
+    return new THREE.EdgesGeometry(new THREE.BoxGeometry(frameSize, frameSize, frameSize));
+  }, [frameSize]);
+
   return (
     <group
       ref={groupRef}
@@ -1293,6 +1337,20 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
           )}
         </group>
       ))}
+
+      {/* Красный каркас выделения */}
+      {showFrame && (
+        <lineSegments geometry={frameGeometry}>
+          <lineBasicMaterial
+            color="red"
+            transparent
+            opacity={0.9}
+            linewidth={2}
+            depthTest={true}
+          />
+        </lineSegments>
+      )}
+
     </group>
   );
 };
@@ -1658,10 +1716,32 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
   const arrowShaftTexture = useLoader(TextureLoader, String(smallCube06));
 
   // Компонент стрелки над кубом
-  const ArrowIndicator = ({ position, coneTexture, shaftTexture }) => {
+  const ArrowIndicator = ({ cubeRef, coneTexture, shaftTexture }) => {
+    const arrowRef = useRef(null);
+
+    useFrame(() => {
+      if (cubeRef?.current && arrowRef.current) {
+        // Копируем позицию куба
+        arrowRef.current.position.copy(cubeRef.current.position);
+
+        // Получаем масштаб куба
+        const cubeScale = cubeRef.current.scale.x;
+
+        // Адаптивная высота стрелки в зависимости от масштаба
+        // Базовая высота 1.4 для Куба 2 (масштаб ~0.6)
+        // Для маленьких кубов (масштаб ~0.4) высота будет ~0.74
+        const arrowHeight = 1.4 * (cubeScale / 0.6);
+        arrowRef.current.position.y += arrowHeight;
+
+        // Масштаб стрелки: для больших кубов - больше, для маленьких - меньше
+        // Базовый масштаб стрелки подстраивается под куб
+        const arrowScale = cubeScale * 1.2; // Множитель 1.2 чтобы стрелка была чуть заметнее
+        arrowRef.current.scale.set(arrowScale, arrowScale, arrowScale);
+      }
+    });
+
     return (
-      <group position={[position[0], position[1] + 2.3, position[2]]}>
-        {/* Конус стрелки */}
+      <group ref={arrowRef}>
         <mesh rotation={[Math.PI, 0, 0]}>
           <coneGeometry args={[0.15, 0.4, 8]} />
           {/*<meshBasicMaterial color="red" />*/}
@@ -1892,67 +1972,9 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
 
       <div ref={setRefs}>
         <Canvas shadows style={canvasStyle} gl={{ antialias: true, toneMapping: THREE.NoToneMapping, logarithmicDepthBuffer: true }}>
-          <perspectiveCamera makeDefault position={[0, 0, 12]}
-                             fov={75} near={0.1} far={1000}
+          <perspectiveCamera makeDefault position={[0, 0, 12]} fov={75} near={0.1} far={1000}
           />
           <ambientLight intensity={0.6} />
-
-          {/* Куб 1: свет + тень */}
-          {selectedCube === 1 && (
-            <>
-              <pointLight
-                position={[cubePositions[0][0], cubePositions[0][1] + 7, cubePositions[0][2]]}
-                intensity={1.5}
-                distance={10}
-                decay={2}
-                castShadow
-                shadow-mapSize-width={2048}
-                shadow-mapSize-height={2048}
-              />
-              <mesh position={[cubePositions[0][0], -groupSize / 2 - 0.5, cubePositions[0][2]]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-                <planeGeometry args={[5, 5]} />
-                <shadowMaterial opacity={0.3} />
-              </mesh>
-            </>
-          )}
-
-          {/* Куб 2: свет + тень */}
-          {selectedCube === 2 && (
-            <>
-              <pointLight
-                position={[cubePositions[1][0], cubePositions[1][1] + 7, cubePositions[1][2]]}
-                intensity={1.5}
-                distance={10}
-                decay={2}
-                castShadow
-                shadow-mapSize-width={2048}
-                shadow-mapSize-height={2048}
-              />
-              <mesh position={[cubePositions[1][0], -groupSize / 2 - 0.5, cubePositions[1][2]]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-                <planeGeometry args={[5, 5]} />
-                <shadowMaterial opacity={0.3} />
-              </mesh>
-            </>
-          )}
-
-          {/* Куб 3: свет + тень */}
-          {selectedCube === 3 && (
-            <>
-              <pointLight
-                position={[cubePositions[2][0], cubePositions[2][1] + 7, cubePositions[2][2]]}
-                intensity={1.5}
-                distance={10}
-                decay={2}
-                castShadow
-                shadow-mapSize-width={2048}
-                shadow-mapSize-height={2048}
-              />
-              <mesh position={[cubePositions[2][0], -groupSize / 2 - 0.5, cubePositions[2][2]]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-                <planeGeometry args={[5, 5]} />
-                <shadowMaterial opacity={0.3} />
-              </mesh>
-            </>
-          )}
 
           <SceneBackground imagePath={backgroundMap[canvasBackground]} canvasFullscreen={canvasFullscreen}/>
 
@@ -1986,6 +2008,7 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
               scaleWithDistance={true}
               minScale={0.40}
               maxScale={0.50}
+              showFrame={selectedCube === 1}
             />
 
             {/* Куб 2 - в центре, самый большой */}
@@ -2002,6 +2025,7 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
                 cubePosition={cubePositions[1]}
                 hasOrbit={false}
                 baseScale={1.0}
+                showFrame={selectedCube === 2}
               />
             </group>
 
@@ -2026,24 +2050,23 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
               scaleWithDistance={true}
               minScale={0.40}
               maxScale={0.50}
+              showFrame={selectedCube === 3}
             />
 
           </group>
 
-          {/* Стрелка над кубом при hover */}
-          {hoveredCube > 0 && (
-            <ArrowIndicator position={cubePositions[hoveredCube - 1]} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture}/>
-          )}
+          {/* Стрелка над кубом при hover - ВНЕ группы sceneGroupRef */}
+          {hoveredCube === 1 && (<ArrowIndicator cubeRef={cube1Ref} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture}/>)}
+          {hoveredCube === 2 && (<ArrowIndicator cubeRef={cube2Ref} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture}/>)}
+          {hoveredCube === 3 && (<ArrowIndicator cubeRef={cube3Ref} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture}/>)}
 
           <CameraControls rotating={sceneRotating} direction={sceneDirection} speed={sceneSpeed} sceneResetTrigger={sceneResetTrigger} controlsRef={cameraControlsRef}
                           targetAngle={targetCameraAngle} onAngleReached={() => setTargetCameraAngle(null)}
           />
 
           <SceneRotation
-            rotating={sceneRotating}
-            direction={sceneDirection}
-            speed={sceneSpeed}
-            groupRef={sceneGroupRef}
+            rotating={sceneRotating} direction={sceneDirection} speed={sceneSpeed}
+            groupRef={sceneGroupRef} resetTrigger={sceneResetTrigger}
           />
 
         </Canvas>
