@@ -254,21 +254,21 @@ const PHOTO_CONFIG_LEVEL_3 = [
 const DEFAULT_CUBE_CONFIGS = {
   1: {
     gap: 0.25, smallCubeScale: 1,
-    rotationX: 90, rotationY: 0, rotationZ: 0,
+    rotationX: 90, rotationY: 20, rotationZ: 0,
     speed: 5, direction: 1, isRotating: true,
-    cubeLevel: 1, cubeStyle: "photo"
+    cubeLevel: 1, cubeStyle: "texture"
   },
   2: {
-    gap: 0.2, smallCubeScale: 0.8,
-    rotationX: 90, rotationY: 20, rotationZ: 0,
+    gap: 0.4, smallCubeScale: 0.8,
+    rotationX: 90, rotationY: 0, rotationZ: 0,
     speed: 2, direction: -1, isRotating: true,
-    cubeLevel: 3, cubeStyle: "texture"
+    cubeLevel: 3, cubeStyle: "photo"
   },
   3: {
-    gap: 0, smallCubeScale: 1,
+    gap: 0.2, smallCubeScale: 1,
     rotationX: 100, rotationY: 120, rotationZ: 0,
     speed: 8, direction: 1, isRotating: true,
-    cubeLevel: 3, cubeStyle: "color"
+    cubeLevel: 2, cubeStyle: "color"
   }
 };
 
