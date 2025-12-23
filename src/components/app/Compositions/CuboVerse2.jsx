@@ -1949,7 +1949,7 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
 
         {/* === Панель сохранения === */}
         <SavePanel canvasRef={internalRef} isRecording={isRecording} onRecordingChange={setIsRecording} isOpen={isSaveMenuOpen} onToggle={setIsSaveMenuOpen}
-                   projectTitle={t('project5.name')}
+                   projectTitle={t('project5.prn-cuboverse2')}
                    footerText={t('save.created')}
                    siteUrl="https://reactorium-3d.vercel.app"
         />

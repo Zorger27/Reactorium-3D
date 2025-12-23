@@ -65,7 +65,9 @@
     "name": "Compositions",
     "disc": "A space of light and motion, where cubes shine, transform, and give birth to new visions",
     "name-orbitron": "Orbitron",
-    "name-cuboverse2": "CuboVerse2"
+    "name-cuboverse2": "CuboVerse2",
+    "prn-orbitron": "Orbitron v.1.0",
+    "prn-cuboverse2": "CuboVerse v.2.0"
   },
   "about": {
     "title": "Reactorium 3D",
