@@ -1706,11 +1706,9 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
   };
 
   // Загружаем текстуру (Конус стрелки)
-  // const arrowConeTexture = useLoader(TextureLoader, String(smallCube04));
   const arrowConeTexture = useLoader(TextureLoader, String(smallCube03));
 
   // Загружаем текстуру (Стержень стрелки)
-  // const arrowShaftTexture = useLoader(TextureLoader, String(small2Cube25));
   const arrowShaftTexture = useLoader(TextureLoader, String(smallCube06));
 
   // Компонент стрелки над кубом
@@ -2044,7 +2042,7 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
             {!isMobile && hoveredCube === 2 && (
               <ArrowIndicator
                 cubeRef={cube2Ref} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture}
-                baseArrowHeight={1.9} arrowSizeMultiplier={0.9} minArrowHeight={1.0} minArrowScale={0.8}
+                baseArrowHeight={1.7} arrowSizeMultiplier={0.7} minArrowHeight={1.0} minArrowScale={0.4}
               />
             )}
             {!isMobile && hoveredCube === 3 && (
