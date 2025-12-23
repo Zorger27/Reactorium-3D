@@ -1284,12 +1284,12 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
 
   const edgesGeometry = useMemo(() => new THREE.EdgesGeometry(geometry), [geometry]);
 
-  // Вычисляем размер каркаса для выделения всей группы
-  const frameSize = useMemo(() => {
+  // Создаём геометрию каркаса
+  const frameGeometry = useMemo(() => {
     const cubesPerSide = cubeLevel === 1 ? 1 : (cubeLevel === 8 ? 2 : 3);
 
     // ВАЖНО: используем те же формулы, что и для расчёта cubeSize в basePositions
-    const singleCubeSize = (groupSize - gap * (cubesPerSide - 1)) / cubesPerSide + gap / cubesPerSide * 2
+    const singleCubeSize = (groupSize - gap * (cubesPerSide - 1)) / cubesPerSide + gap / cubesPerSide * 2;
 
     let size;
     if (cubeLevel === 1) {
@@ -1303,13 +1303,9 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
       size = (1.3 * singleCubeSize + smallCubeScale + gap) * 1.5;
     }
 
-    return size;
+    const boxGeometry = new THREE.BoxGeometry(size, size, size);
+    return new THREE.EdgesGeometry(boxGeometry);
   }, [cubeLevel, groupSize, gap, smallCubeScale]);
-
-  // Создаём геометрию каркаса
-  const frameGeometry = useMemo(() => {
-    return new THREE.EdgesGeometry(new THREE.BoxGeometry(frameSize, frameSize, frameSize));
-  }, [frameSize]);
 
   return (
     <group
@@ -1702,7 +1698,7 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
   const arrowShaftTexture = useLoader(TextureLoader, String(smallCube06));
 
   // Компонент стрелки над кубом
-  const ArrowIndicator = ({ cubeRef, coneTexture, shaftTexture }) => {
+  const ArrowIndicator = ({ cubeRef, coneTexture, shaftTexture, baseArrowHeight = 1.3, arrowSizeMultiplier = 1.2 }) => {
     const arrowRef = useRef(null);
 
     useFrame(() => {
@@ -1713,15 +1709,12 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
         // Получаем масштаб куба
         const cubeScale = cubeRef.current.scale.x;
 
-        // Адаптивная высота стрелки в зависимости от масштаба
-        // Базовая высота 1.4 для Куба 2 (масштаб ~0.6)
-        // Для маленьких кубов (масштаб ~0.4) высота будет ~0.74
-        const arrowHeight = 1.4 * (cubeScale / 0.6);
+        // Адаптивная высота стрелки с индивидуальным базовым значением
+        const arrowHeight = baseArrowHeight * cubeScale;
         arrowRef.current.position.y += arrowHeight;
 
-        // Масштаб стрелки: для больших кубов - больше, для маленьких - меньше
-        // Базовый масштаб стрелки подстраивается под куб
-        const arrowScale = cubeScale * 1.2; // Множитель 1.2 чтобы стрелка была чуть заметнее
+        // Масштаб стрелки с индивидуальным множителем
+        const arrowScale = cubeScale * arrowSizeMultiplier;
         arrowRef.current.scale.set(arrowScale, arrowScale, arrowScale);
       }
     });
@@ -2026,9 +2019,33 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
           </group>
 
           {/* Стрелка над кубом при hover - ВНЕ группы sceneGroupRef */}
-          {hoveredCube === 1 && (<ArrowIndicator cubeRef={cube1Ref} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture}/>)}
-          {hoveredCube === 2 && (<ArrowIndicator cubeRef={cube2Ref} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture}/>)}
-          {hoveredCube === 3 && (<ArrowIndicator cubeRef={cube3Ref} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture}/>)}
+          {hoveredCube === 1 && (
+            <ArrowIndicator
+              cubeRef={cube1Ref}
+              coneTexture={arrowConeTexture}
+              shaftTexture={arrowShaftTexture}
+              baseArrowHeight={1.6}      // Индивидуальная высота для Куба 1
+              arrowSizeMultiplier={2.0}  // Индивидуальный размер для Куба 1
+            />
+          )}
+          {hoveredCube === 2 && (
+            <ArrowIndicator
+              cubeRef={cube2Ref}
+              coneTexture={arrowConeTexture}
+              shaftTexture={arrowShaftTexture}
+              baseArrowHeight={1.9}      // Индивидуальная высота для Куба 2
+              arrowSizeMultiplier={0.9}  // Индивидуальный размер для Куба 2
+            />
+          )}
+          {hoveredCube === 3 && (
+            <ArrowIndicator
+              cubeRef={cube3Ref}
+              coneTexture={arrowConeTexture}
+              shaftTexture={arrowShaftTexture}
+              baseArrowHeight={3.0}      // Индивидуальная высота для Куба 3
+              arrowSizeMultiplier={3.0}  // Индивидуальный размер для Куба 3
+            />
+          )}
 
           <CameraControls rotating={sceneRotating} direction={sceneDirection} speed={sceneSpeed} sceneResetTrigger={sceneResetTrigger} controlsRef={cameraControlsRef}
                           targetAngle={targetCameraAngle} onAngleReached={() => setTargetCameraAngle(null)}
