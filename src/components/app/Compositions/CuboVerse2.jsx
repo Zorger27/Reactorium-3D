@@ -2039,20 +2039,17 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
           {/* Стрелка над кубом при hover - ВНЕ группы sceneGroupRef */}
           {!isMobile && hoveredCube === 1 && (
             <ArrowIndicator
-              cubeRef={cube1Ref} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture}
-              baseArrowHeight={1.6} arrowSizeMultiplier={2.0}
+              cubeRef={cube1Ref} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture} baseArrowHeight={1.6} arrowSizeMultiplier={2.0}
             />
           )}
           {!isMobile && hoveredCube === 2 && (
             <ArrowIndicator
-              cubeRef={cube2Ref} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture}
-              baseArrowHeight={1.9} arrowSizeMultiplier={0.9}
+              cubeRef={cube2Ref} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture} baseArrowHeight={1.9} arrowSizeMultiplier={0.9}
             />
           )}
           {!isMobile && hoveredCube === 3 && (
             <ArrowIndicator
-              cubeRef={cube3Ref} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture}
-              baseArrowHeight={3.0} arrowSizeMultiplier={3.0}
+              cubeRef={cube3Ref} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture} baseArrowHeight={3.0} arrowSizeMultiplier={3.0}
             />
           )}
 
