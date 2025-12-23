@@ -1289,26 +1289,18 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     const cubesPerSide = cubeLevel === 1 ? 1 : (cubeLevel === 8 ? 2 : 3);
 
     // ВАЖНО: используем те же формулы, что и для расчёта cubeSize в basePositions
-    // const step = ((groupSize - gap * (cubesPerSide - 1)) / cubesPerSide) * smallCubeScale + gap;
+    const singleCubeSize = (groupSize - gap * (cubesPerSide - 1)) / cubesPerSide + gap / cubesPerSide * 2
 
-    const step = (groupSize - gap * (cubesPerSide - 1)) / cubesPerSide + gap / cubesPerSide * 2
-
-      let size;
+    let size;
     if (cubeLevel === 1) {
-      // Один куб: просто размер одного кубика с учётом scale
-      size = step * 1.05;
+      // Один куб: просто размер одного кубика
+      size = (1.3 * singleCubeSize + smallCubeScale + gap) * 0.6;
     } else if (cubeLevel === 8) {
-      // 2x2x2: 2 кубика + 1 gap между ними
-      // const singleCubeSize = ((groupSize - gap * (cubesPerSide - 1)) / cubesPerSide) * smallCubeScale;
-      // size = (2 * singleCubeSize + gap) * 1.02;
-
-      size = 2 * step * 1.05;
-    } else {
-      // 3x3x3: 3 кубика + 2 gap между ними
-      // const singleCubeSize = ((groupSize - gap * (cubesPerSide - 1)) / cubesPerSide) * smallCubeScale;
-      // size = (3 * singleCubeSize + 2 * gap) * 1.02;
-
-      size = 3 * step * 1.05;
+      // 2x2x2: 2 кубика
+      size = (1.3 * singleCubeSize + smallCubeScale + gap) * 1.05;
+    } else if (cubeLevel === 27) {
+      // 3x3x3: 3 кубика
+      size = (1.3 * singleCubeSize + smallCubeScale + gap) * 1.5;
     }
 
     return size;
