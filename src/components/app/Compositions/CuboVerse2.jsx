@@ -470,7 +470,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
                      scaleWithDistance = false, // Масштабировать ли в зависимости от расстояния
                      minScale = 0.5,          // Минимальный масштаб (на дальней точке)
                      maxScale = 1.0,           // Максимальный масштаб (на ближней точке)
-                     // Новый параметр для отображения каркаса
+                     // Параметр для отображения каркаса
                      showFrame = false
                    }) => {
   const groupRef = useRef(null);
@@ -2034,27 +2034,27 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
               showFrame={selectedCube === 3}
             />
 
-          </group>
+            {/* Стрелки над кубами - ВНУТРИ группы сцены */}
+            {!isMobile && hoveredCube === 1 && (
+              <ArrowIndicator
+                cubeRef={cube1Ref} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture}
+                baseArrowHeight={0.88} arrowSizeMultiplier={0.8} minArrowHeight={0.88} minArrowScale={0.4}
+              />
+            )}
+            {!isMobile && hoveredCube === 2 && (
+              <ArrowIndicator
+                cubeRef={cube2Ref} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture}
+                baseArrowHeight={1.9} arrowSizeMultiplier={0.9} minArrowHeight={1.0} minArrowScale={0.8}
+              />
+            )}
+            {!isMobile && hoveredCube === 3 && (
+              <ArrowIndicator
+                cubeRef={cube3Ref} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture}
+                baseArrowHeight={0.6} arrowSizeMultiplier={0.8} minArrowHeight={0.6} minArrowScale={0.4}
+              />
+            )}
 
-          {/* Стрелка над кубом при hover - ВНЕ группы sceneGroupRef */}
-          {!isMobile && hoveredCube === 1 && (
-            <ArrowIndicator
-              cubeRef={cube1Ref} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture}
-              baseArrowHeight={0.88} arrowSizeMultiplier={0.8} minArrowHeight={0.88} minArrowScale={0.4}
-            />
-          )}
-          {!isMobile && hoveredCube === 2 && (
-            <ArrowIndicator
-              cubeRef={cube2Ref} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture}
-              baseArrowHeight={1.9} arrowSizeMultiplier={0.9} minArrowHeight={1.0} minArrowScale={0.8}
-            />
-          )}
-          {!isMobile && hoveredCube === 3 && (
-            <ArrowIndicator
-              cubeRef={cube3Ref} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture}
-              baseArrowHeight={0.6} arrowSizeMultiplier={0.8} minArrowHeight={0.6} minArrowScale={0.4}
-            />
-          )}
+          </group>
 
           <CameraControls rotating={sceneRotating} direction={sceneDirection} speed={sceneSpeed} sceneResetTrigger={sceneResetTrigger} controlsRef={cameraControlsRef}
                           targetAngle={targetCameraAngle} onAngleReached={() => setTargetCameraAngle(null)}
