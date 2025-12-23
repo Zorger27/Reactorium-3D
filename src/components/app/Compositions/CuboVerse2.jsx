@@ -1340,6 +1340,24 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
 const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref) => {
   const { t } = useTranslation();
 
+  const [isMobile, setIsMobile] = useState(false);
+
+  // EFFECT 11: Определяем, является ли устройство мобильным
+  useEffect(() => {
+    const checkMobile = () => {
+      // Проверяем по ширине экрана и наличию touch events
+      const mobileCheck = window.innerWidth <= 768 ||
+        ('ontouchstart' in window) ||
+        (navigator.maxTouchPoints > 0);
+      setIsMobile(mobileCheck);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const canvasStyle = useResponsiveStyle({
     default: {
       height: 'calc(100vh - 225px)',
@@ -1526,7 +1544,7 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
     scene04: small2Cube24
   };
 
-  // EFFECT 11: useEffect для закрытия при клике вне меню!!!!!
+  // EFFECT 12: useEffect для закрытия при клике вне меню!!!!!
   useEffect(() => {
     if (!isShuffleMenuOpen && !isClearMenuOpen && !isSaveMenuOpen && !isCubeStyleMenuOpen && !isCanvasBackgroundMenuOpen) return;
 
@@ -1550,7 +1568,7 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
     };
   }, [isShuffleMenuOpen, isClearMenuOpen, isSaveMenuOpen, isCubeStyleMenuOpen, isCanvasBackgroundMenuOpen, isRecording]);
 
-  // EFFECT 12: Когда открывается меню перемешивания — закрываем остальные меню
+  // EFFECT 13: Когда открывается меню перемешивания — закрываем остальные меню
   useEffect(() => {
     if (isShuffleMenuOpen) {
       setIsClearMenuOpen(false);
@@ -1563,7 +1581,7 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
     }
   }, [isShuffleMenuOpen, isRecording]);
 
-  // EFFECT 13: Когда открывается меню очистки — закрываем остальные меню
+  // EFFECT 14: Когда открывается меню очистки — закрываем остальные меню
   useEffect(() => {
     if (isClearMenuOpen) {
       setIsShuffleMenuOpen(false);
@@ -1577,7 +1595,7 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
     }
   }, [isClearMenuOpen, isRecording]);
 
-  // EFFECT 14: Когда открывается меню сохранения — закрываем остальные меню
+  // EFFECT 15: Когда открывается меню сохранения — закрываем остальные меню
   useEffect(() => {
     if (isSaveMenuOpen) {
       setIsShuffleMenuOpen(false);
@@ -1587,7 +1605,7 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
     }
   }, [isSaveMenuOpen]);
 
-  // EFFECT 15: Когда открывается меню выбора стиля куба — закрываем остальные меню
+  // EFFECT 16: Когда открывается меню выбора стиля куба — закрываем остальные меню
   useEffect(() => {
     if (isCubeStyleMenuOpen) {
       setIsShuffleMenuOpen(false);
@@ -1601,7 +1619,7 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
     }
   }, [isCubeStyleMenuOpen, isRecording]);
 
-  // EFFECT 16: Когда открывается меню фона — закрываем остальные меню
+  // EFFECT 17: Когда открывается меню фона — закрываем остальные меню
   useEffect(() => {
     if (isCanvasBackgroundMenuOpen) {
       setIsShuffleMenuOpen(false);
@@ -2019,31 +2037,22 @@ const CuboVerse2 = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, re
           </group>
 
           {/* Стрелка над кубом при hover - ВНЕ группы sceneGroupRef */}
-          {hoveredCube === 1 && (
+          {!isMobile && hoveredCube === 1 && (
             <ArrowIndicator
-              cubeRef={cube1Ref}
-              coneTexture={arrowConeTexture}
-              shaftTexture={arrowShaftTexture}
-              baseArrowHeight={1.6}      // Индивидуальная высота для Куба 1
-              arrowSizeMultiplier={2.0}  // Индивидуальный размер для Куба 1
+              cubeRef={cube1Ref} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture}
+              baseArrowHeight={1.6} arrowSizeMultiplier={2.0}
             />
           )}
-          {hoveredCube === 2 && (
+          {!isMobile && hoveredCube === 2 && (
             <ArrowIndicator
-              cubeRef={cube2Ref}
-              coneTexture={arrowConeTexture}
-              shaftTexture={arrowShaftTexture}
-              baseArrowHeight={1.9}      // Индивидуальная высота для Куба 2
-              arrowSizeMultiplier={0.9}  // Индивидуальный размер для Куба 2
+              cubeRef={cube2Ref} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture}
+              baseArrowHeight={1.9} arrowSizeMultiplier={0.9}
             />
           )}
-          {hoveredCube === 3 && (
+          {!isMobile && hoveredCube === 3 && (
             <ArrowIndicator
-              cubeRef={cube3Ref}
-              coneTexture={arrowConeTexture}
-              shaftTexture={arrowShaftTexture}
-              baseArrowHeight={3.0}      // Индивидуальная высота для Куба 3
-              arrowSizeMultiplier={3.0}  // Индивидуальный размер для Куба 3
+              cubeRef={cube3Ref} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture}
+              baseArrowHeight={3.0} arrowSizeMultiplier={3.0}
             />
           )}
 
