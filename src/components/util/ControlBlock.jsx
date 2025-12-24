@@ -7,11 +7,12 @@ import "@/components/util/ControlBlock.scss";
 
 function ControlBlock({
                         label,
-                        icon = null, // пропс для иконки
+                        icon = null,
                         sliders = [],
                         gapConfig = null,
                         isOpen = false,
-                        onToggle
+                        onToggle,
+                        variant = "default"
                       }) {
   const { t } = useTranslation();
   const containerRef = useRef(null);
@@ -31,7 +32,7 @@ function ControlBlock({
     <div className="control-block" ref={containerRef}>
       <div className={`label-all ${isOpen ? "open" : "closed"}`}>
         <div
-          className={`control-label ${isOpen ? "open" : "closed"}`}
+          className={`control-label ${variant === "scene" ? "scene-variant" : ""} ${isOpen ? "open" : "closed"}`}
           onClick={onToggle}
         >
           {icon && <i className={`label-icon ${icon}`}></i>}

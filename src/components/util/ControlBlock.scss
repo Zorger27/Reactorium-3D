@@ -53,10 +53,6 @@
         background-color: seagreen;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
         transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border 0.2s ease-in-out, transform 0.2s ease-in-out;
-        //background-image: url("@/assets/app/VortexCube/cube3/cube3-17.webp");
-        //background-position: center;
-        //background-size: cover;
-        //background-repeat: no-repeat;
 
         &:hover {
           background: linear-gradient(to bottom, rgb(255, 255, 255), rgb(152, 152, 255));
@@ -77,6 +73,24 @@
       &.open {
         .label-text {display: inline;}
         .label-icon {display: inline;}
+      }
+
+      &.scene-variant.closed {
+        border: 1px solid #0f766e;
+        background-color: #2dd4bf;
+
+        &:hover {
+          background: linear-gradient(to bottom, #ecfeff, #5eead4);
+          color: #042f2e;
+          box-shadow: none;
+          text-shadow: none;
+          border: 1px solid #115e59;
+        }
+      }
+
+      &.scene-variant.open {
+        background: none;   // 🔥 ВАЖНО
+        border: none;
       }
     }
 

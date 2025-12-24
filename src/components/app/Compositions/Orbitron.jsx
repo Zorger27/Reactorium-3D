@@ -1,4 +1,4 @@
-import React, {forwardRef, useEffect, useMemo, useRef, useState} from "react";
+import React, {forwardRef, useCallback, useEffect, useMemo, useRef, useState} from "react";
 import "@/components/app/Compositions/Orbitron.scss"
 import { useResponsiveStyle } from "@/hooks/useResponsiveStyle.js";
 import { useLocalStorage } from "@/hooks/useLocalStorage.js";
@@ -406,26 +406,58 @@ const SceneRotation = ({ rotating, direction, speed, groupRef, resetTrigger }) =
 };
 
 // Компонент для обнаружения столкновений КУБОВ
-const CollisionDetector = ({ cubeRefs, onCollision }) => {
-  useFrame(() => {
-    // Проверяем столкновения между всеми парами кубов
-    for (let i = 0; i < cubeRefs.length; i++) {
-      for (let j = i + 1; j < cubeRefs.length; j++) {
-        const cube1 = cubeRefs[i]?.current;
-        const cube2 = cubeRefs[j]?.current;
+const CollisionDetector = ({ cubeRefs, cubeSettings, onCollision }) => {
+  const lastCollisionTime = useRef({});
+  const collisionCooldown = 1000; // Минимальное время между столкновениями (мс)
 
-        if (!cube1 || !cube2) continue;
+  useFrame(() => {
+    const now = Date.now();
+
+    // Проверяем столкновения только между кубами на орбитах
+    const orbitalCubes = [
+      { id: 1, ref: cubeRefs[0], settings: cubeSettings[0] },
+      { id: 3, ref: cubeRefs[2], settings: cubeSettings[2] },
+      { id: 4, ref: cubeRefs[3], settings: cubeSettings[3] },
+      { id: 5, ref: cubeRefs[4], settings: cubeSettings[4] },
+      { id: 6, ref: cubeRefs[5], settings: cubeSettings[5] }
+    ];
+
+    for (let i = 0; i < orbitalCubes.length; i++) {
+      for (let j = i + 1; j < orbitalCubes.length; j++) {
+        const cube1 = orbitalCubes[i];
+        const cube2 = orbitalCubes[j];
+
+        if (!cube1.ref?.current || !cube2.ref?.current) continue;
+
+        const collisionKey = `${cube1.id}-${cube2.id}`;
+
+        // Проверяем cooldown
+        if (lastCollisionTime.current[collisionKey] &&
+          now - lastCollisionTime.current[collisionKey] < collisionCooldown) {
+          continue;
+        }
 
         // Вычисляем расстояние между кубами
-        const distance = cube1.position.distanceTo(cube2.position);
+        const distance = cube1.ref.current.position.distanceTo(cube2.ref.current.position);
 
-        // Оцениваем радиус каждого куба (приблизительно)
-        const radius1 = 1.5 * cube1.scale.x; // Примерный радиус
-        const radius2 = 1.5 * cube2.scale.x;
+        // Вычисляем радиусы с учётом масштаба и размера
+        const getRadius = (cubeRef) => {
+          const scale = cubeRef.current.scale.x;
+          // Базовый радиус группы кубов (примерно половина диагонали)
+          const baseRadius = 2.0; // Подбирается экспериментально
+          return baseRadius * scale;
+        };
 
-        // Если расстояние меньше суммы радиусов - столкновение
-        if (distance < radius1 + radius2) {
-          onCollision(i + 1, j + 1); // cubeId = index + 1
+        const radius1 = getRadius(cube1.ref);
+        const radius2 = getRadius(cube2.ref);
+        const minDistance = radius1 + radius2;
+
+        // Если расстояние меньше суммы радиусов - столкновение!
+        if (distance < minDistance) {
+          console.log(`Столкновение: Куб ${cube1.id} и Куб ${cube2.id}, расстояние: ${distance.toFixed(2)}, мин: ${minDistance.toFixed(2)}`);
+
+          lastCollisionTime.current[collisionKey] = now;
+          onCollision(cube1.id, cube2.id);
         }
       }
     }
@@ -519,7 +551,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
                      maxScale = 1.0,           // Максимальный масштаб (на ближней точке)
                      // Параметр для отображения каркаса
                      showFrame = false,
-                     orbitStartAngle = 0
+                     orbitStartAngle = 0 // Начальный угол позиции куба на орбите (0 = начальная точка, Math.PI = противоположная сторона)
                    }) => {
   const groupRef = useRef(null);
 
@@ -2015,26 +2047,30 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
   };
 
   // Обработчик столкновений КУБОВ
-  const handleCollision = (cubeId1, cubeId2) => {
-    // Меняем направление для обоих кубов
-    const settings1 = cubeId1 === 1 ? cube1Settings
-      : cubeId1 === 2 ? cube2Settings
-        : cubeId1 === 3 ? cube3Settings
-          : cubeId1 === 4 ? cube4Settings
-            : cubeId1 === 5 ? cube5Settings
-              : cube6Settings;
+  const handleCollision = useCallback((cubeId1, cubeId2) => {
+    const getSettings = (id) => {
+      switch(id) {
+        case 1: return cube1Settings;
+        case 2: return cube2Settings;
+        case 3: return cube3Settings;
+        case 4: return cube4Settings;
+        case 5: return cube5Settings;
+        case 6: return cube6Settings;
+        default: return null;
+      }
+    };
 
-    const settings2 = cubeId2 === 1 ? cube1Settings
-      : cubeId2 === 2 ? cube2Settings
-        : cubeId2 === 3 ? cube3Settings
-          : cubeId2 === 4 ? cube4Settings
-            : cubeId2 === 5 ? cube5Settings
-              : cube6Settings;
+    const settings1 = getSettings(cubeId1);
+    const settings2 = getSettings(cubeId2);
 
-    // Инвертируем направление орбитального движения
+    if (!settings1 || !settings2) return;
+
+    // Инвертируем направление для обоих кубов
     settings1.setDirection(prev => -prev);
     settings2.setDirection(prev => -prev);
-  };
+
+    console.log(`Направления изменены: Куб ${cubeId1} и Куб ${cubeId2}`);
+  }, [cube1Settings, cube2Settings, cube3Settings, cube4Settings, cube5Settings, cube6Settings]);
 
   return (
     <div className="orbitron-container">
@@ -2114,45 +2150,47 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
         </div>
       )}
 
-      {/* === Панель управления скоростью СЦЕНЫ === */}
+      {/* === Панель управления СЦЕНОЙ === */}
       {!selectedCube && (
         <div className="cube-controls">
 
           {openSceneBlock === null && (
             <>
               {/* Скорость сцены */}
-              <ControlBlock label={t("control.scene-speed")} icon="fa-solid fa-gauge-simple-high" isOpen={false} onToggle={() => setOpenSceneBlock("speed")}
+              <ControlBlock variant="scene" label={t("control.scene-speed")} icon="fa-solid fa-gauge-simple-high" isOpen={false}
+                            onToggle={() => setOpenSceneBlock("speed")}
                             gapConfig={{value: sceneSpeed, min: 0, max: 10, step: 1, onChange: setSceneSpeed, ...sceneSpeedHandlers}}
               />
 
               {/* Наклон сцены */}
-              <ControlBlock
-                label={t("control.scene-tilt")} icon="fa-solid fa-angles-up" isOpen={false} onToggle={() => setOpenSceneBlock("tilt")}
-                gapConfig={{
-                  value: sceneRotationX, min: -40, max: 40, step: 1,
-                  onChange: setSceneRotationX, reset: () => setSceneRotationX(0),
-                  increase: () => setSceneRotationX(prev => Math.min(40, +(prev + 1).toFixed(2))),
-                  decrease: () => setSceneRotationX(prev => Math.max(-40, +(prev - 1).toFixed(2)))
-                }}
+              <ControlBlock variant="scene" label={t("control.scene-tilt")} icon="fa-solid fa-angles-up" isOpen={false}
+                            onToggle={() => setOpenSceneBlock("tilt")}
+                            gapConfig={{
+                            value: sceneRotationX, min: -40, max: 40, step: 1,
+                            onChange: setSceneRotationX, reset: () => setSceneRotationX(0),
+                            increase: () => setSceneRotationX(prev => Math.min(40, +(prev + 1).toFixed(2))),
+                            decrease: () => setSceneRotationX(prev => Math.max(-40, +(prev - 1).toFixed(2)))
+                          }}
               />
             </>
           )}
 
           {openSceneBlock === "speed" && (
-            <ControlBlock label={t("control.scene-speed")} icon="fa-solid fa-gauge-simple-high" isOpen={true} onToggle={() => setOpenSceneBlock(null)}
+            <ControlBlock variant="scene"  label={t("control.scene-speed")} icon="fa-solid fa-gauge-simple-high" isOpen={true}
+                          onToggle={() => setOpenSceneBlock(null)}
                           gapConfig={{value: sceneSpeed, min: 0, max: 10, step: 1, onChange: setSceneSpeed, ...sceneSpeedHandlers}}
             />
           )}
 
           {openSceneBlock === "tilt" && (
-            <ControlBlock
-              label={t("control.scene-tilt")} icon="fa-solid fa-angles-up" isOpen={true} onToggle={() => setOpenSceneBlock(null)}
-              gapConfig={{
-                value: sceneRotationX, min: -40, max: 40, step: 1,
-                onChange: setSceneRotationX, reset: () => setSceneRotationX(0),
-                increase: () => setSceneRotationX(prev => Math.min(40, +(prev + 1).toFixed(2))),
-                decrease: () => setSceneRotationX(prev => Math.max(-40, +(prev - 1).toFixed(2)))
-              }}
+            <ControlBlock variant="scene" label={t("control.scene-tilt")} icon="fa-solid fa-angles-up" isOpen={true}
+                          onToggle={() => setOpenSceneBlock(null)}
+                          gapConfig={{
+                            value: sceneRotationX, min: -40, max: 40, step: 1,
+                            onChange: setSceneRotationX, reset: () => setSceneRotationX(0),
+                            increase: () => setSceneRotationX(prev => Math.min(40, +(prev + 1).toFixed(2))),
+                            decrease: () => setSceneRotationX(prev => Math.max(-40, +(prev - 1).toFixed(2)))
+                          }}
             />
           )}
 
@@ -2381,6 +2419,7 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
           {/* Детектор столкновений */}
           <CollisionDetector
             cubeRefs={[cube1Ref, cube2Ref, cube3Ref, cube4Ref, cube5Ref, cube6Ref]}
+            cubeSettings={[cube1Settings, cube2Settings, cube3Settings, cube4Settings, cube5Settings, cube6Settings]}
             onCollision={handleCollision}
           />
 
