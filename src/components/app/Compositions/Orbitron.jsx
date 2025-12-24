@@ -281,6 +281,12 @@ const DEFAULT_CUBE_CONFIGS = {
     rotationX: 110, rotationY: 90, rotationZ: 0,
     speed: 5, direction: -1, isRotating: true,
     cubeLevel: 2, cubeStyle: "texture"
+  },
+  6: {
+    gap: 0, smallCubeScale: 1,
+    rotationX: 100, rotationY: 120, rotationZ: 0,
+    speed: 8, direction: 1, isRotating: true,
+    cubeLevel: 2, cubeStyle: "color"
   }
 };
 
@@ -483,7 +489,8 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
                      minScale = 0.5,          // Минимальный масштаб (на дальней точке)
                      maxScale = 1.0,           // Максимальный масштаб (на ближней точке)
                      // Параметр для отображения каркаса
-                     showFrame = false
+                     showFrame = false,
+                     orbitStartAngle = 0
                    }) => {
   const groupRef = useRef(null);
 
@@ -981,7 +988,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
   const firstFlipFrameRef = useRef(true);
 
   // Состояние для угла орбиты
-  const orbitAngleRef = useRef(0);
+  const orbitAngleRef = useRef(orbitStartAngle);
 
   // Состояние для динамического масштаба
   const [dynamicScale, setDynamicScale] = useState(baseScale);
@@ -1439,6 +1446,7 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
   const cube3Ref = useRef(null);
   const cube4Ref = useRef(null);
   const cube5Ref = useRef(null);
+  const cube6Ref = useRef(null);
 
   // Ref для управления камерой
   const cameraControlsRef = useRef(null);
@@ -1501,14 +1509,15 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
   const cube3Settings = getCubeSettings(3);
   const cube4Settings = getCubeSettings(4);
   const cube5Settings = getCubeSettings(5);
+  const cube6Settings = getCubeSettings(6);
 
-  // Получаем настройки активного куба (если куб выбран)
   const settings = selectedCube === 1 ? cube1Settings
     : selectedCube === 2 ? cube2Settings
       : selectedCube === 3 ? cube3Settings
         : selectedCube === 4 ? cube4Settings
           : selectedCube === 5 ? cube5Settings
-            : cube1Settings; // По умолчанию - настройки первого куба
+            : selectedCube === 6 ? cube6Settings
+              : cube1Settings; // По умолчанию - настройки первого куба
 
   const [canvasBackground, setCanvasBackground, resetCanvasBackground] = useLocalStorage("orbitronCanvasBackground", "scene02", v => v);
 
@@ -1516,6 +1525,7 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
   const [sceneRotating, setSceneRotating, resetSceneRotating] = useLocalStorage("orbitronSceneRotating", false, v => v === "true");
   const [sceneDirection, setSceneDirection, resetSceneDirection] = useLocalStorage("orbitronSceneDirection", 1, v => parseInt(v, 10));
   const [sceneSpeed, setSceneSpeed,resetSceneSpeed] = useLocalStorage("orbitronSceneSpeed", 1, parseFloat);
+  const [sceneRotationX, setSceneRotationX, resetSceneRotationX] = useLocalStorage("orbitronSceneRotationX", 10, parseFloat);
 
   // Кнопки вращения КУБА
   const handleClockwise = () => {settings.setDirection(1);settings.setIsRotating(true);};
@@ -1735,10 +1745,25 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
     cube5Settings.setPositionsResetTrigger(prev => prev + 1);
     cube5Settings.setResetTrigger(prev => !prev);
 
+    // Сброс Куба 6
+    cube6Settings.resetGap();
+    cube6Settings.resetSmallCubeScale();
+    cube6Settings.resetRotationX();
+    cube6Settings.resetRotationY();
+    cube6Settings.resetRotationZ();
+    cube6Settings.resetSpeed();
+    cube6Settings.resetDirection();
+    cube6Settings.resetIsRotating();
+    cube6Settings.resetCubeLevel();
+    cube6Settings.resetCubeStyle();
+    cube6Settings.setPositionsResetTrigger(prev => prev + 1);
+    cube6Settings.setResetTrigger(prev => !prev);
+
     // Сброс параметров вращения сцены
     resetSceneRotating();
     resetSceneDirection();
     resetSceneSpeed();
+    resetSceneRotationX();
 
     // Сброс фона
     resetCanvasBackground();
@@ -1758,16 +1783,17 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
 
   // Позиции только для визуальных элементов (свет, тени, стрелки)
   const cubePositions = [
-    [-7, 0, -4],   // Куб 1 - начальная точка орбиты (не используется для самого куба)
-    [0, 0, 0],     // Куб 2 - центр
-    [7, 0, -4],    // Куб 3 - начальная точка орбиты (не используется для самого куба)
-    [-5, 0, -3],   // Куб 4 (начальная точка)
-    [5, 0, -3]     // Куб 5 (начальная точка)
+    [-7, 0, -4],   // Куб 1
+    [0, 0, 0],     // Куб 2
+    [7, 0, -4],    // Куб 3
+    [-5, 0, -3],   // Куб 4
+    [5, 0, -3],    // Куб 5
+    [-7, 0, 4]     // Куб 6 (диаметрально противоположно Кубу 3)
   ];
 
   // Компонент для обработки кликов
   const CubeSelector = () => {
-    useCubeSelection([cube1Ref, cube2Ref, cube3Ref, cube4Ref, cube5Ref], selectedCube, setSelectedCube);
+    useCubeSelection([cube1Ref, cube2Ref, cube3Ref, cube4Ref, cube5Ref, cube6Ref], selectedCube, setSelectedCube);
     return null;
   };
 
@@ -2040,10 +2066,28 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
       {/* === Панель управления скоростью СЦЕНЫ === */}
       {!selectedCube && (
         <div className="cube-controls">
+
           {openSceneBlock === null && (
-            <ControlBlock label={t("control.scene-speed")} icon="fa-solid fa-gauge-simple-high" isOpen={false} onToggle={() => setOpenSceneBlock("speed")}
-                          gapConfig={{value: sceneSpeed, min: 0, max: 10, step: 1, onChange: setSceneSpeed, ...sceneSpeedHandlers}}
-            />
+            <>
+              {/* Скорость сцены */}
+              <ControlBlock label={t("control.scene-speed")} icon="fa-solid fa-gauge-simple-high" isOpen={false} onToggle={() => setOpenSceneBlock("speed")}
+                            gapConfig={{value: sceneSpeed, min: 0, max: 10, step: 1, onChange: setSceneSpeed, ...sceneSpeedHandlers}}
+              />
+
+              {/* Наклон сцены */}
+              <ControlBlock
+                label={t("control.scene-tilt") || "Наклон сцены"}
+                icon="fa-solid fa-angles-up"
+                isOpen={false}
+                onToggle={() => setOpenSceneBlock("tilt")}
+                gapConfig={{
+                  value: sceneRotationX, min: -40, max: 40, step: 1,
+                  onChange: setSceneRotationX, reset: () => setSceneRotationX(0),
+                  increase: () => setSceneRotationX(prev => Math.min(40, +(prev + 1).toFixed(2))),
+                  decrease: () => setSceneRotationX(prev => Math.max(-40, +(prev - 1).toFixed(2)))
+                }}
+              />
+            </>
           )}
 
           {openSceneBlock === "speed" && (
@@ -2051,6 +2095,22 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
                           gapConfig={{value: sceneSpeed, min: 0, max: 10, step: 1, onChange: setSceneSpeed, ...sceneSpeedHandlers}}
             />
           )}
+
+          {openSceneBlock === "tilt" && (
+            <ControlBlock
+              label={t("control.scene-tilt") || "Наклон сцены"}
+              icon="fa-solid fa-angles-up"
+              isOpen={true}
+              onToggle={() => setOpenSceneBlock(null)}
+              gapConfig={{
+                value: sceneRotationX, min: -40, max: 40, step: 1,
+                onChange: setSceneRotationX, reset: () => setSceneRotationX(0),
+                increase: () => setSceneRotationX(prev => Math.min(40, +(prev + 1).toFixed(2))),
+                decrease: () => setSceneRotationX(prev => Math.max(-40, +(prev - 1).toFixed(2)))
+              }}
+            />
+          )}
+
         </div>
       )}
 
@@ -2116,7 +2176,7 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
           <CubeSelector />
 
           {/* Группа для всей сцены с кубами и орбитами */}
-          <group ref={sceneGroupRef} rotation={[degreesToRadians(10), 0, 0]}>
+          <group ref={sceneGroupRef} rotation={[degreesToRadians(sceneRotationX), 0, 0]}>
 
             {/* Орбиты для кубов 1 и 3 */}
             <OrbitLines />
@@ -2206,6 +2266,24 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
               showFrame={selectedCube === 5}
             />
 
+            {/* Куб 6 - вертикальная орбита (напротив Куба 3) */}
+            <CubeGroup
+              cubeId={6} onHover={setHoveredCube} groupRefProp={cube6Ref} key="cube6" groupSize={groupSize}
+              gap={cube6Settings.gap}
+              rotationX={cube6Settings.rotationX} rotationY={cube6Settings.rotationY} rotationZ={cube6Settings.rotationZ}
+              isRotating={cube6Settings.isRotating} direction={cube6Settings.direction} speed={cube6Settings.speed}
+              resetTrigger={cube6Settings.resetTrigger} flipTrigger={cube6Settings.flipTrigger}
+              smallCubeScale={cube6Settings.smallCubeScale}
+              shuffleTrigger={cube6Settings.shuffleTrigger} setShuffleTrigger={cube6Settings.setShuffleTrigger}
+              positionsResetTrigger={cube6Settings.positionsResetTrigger}
+              cubeLevel={cubeLevelMap[cube6Settings.cubeLevel]} cubeStyle={cube6Settings.cubeStyle}
+              cubePosition={cubePositions[5]}
+              hasOrbit={true} orbitSemiMajorAxis={2.5} orbitSemiMinorAxis={2} orbitSpeed={0.3} orbitDirection={1} orbitPlane="xy"
+              orbitStartAngle={Math.PI}  // Начинаем с противоположной точки
+              baseScale={0.4} scaleWithDistance={true} minScale={0.25} maxScale={0.45}
+              showFrame={selectedCube === 6}
+            />
+
             {/* Стрелки над кубами - ВНУТРИ группы сцены */}
             {!isMobile && hoveredCube === 1 && (
               <ArrowIndicator
@@ -2235,6 +2313,12 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
               <ArrowIndicator
                 cubeRef={cube5Ref} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture}
                 baseArrowHeight={1.8} arrowSizeMultiplier={2.0} minArrowHeight={0.8} minArrowScale={0.4}
+              />
+            )}
+            {!isMobile && hoveredCube === 6 && (
+              <ArrowIndicator
+                cubeRef={cube6Ref} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture}
+                baseArrowHeight={0.6} arrowSizeMultiplier={0.8} minArrowHeight={0.6} minArrowScale={0.4}
               />
             )}
 
