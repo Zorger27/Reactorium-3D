@@ -265,10 +265,10 @@ const DEFAULT_CUBE_CONFIGS = {
     cubeLevel: 3, cubeStyle: "photo"
   },
   3: {
-    gap: 0.2, smallCubeScale: 1,
+    gap: 0, smallCubeScale: 1,
     rotationX: 100, rotationY: 120, rotationZ: 0,
     speed: 8, direction: 1, isRotating: true,
-    cubeLevel: 2, cubeStyle: "color"
+    cubeLevel: 3, cubeStyle: "color"
   },
   4: {
     gap: 0.15, smallCubeScale: 0.9,
@@ -2201,7 +2201,7 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
               positionsResetTrigger={cube5Settings.positionsResetTrigger}
               cubeLevel={cubeLevelMap[cube5Settings.cubeLevel]} cubeStyle={cube5Settings.cubeStyle}
               cubePosition={cubePositions[4]}
-              hasOrbit={true} orbitSemiMajorAxis={3.5} orbitSemiMinorAxis={2.5} orbitSpeed={0.5} orbitDirection={-1} orbitPlane="xz135"
+              hasOrbit={true} orbitSemiMajorAxis={3.5} orbitSemiMinorAxis={2.5} orbitSpeed={0.4} orbitDirection={-1} orbitPlane="xz135"
               baseScale={0.45} scaleWithDistance={true} minScale={0.40} maxScale={0.50}
               showFrame={selectedCube === 5}
             />
