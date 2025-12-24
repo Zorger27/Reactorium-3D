@@ -1828,9 +1828,11 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
     const semiMajorAxis1 = 3.5;
     const semiMinorAxis1 = 2.5;
 
-    // Новые орбиты (те же размеры, что у куба 1)
+    // Параметры орбиты для куба 4 (+45°, зелёная)
     const semiMajorAxis4 = 3.5;
     const semiMinorAxis4 = 2.5;
+
+    // Параметры орбиты для куба 5 (+135°, красная)
     const semiMajorAxis5 = 3.5;
     const semiMinorAxis5 = 2.5;
 
