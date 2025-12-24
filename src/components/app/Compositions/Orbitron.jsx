@@ -283,7 +283,7 @@ const DEFAULT_CUBE_CONFIGS = {
     cubeLevel: 2, cubeStyle: "texture"
   },
   6: {
-    gap: 0, smallCubeScale: 1,
+    gap: 0.4, smallCubeScale: 1,
     rotationX: 100, rotationY: 120, rotationZ: 0,
     speed: 8, direction: 1, isRotating: true,
     cubeLevel: 2, cubeStyle: "color"
@@ -401,6 +401,35 @@ const SceneRotation = ({ rotating, direction, speed, groupRef, resetTrigger }) =
       groupRef.current.rotation.y = 0;
     }
   }, [resetTrigger, groupRef]);
+
+  return null;
+};
+
+// Компонент для обнаружения столкновений КУБОВ
+const CollisionDetector = ({ cubeRefs, onCollision }) => {
+  useFrame(() => {
+    // Проверяем столкновения между всеми парами кубов
+    for (let i = 0; i < cubeRefs.length; i++) {
+      for (let j = i + 1; j < cubeRefs.length; j++) {
+        const cube1 = cubeRefs[i]?.current;
+        const cube2 = cubeRefs[j]?.current;
+
+        if (!cube1 || !cube2) continue;
+
+        // Вычисляем расстояние между кубами
+        const distance = cube1.position.distanceTo(cube2.position);
+
+        // Оцениваем радиус каждого куба (приблизительно)
+        const radius1 = 1.5 * cube1.scale.x; // Примерный радиус
+        const radius2 = 1.5 * cube2.scale.x;
+
+        // Если расстояние меньше суммы радиусов - столкновение
+        if (distance < radius1 + radius2) {
+          onCollision(i + 1, j + 1); // cubeId = index + 1
+        }
+      }
+    }
+  });
 
   return null;
 };
@@ -1985,6 +2014,28 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
     );
   };
 
+  // Обработчик столкновений КУБОВ
+  const handleCollision = (cubeId1, cubeId2) => {
+    // Меняем направление для обоих кубов
+    const settings1 = cubeId1 === 1 ? cube1Settings
+      : cubeId1 === 2 ? cube2Settings
+        : cubeId1 === 3 ? cube3Settings
+          : cubeId1 === 4 ? cube4Settings
+            : cubeId1 === 5 ? cube5Settings
+              : cube6Settings;
+
+    const settings2 = cubeId2 === 1 ? cube1Settings
+      : cubeId2 === 2 ? cube2Settings
+        : cubeId2 === 3 ? cube3Settings
+          : cubeId2 === 4 ? cube4Settings
+            : cubeId2 === 5 ? cube5Settings
+              : cube6Settings;
+
+    // Инвертируем направление орбитального движения
+    settings1.setDirection(prev => -prev);
+    settings2.setDirection(prev => -prev);
+  };
+
   return (
     <div className="orbitron-container">
 
@@ -2076,10 +2127,7 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
 
               {/* Наклон сцены */}
               <ControlBlock
-                label={t("control.scene-tilt") || "Наклон сцены"}
-                icon="fa-solid fa-angles-up"
-                isOpen={false}
-                onToggle={() => setOpenSceneBlock("tilt")}
+                label={t("control.scene-tilt")} icon="fa-solid fa-angles-up" isOpen={false} onToggle={() => setOpenSceneBlock("tilt")}
                 gapConfig={{
                   value: sceneRotationX, min: -40, max: 40, step: 1,
                   onChange: setSceneRotationX, reset: () => setSceneRotationX(0),
@@ -2098,10 +2146,7 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
 
           {openSceneBlock === "tilt" && (
             <ControlBlock
-              label={t("control.scene-tilt") || "Наклон сцены"}
-              icon="fa-solid fa-angles-up"
-              isOpen={true}
-              onToggle={() => setOpenSceneBlock(null)}
+              label={t("control.scene-tilt")} icon="fa-solid fa-angles-up" isOpen={true} onToggle={() => setOpenSceneBlock(null)}
               gapConfig={{
                 value: sceneRotationX, min: -40, max: 40, step: 1,
                 onChange: setSceneRotationX, reset: () => setSceneRotationX(0),
@@ -2331,6 +2376,12 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
           <SceneRotation
             rotating={sceneRotating} direction={sceneDirection} speed={sceneSpeed}
             groupRef={sceneGroupRef} resetTrigger={sceneResetTrigger}
+          />
+
+          {/* Детектор столкновений */}
+          <CollisionDetector
+            cubeRefs={[cube1Ref, cube2Ref, cube3Ref, cube4Ref, cube5Ref, cube6Ref]}
+            onCollision={handleCollision}
           />
 
         </Canvas>
