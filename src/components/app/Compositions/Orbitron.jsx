@@ -269,6 +269,18 @@ const DEFAULT_CUBE_CONFIGS = {
     rotationX: 100, rotationY: 120, rotationZ: 0,
     speed: 8, direction: 1, isRotating: true,
     cubeLevel: 2, cubeStyle: "color"
+  },
+  4: {
+    gap: 0.15, smallCubeScale: 0.9,
+    rotationX: 80, rotationY: 45, rotationZ: 0,
+    speed: 4, direction: 1, isRotating: true,
+    cubeLevel: 1, cubeStyle: "photo"
+  },
+  5: {
+    gap: 0.2, smallCubeScale: 0.85,
+    rotationX: 110, rotationY: 90, rotationZ: 0,
+    speed: 5, direction: -1, isRotating: true,
+    cubeLevel: 2, cubeStyle: "texture"
   }
 };
 
@@ -997,10 +1009,28 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
 
       let x, y, z;
       if (orbitPlane === 'xy') {
+        // Вертикальная орбита
         x = orbitSemiMajorAxis * Math.cos(orbitAngleRef.current);
         y = orbitSemiMinorAxis * Math.sin(orbitAngleRef.current);
         z = 0;
+      } else if (orbitPlane === 'xz45') {
+        // Орбита +45°
+        const rotationAngle = Math.PI / 4;
+        x = orbitSemiMajorAxis * Math.cos(orbitAngleRef.current);
+        const yTemp = 0;
+        const zTemp = orbitSemiMinorAxis * Math.sin(orbitAngleRef.current);
+        y = yTemp * Math.cos(rotationAngle) - zTemp * Math.sin(rotationAngle);
+        z = yTemp * Math.sin(rotationAngle) + zTemp * Math.cos(rotationAngle);
+      } else if (orbitPlane === 'xz135') {
+        // Орбита +135°
+        const rotationAngle = (3 * Math.PI) / 4;
+        x = orbitSemiMajorAxis * Math.cos(orbitAngleRef.current);
+        const yTemp = 0;
+        const zTemp = orbitSemiMinorAxis * Math.sin(orbitAngleRef.current);
+        y = yTemp * Math.cos(rotationAngle) - zTemp * Math.sin(rotationAngle);
+        z = yTemp * Math.sin(rotationAngle) + zTemp * Math.cos(rotationAngle);
       } else {
+        // Горизонтальная орбита (по умолчанию)
         x = orbitSemiMajorAxis * Math.cos(orbitAngleRef.current);
         y = 0;
         z = orbitSemiMinorAxis * Math.sin(orbitAngleRef.current);
@@ -1407,6 +1437,8 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
   const cube1Ref = useRef(null);
   const cube2Ref = useRef(null);
   const cube3Ref = useRef(null);
+  const cube4Ref = useRef(null);
+  const cube5Ref = useRef(null);
 
   // Ref для управления камерой
   const cameraControlsRef = useRef(null);
@@ -1467,12 +1499,16 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
   const cube1Settings = getCubeSettings(1);
   const cube2Settings = getCubeSettings(2);
   const cube3Settings = getCubeSettings(3);
+  const cube4Settings = getCubeSettings(4);
+  const cube5Settings = getCubeSettings(5);
 
   // Получаем настройки активного куба (если куб выбран)
   const settings = selectedCube === 1 ? cube1Settings
     : selectedCube === 2 ? cube2Settings
       : selectedCube === 3 ? cube3Settings
-        : cube1Settings; // По умолчанию - настройки первого куба
+        : selectedCube === 4 ? cube4Settings
+          : selectedCube === 5 ? cube5Settings
+            : cube1Settings; // По умолчанию - настройки первого куба
 
   const [canvasBackground, setCanvasBackground, resetCanvasBackground] = useLocalStorage("orbitronCanvasBackground", "scene02", v => v);
 
@@ -1627,7 +1663,7 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
     }
   }, [isCanvasBackgroundMenuOpen, isRecording]);
 
-  // Функция для сброса всех состояний ВСЕХ трёх кубов
+  // Функция для сброса всех состояний ВСЕХ кубов
   const resetAllCubes = () => {
     // Сброс Куба 1
     cube1Settings.resetGap();
@@ -1671,6 +1707,34 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
     cube3Settings.setPositionsResetTrigger(prev => prev + 1);
     cube3Settings.setResetTrigger(prev => !prev);
 
+    // Сброс Куба 4
+    cube4Settings.resetGap();
+    cube4Settings.resetSmallCubeScale();
+    cube4Settings.resetRotationX();
+    cube4Settings.resetRotationY();
+    cube4Settings.resetRotationZ();
+    cube4Settings.resetSpeed();
+    cube4Settings.resetDirection();
+    cube4Settings.resetIsRotating();
+    cube4Settings.resetCubeLevel();
+    cube4Settings.resetCubeStyle();
+    cube4Settings.setPositionsResetTrigger(prev => prev + 1);
+    cube4Settings.setResetTrigger(prev => !prev);
+
+    // Сброс Куба 5
+    cube5Settings.resetGap();
+    cube5Settings.resetSmallCubeScale();
+    cube5Settings.resetRotationX();
+    cube5Settings.resetRotationY();
+    cube5Settings.resetRotationZ();
+    cube5Settings.resetSpeed();
+    cube5Settings.resetDirection();
+    cube5Settings.resetIsRotating();
+    cube5Settings.resetCubeLevel();
+    cube5Settings.resetCubeStyle();
+    cube5Settings.setPositionsResetTrigger(prev => prev + 1);
+    cube5Settings.setResetTrigger(prev => !prev);
+
     // Сброс параметров вращения сцены
     resetSceneRotating();
     resetSceneDirection();
@@ -1696,12 +1760,14 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
   const cubePositions = [
     [-7, 0, -4],   // Куб 1 - начальная точка орбиты (не используется для самого куба)
     [0, 0, 0],     // Куб 2 - центр
-    [7, 0, -4]     // Куб 3 - начальная точка орбиты (не используется для самого куба)
+    [7, 0, -4],    // Куб 3 - начальная точка орбиты (не используется для самого куба)
+    [-5, 0, -3],   // Куб 4 (начальная точка)
+    [5, 0, -3]     // Куб 5 (начальная точка)
   ];
 
   // Компонент для обработки кликов
   const CubeSelector = () => {
-    useCubeSelection([cube1Ref, cube2Ref, cube3Ref], selectedCube, setSelectedCube);
+    useCubeSelection([cube1Ref, cube2Ref, cube3Ref, cube4Ref, cube5Ref], selectedCube, setSelectedCube);
     return null;
   };
 
@@ -1762,7 +1828,13 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
     const semiMajorAxis1 = 3.5;
     const semiMinorAxis1 = 2.5;
 
-    // Создаём точки для орбиты куба 3 (вертикальная орбита в плоскости XY)
+    // Новые орбиты (те же размеры, что у куба 1)
+    const semiMajorAxis4 = 3.5;
+    const semiMinorAxis4 = 2.5;
+    const semiMajorAxis5 = 3.5;
+    const semiMinorAxis5 = 2.5;
+
+    // Орбита для куба 3 (вертикальная, XY)
     const orbitPoints2 = useMemo(() => {
       const points = [];
       for (let i = 0; i <= 360; i++) {
@@ -1775,7 +1847,7 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
       return new Float32Array(points);
     }, []);
 
-    // Создаём точки для орбиты куба 1 (горизонтальная орбита в плоскости XZ)
+    // Орбита для куба 1 (горизонтальная, XZ)
     const orbitPoints1 = useMemo(() => {
       const points = [];
       for (let i = 0; i <= 360; i++) {
@@ -1788,9 +1860,48 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
       return new Float32Array(points);
     }, []);
 
+    // Орбита для куба 4 (+45° от горизонтальной)
+    const orbitPoints4 = useMemo(() => {
+      const points = [];
+      const rotationAngle = Math.PI / 4; // 45 градусов
+      for (let i = 0; i <= 360; i++) {
+        const angle = (i * Math.PI) / 180;
+        const x = semiMajorAxis4 * Math.cos(angle);
+        const y = 0;
+        const z = semiMinorAxis4 * Math.sin(angle);
+
+        // Поворот вокруг оси X на 45°
+        const yRotated = y * Math.cos(rotationAngle) - z * Math.sin(rotationAngle);
+        const zRotated = y * Math.sin(rotationAngle) + z * Math.cos(rotationAngle);
+
+        points.push(x, yRotated, zRotated);
+      }
+      return new Float32Array(points);
+    }, []);
+
+    // Орбита для куба 5 (+135° от горизонтальной)
+    const orbitPoints5 = useMemo(() => {
+      const points = [];
+      const rotationAngle = (3 * Math.PI) / 4; // 135 градусов
+      for (let i = 0; i <= 360; i++) {
+        const angle = (i * Math.PI) / 180;
+        const x = semiMajorAxis5 * Math.cos(angle);
+        const y = 0;
+        const z = semiMinorAxis5 * Math.sin(angle);
+
+        // Поворот вокруг оси X на 135°
+        const yRotated = y * Math.cos(rotationAngle) - z * Math.sin(rotationAngle);
+        const zRotated = y * Math.sin(rotationAngle) + z * Math.cos(rotationAngle);
+
+        points.push(x, yRotated, zRotated);
+      }
+      return new Float32Array(points);
+    }, []);
+
+
     return (
       <>
-        {/* Орбита для куба 3 (вертикальная) */}
+        {/* Орбита для куба 3 (вертикальная, синяя) */}
         <line>
           <bufferGeometry>
             <bufferAttribute
@@ -1803,7 +1914,7 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
           <lineBasicMaterial color={0x00aaff} linewidth={2} />
         </line>
 
-        {/* Орбита для куба 1 (горизонтальная) */}
+        {/* Орбита для куба 1 (горизонтальная, фиолетовая) */}
         <line>
           <bufferGeometry>
             <bufferAttribute
@@ -1815,6 +1926,33 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
           </bufferGeometry>
           <lineBasicMaterial color={0x8a2be2} linewidth={2} />
         </line>
+
+        {/* Орбита для куба 4 (+45°, зелёная) */}
+        <line>
+          <bufferGeometry>
+            <bufferAttribute
+              attach="attributes-position"
+              count={orbitPoints4.length / 3}
+              array={orbitPoints4}
+              itemSize={3}
+            />
+          </bufferGeometry>
+          <lineBasicMaterial color={0x00ff00} linewidth={2} />
+        </line>
+
+        {/* Орбита для куба 5 (+135°, красная) */}
+        <line>
+          <bufferGeometry>
+            <bufferAttribute
+              attach="attributes-position"
+              count={orbitPoints5.length / 3}
+              array={orbitPoints5}
+              itemSize={3}
+            />
+          </bufferGeometry>
+          <lineBasicMaterial color={0xff0000} linewidth={2} />
+        </line>
+
       </>
     );
   };
@@ -1993,7 +2131,7 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
               shuffleTrigger={cube1Settings.shuffleTrigger} setShuffleTrigger={cube1Settings.setShuffleTrigger} positionsResetTrigger={cube1Settings.positionsResetTrigger}
               cubeLevel={cubeLevelMap[cube1Settings.cubeLevel]} cubeStyle={cube1Settings.cubeStyle}
               cubePosition={cubePositions[0]}
-              hasOrbit={true} orbitSemiMajorAxis={3.5} orbitSemiMinorAxis={2.5} orbitSpeed={0.3} orbitDirection={-1} orbitPlane="xz"
+              hasOrbit={true} orbitSemiMajorAxis={3.5} orbitSemiMinorAxis={2.5} orbitSpeed={0.2} orbitDirection={-1} orbitPlane="xz"
               baseScale={0.45} scaleWithDistance={true} minScale={0.40} maxScale={0.50}
               showFrame={selectedCube === 1}
             />
@@ -2032,6 +2170,40 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
               showFrame={selectedCube === 3}
             />
 
+            {/* Куб 4 - орбита +45° (зелёная) */}
+            <CubeGroup
+              cubeId={4} onHover={setHoveredCube} groupRefProp={cube4Ref} key="cube4" groupSize={groupSize}
+              gap={cube4Settings.gap}
+              rotationX={cube4Settings.rotationX} rotationY={cube4Settings.rotationY} rotationZ={cube4Settings.rotationZ}
+              isRotating={cube4Settings.isRotating} direction={cube4Settings.direction} speed={cube4Settings.speed}
+              resetTrigger={cube4Settings.resetTrigger} flipTrigger={cube4Settings.flipTrigger}
+              smallCubeScale={cube4Settings.smallCubeScale}
+              shuffleTrigger={cube4Settings.shuffleTrigger} setShuffleTrigger={cube4Settings.setShuffleTrigger}
+              positionsResetTrigger={cube4Settings.positionsResetTrigger}
+              cubeLevel={cubeLevelMap[cube4Settings.cubeLevel]} cubeStyle={cube4Settings.cubeStyle}
+              cubePosition={cubePositions[3]}
+              hasOrbit={true} orbitSemiMajorAxis={3.5} orbitSemiMinorAxis={2.5} orbitSpeed={0.3} orbitDirection={1} orbitPlane="xz45"
+              baseScale={0.45} scaleWithDistance={true} minScale={0.40} maxScale={0.50}
+              showFrame={selectedCube === 4}
+            />
+
+            {/* Куб 5 - орбита +135° (красная) */}
+            <CubeGroup
+              cubeId={5} onHover={setHoveredCube} groupRefProp={cube5Ref} key="cube5" groupSize={groupSize}
+              gap={cube5Settings.gap}
+              rotationX={cube5Settings.rotationX} rotationY={cube5Settings.rotationY} rotationZ={cube5Settings.rotationZ}
+              isRotating={cube5Settings.isRotating} direction={cube5Settings.direction} speed={cube5Settings.speed}
+              resetTrigger={cube5Settings.resetTrigger} flipTrigger={cube5Settings.flipTrigger}
+              smallCubeScale={cube5Settings.smallCubeScale}
+              shuffleTrigger={cube5Settings.shuffleTrigger} setShuffleTrigger={cube5Settings.setShuffleTrigger}
+              positionsResetTrigger={cube5Settings.positionsResetTrigger}
+              cubeLevel={cubeLevelMap[cube5Settings.cubeLevel]} cubeStyle={cube5Settings.cubeStyle}
+              cubePosition={cubePositions[4]}
+              hasOrbit={true} orbitSemiMajorAxis={3.5} orbitSemiMinorAxis={2.5} orbitSpeed={0.5} orbitDirection={-1} orbitPlane="xz135"
+              baseScale={0.45} scaleWithDistance={true} minScale={0.40} maxScale={0.50}
+              showFrame={selectedCube === 5}
+            />
+
             {/* Стрелки над кубами - ВНУТРИ группы сцены */}
             {!isMobile && hoveredCube === 1 && (
               <ArrowIndicator
@@ -2049,6 +2221,18 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
               <ArrowIndicator
                 cubeRef={cube3Ref} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture}
                 baseArrowHeight={0.6} arrowSizeMultiplier={0.8} minArrowHeight={0.6} minArrowScale={0.4}
+              />
+            )}
+            {!isMobile && hoveredCube === 4 && (
+              <ArrowIndicator
+                cubeRef={cube4Ref} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture}
+                baseArrowHeight={1.8} arrowSizeMultiplier={2.0} minArrowHeight={0.8} minArrowScale={0.4}
+              />
+            )}
+            {!isMobile && hoveredCube === 5 && (
+              <ArrowIndicator
+                cubeRef={cube5Ref} coneTexture={arrowConeTexture} shaftTexture={arrowShaftTexture}
+                baseArrowHeight={1.8} arrowSizeMultiplier={2.0} minArrowHeight={0.8} minArrowScale={0.4}
               />
             )}
 
