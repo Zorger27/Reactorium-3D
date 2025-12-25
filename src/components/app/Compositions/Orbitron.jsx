@@ -449,7 +449,7 @@ const CollisionDetector = ({ cubeRefs, cubeSettings, onCollision }) => {
         const scale2 = cube2.ref.current.scale.x;
 
         // Увеличенный базовый радиус для более раннего обнаружения
-        const baseRadius = 1.5;
+        const baseRadius = 2.0;
         const radius1 = baseRadius * scale1;
         const radius2 = baseRadius * scale2;
         const minDistance = radius1 + radius2;
@@ -2304,6 +2304,7 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
               cubeLevel={cubeLevelMap[cube1Settings.cubeLevel]} cubeStyle={cube1Settings.cubeStyle}
               cubePosition={cubePositions[0]}
               hasOrbit={true} orbitSemiMajorAxis={3.5} orbitSemiMinorAxis={2.5} orbitSpeed={0.2} orbitDirection={-1} orbitPlane="xz"
+              orbitStartAngle={Math.PI}
               baseScale={0.45} scaleWithDistance={true} minScale={0.40} maxScale={0.50}
               showFrame={selectedCube === 1}
             />
