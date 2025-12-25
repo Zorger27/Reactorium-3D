@@ -449,7 +449,7 @@ const CollisionDetector = ({ cubeRefs, cubeSettings, onCollision }) => {
         const scale2 = cube2.ref.current.scale.x;
 
         // Увеличенный базовый радиус для более раннего обнаружения
-        const baseRadius = 2.0;
+        const baseRadius = 1.5;
         const radius1 = baseRadius * scale1;
         const radius2 = baseRadius * scale2;
         const minDistance = radius1 + radius2;
