@@ -408,10 +408,15 @@ const SceneRotation = ({ rotating, direction, speed, groupRef, resetTrigger }) =
 // Компонент для обнаружения столкновений КУБОВ
 const CollisionDetector = ({ cubeRefs, cubeSettings, onCollision }) => {
   const lastCollisionTime = useRef({});
-  const collisionCooldown = 1000; // Минимальное время между столкновениями (мс)
+  const collisionCooldown = 500; // Уменьшили cooldown для тестирования
+  const debugInterval = useRef(0);
 
   useFrame(() => {
     const now = Date.now();
+
+    // Отладочный вывод раз в 5 секунд
+    debugInterval.current++;
+    const shouldDebug = debugInterval.current % 300 === 0; // ~5 сек при 60 FPS
 
     // Проверяем столкновения только между кубами на орбитах
     const orbitalCubes = [
@@ -427,34 +432,55 @@ const CollisionDetector = ({ cubeRefs, cubeSettings, onCollision }) => {
         const cube1 = orbitalCubes[i];
         const cube2 = orbitalCubes[j];
 
-        if (!cube1.ref?.current || !cube2.ref?.current) continue;
-
-        const collisionKey = `${cube1.id}-${cube2.id}`;
-
-        // Проверяем cooldown
-        if (lastCollisionTime.current[collisionKey] &&
-          now - lastCollisionTime.current[collisionKey] < collisionCooldown) {
+        if (!cube1.ref?.current || !cube2.ref?.current) {
+          if (shouldDebug) console.log(`Куб ${cube1.id} или ${cube2.id} не найден`);
           continue;
         }
 
+        const collisionKey = `${cube1.id}-${cube2.id}`;
+
         // Вычисляем расстояние между кубами
-        const distance = cube1.ref.current.position.distanceTo(cube2.ref.current.position);
+        const pos1 = cube1.ref.current.position;
+        const pos2 = cube2.ref.current.position;
+        const distance = pos1.distanceTo(pos2);
 
-        // Вычисляем радиусы с учётом масштаба и размера
-        const getRadius = (cubeRef) => {
-          const scale = cubeRef.current.scale.x;
-          // Базовый радиус группы кубов (примерно половина диагонали)
-          const baseRadius = 2.0; // Подбирается экспериментально
-          return baseRadius * scale;
-        };
+        // Вычисляем радиусы с учётом масштаба
+        const scale1 = cube1.ref.current.scale.x;
+        const scale2 = cube2.ref.current.scale.x;
 
-        const radius1 = getRadius(cube1.ref);
-        const radius2 = getRadius(cube2.ref);
+        // Увеличенный базовый радиус для более раннего обнаружения
+        const baseRadius = 1.5;
+        const radius1 = baseRadius * scale1;
+        const radius2 = baseRadius * scale2;
         const minDistance = radius1 + radius2;
+
+        // Отладочный вывод
+        if (shouldDebug) {
+          console.log(`Куб ${cube1.id} - Куб ${cube2.id}:`, {
+            distance: distance.toFixed(2),
+            minDistance: minDistance.toFixed(2),
+            scale1: scale1.toFixed(2),
+            scale2: scale2.toFixed(2),
+            pos1: `(${pos1.x.toFixed(1)}, ${pos1.y.toFixed(1)}, ${pos1.z.toFixed(1)})`,
+            pos2: `(${pos2.x.toFixed(1)}, ${pos2.y.toFixed(1)}, ${pos2.z.toFixed(1)})`
+          });
+        }
+
+        // Проверяем cooldown
+        const lastCollision = lastCollisionTime.current[collisionKey];
+        const timeSinceLastCollision = lastCollision ? now - lastCollision : Infinity;
+
+        if (timeSinceLastCollision < collisionCooldown) {
+          if (shouldDebug) console.log(`Cooldown активен для ${collisionKey}: ${timeSinceLastCollision}ms`);
+          continue;
+        }
 
         // Если расстояние меньше суммы радиусов - столкновение!
         if (distance < minDistance) {
-          console.log(`Столкновение: Куб ${cube1.id} и Куб ${cube2.id}, расстояние: ${distance.toFixed(2)}, мин: ${minDistance.toFixed(2)}`);
+          console.log(`🔴 СТОЛКНОВЕНИЕ: Куб ${cube1.id} и Куб ${cube2.id}`);
+          console.log(`   Расстояние: ${distance.toFixed(2)}, Минимум: ${minDistance.toFixed(2)}`);
+          console.log(`   Позиция ${cube1.id}: (${pos1.x.toFixed(1)}, ${pos1.y.toFixed(1)}, ${pos1.z.toFixed(1)})`);
+          console.log(`   Позиция ${cube2.id}: (${pos2.x.toFixed(1)}, ${pos2.y.toFixed(1)}, ${pos2.z.toFixed(1)})`);
 
           lastCollisionTime.current[collisionKey] = now;
           onCollision(cube1.id, cube2.id);
@@ -542,7 +568,7 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
                      orbitSemiMajorAxis = 0,
                      orbitSemiMinorAxis = 0,
                      orbitSpeed = 0,
-                     orbitDirection = 1,
+                     // orbitDirection = 1,
                      orbitPlane = 'xy', // 'xy' или 'xz'
                      // Параметры для масштабирования
                      baseScale = 1,           // Базовый масштаб куба
@@ -1073,7 +1099,8 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
 
     // === БЛОК ОРБИТАЛЬНОГО ДВИЖЕНИЯ ===
     if (hasOrbit && groupRef.current) {
-      orbitAngleRef.current += orbitDirection * orbitSpeed * delta;
+      // orbitAngleRef.current += orbitDirection * orbitSpeed * delta;
+      orbitAngleRef.current += direction * orbitSpeed * delta;
 
       let x, y, z;
       if (orbitPlane === 'xy') {
@@ -1501,7 +1528,7 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
   // Состояние для записи видео
   const [isRecording, setIsRecording] = useState(false);
 
-  // Refs для трёх кубов
+  // Refs для кубов
   const cube1Ref = useRef(null);
   const cube2Ref = useRef(null);
   const cube3Ref = useRef(null);
