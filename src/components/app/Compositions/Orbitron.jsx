@@ -1517,7 +1517,7 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
     const [cubeStyle, setCubeStyle] = useLocalStorage(`orbitronCubeStyle${suffix}`, defaults.cubeStyle, v => v);
 
     // Направление движения по орбите
-    const [orbitDirection, setOrbitDirection] = useLocalStorage(`cuboVerse2OrbitDirection${suffix}`, defaults.orbitDirection, v => parseInt(v, 10));
+    const [orbitDirection, setOrbitDirection] = useLocalStorage(`orbitronOrbitDirection${suffix}`, defaults.orbitDirection, v => parseInt(v, 10));
 
     // 🎯 КАСТОМНЫЕ RESET-ФУНКЦИИ с правильными дефолтами
     const resetGap = () => setGap(defaults.gap);
