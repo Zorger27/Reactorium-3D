@@ -408,7 +408,8 @@ const SceneRotation = ({ rotating, direction, speed, groupRef, resetTrigger }) =
 // Компонент для обнаружения столкновений КУБОВ
 const CollisionDetector = ({ cubeRefs, onCollision }) => {
   const lastCollisionTime = useRef({});
-  const collisionCooldown = 500;
+  const lastPositions = useRef({});
+  const collisionCooldown = 1000;
 
   useFrame(() => {
     const now = Date.now();
@@ -433,7 +434,19 @@ const CollisionDetector = ({ cubeRefs, onCollision }) => {
 
         if (lastCollision && now - lastCollision < collisionCooldown) continue;
 
-        const distance = cube1.ref.current.position.distanceTo(cube2.ref.current.position);
+        const pos1 = cube1.ref.current.position;
+        const pos2 = cube2.ref.current.position;
+        const distance = pos1.distanceTo(pos2);
+
+        // Проверяем, сближаются ли кубы
+        const lastDist = lastPositions.current[collisionKey];
+        if (lastDist && distance >= lastDist) {
+          // Кубы расходятся или стоят на месте - пропускаем
+          lastPositions.current[collisionKey] = distance;
+          continue;
+        }
+        lastPositions.current[collisionKey] = distance;
+
         const scale1 = cube1.ref.current.scale.x;
         const scale2 = cube2.ref.current.scale.x;
 
@@ -1061,7 +1074,6 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
     // === БЛОК ОРБИТАЛЬНОГО ДВИЖЕНИЯ ===
     if (hasOrbit && groupRef.current) {
       orbitAngleRef.current += orbitDirection * orbitSpeed * delta; // Используем orbitDirection
-      // orbitAngleRef.current += direction * orbitSpeed * delta;
 
         let x, y, z;
       if (orbitPlane === 'xy') {
@@ -1645,6 +1657,23 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
     scene04: small2Cube24
   };
 
+  // // После создания всех settings
+  // useEffect(() => {
+  //   console.log('🔍 Текущие orbitDirection:', {
+  //     cube1: cube1Settings.orbitDirection,
+  //     cube3: cube3Settings.orbitDirection,
+  //     cube4: cube4Settings.orbitDirection,
+  //     cube5: cube5Settings.orbitDirection,
+  //     cube6: cube6Settings.orbitDirection
+  //   });
+  // }, [
+  //   cube1Settings.orbitDirection,
+  //   cube3Settings.orbitDirection,
+  //   cube4Settings.orbitDirection,
+  //   cube5Settings.orbitDirection,
+  //   cube6Settings.orbitDirection
+  // ]);
+
   // EFFECT 12: useEffect для закрытия при клике вне меню!!!!!
   useEffect(() => {
     if (!isShuffleMenuOpen && !isClearMenuOpen && !isSaveMenuOpen && !isCubeStyleMenuOpen && !isCanvasBackgroundMenuOpen) return;
@@ -1729,6 +1758,21 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
       if (!isRecording) setIsSaveMenuOpen(false);
     }
   }, [isCanvasBackgroundMenuOpen, isRecording]);
+
+  // Флаг инициализации
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // EFFECT 18: Для завершения инициализации (Отключить CollisionDetector на время инициализации)
+  useEffect(() => {
+    // Даём кубам время занять свои позиции
+    const timer = setTimeout(() => {
+      setIsInitialized(true);
+      console.log('✅ Инициализация завершена, CollisionDetector активирован');
+    }, 1000); // 1 секунда на инициализацию
+
+    return () => clearTimeout(timer);
+  }, []);
+
 
   // Функция для сброса всех состояний ВСЕХ кубов
   const resetAllCubes = () => {
@@ -2275,7 +2319,7 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
               cubeLevel={cubeLevelMap[cube1Settings.cubeLevel]} cubeStyle={cube1Settings.cubeStyle}
               cubePosition={cubePositions[0]}
               hasOrbit={true} orbitSemiMajorAxis={3.5} orbitSemiMinorAxis={2.5} orbitSpeed={0.2} orbitPlane="xz"
-              orbitStartAngle={Math.PI}
+              orbitStartAngle={Math.PI / 4}
               baseScale={0.45} scaleWithDistance={true} minScale={0.40} maxScale={0.50}
               showFrame={selectedCube === 1}
             />
@@ -2314,6 +2358,7 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
               cubeLevel={cubeLevelMap[cube3Settings.cubeLevel]} cubeStyle={cube3Settings.cubeStyle}
               cubePosition={cubePositions[2]}
               hasOrbit={true} orbitSemiMajorAxis={2.5} orbitSemiMinorAxis={2} orbitSpeed={0.3} orbitPlane="xy"
+              orbitStartAngle={0}
               baseScale={0.35} scaleWithDistance={true} minScale={0.40} maxScale={0.50}
               showFrame={selectedCube === 3}
             />
@@ -2332,6 +2377,7 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
               positionsResetTrigger={cube4Settings.positionsResetTrigger}
               cubeLevel={cubeLevelMap[cube4Settings.cubeLevel]} cubeStyle={cube4Settings.cubeStyle}
               cubePosition={cubePositions[3]}
+              orbitStartAngle={Math.PI / 2}
               hasOrbit={true} orbitSemiMajorAxis={3.5} orbitSemiMinorAxis={2.5} orbitSpeed={0.3} orbitPlane="xz45"
               baseScale={0.45} scaleWithDistance={true} minScale={0.40} maxScale={0.50}
               showFrame={selectedCube === 4}
@@ -2351,6 +2397,7 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
               positionsResetTrigger={cube5Settings.positionsResetTrigger}
               cubeLevel={cubeLevelMap[cube5Settings.cubeLevel]} cubeStyle={cube5Settings.cubeStyle}
               cubePosition={cubePositions[4]}
+              orbitStartAngle={Math.PI * 1.5}
               hasOrbit={true} orbitSemiMajorAxis={3.5} orbitSemiMinorAxis={2.5} orbitSpeed={0.4} orbitPlane="xz135"
               baseScale={0.45} scaleWithDistance={true} minScale={0.40} maxScale={0.50}
               showFrame={selectedCube === 5}
@@ -2426,10 +2473,12 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
           />
 
           {/* Детектор столкновений */}
-          <CollisionDetector
-            cubeRefs={[cube1Ref, cube2Ref, cube3Ref, cube4Ref, cube5Ref, cube6Ref]}
-            onCollision={handleCollision}
-          />
+          {isInitialized && (
+            <CollisionDetector
+              cubeRefs={[cube1Ref, cube2Ref, cube3Ref, cube4Ref, cube5Ref, cube6Ref]}
+              onCollision={handleCollision}
+            />
+          )}
 
         </Canvas>
       </div>
