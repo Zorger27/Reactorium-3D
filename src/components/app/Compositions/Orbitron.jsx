@@ -1565,13 +1565,16 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
   const cube5Settings = getCubeSettings(5);
   const cube6Settings = getCubeSettings(6);
 
-  const settings = selectedCube === 1 ? cube1Settings
-    : selectedCube === 2 ? cube2Settings
-      : selectedCube === 3 ? cube3Settings
-        : selectedCube === 4 ? cube4Settings
-          : selectedCube === 5 ? cube5Settings
-            : selectedCube === 6 ? cube6Settings
-              : cube1Settings; // По умолчанию - настройки первого куба
+  const cubeSettingsMap = {
+    1: cube1Settings,
+    2: cube2Settings,
+    3: cube3Settings,
+    4: cube4Settings,
+    5: cube5Settings,
+    6: cube6Settings
+  };
+
+  const settings = cubeSettingsMap[selectedCube] || cube1Settings;
 
   const [canvasBackground, setCanvasBackground, resetCanvasBackground] = useLocalStorage("orbitronCanvasBackground", "scene02", v => v);
 
@@ -2047,24 +2050,20 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
 
   // Обработчик столкновений КУБОВ
   const handleCollision = useCallback((cubeId1, cubeId2) => {
-    const getSettings = (id) => {
-      switch(id) {
-        case 1: return cube1Settings;
-        case 2: return cube2Settings;
-        case 3: return cube3Settings;
-        case 4: return cube4Settings;
-        case 5: return cube5Settings;
-        case 6: return cube6Settings;
-        default: return null;
-      }
+    const cubeSettingsMap = {
+      1: cube1Settings,
+      2: cube2Settings,
+      3: cube3Settings,
+      4: cube4Settings,
+      5: cube5Settings,
+      6: cube6Settings
     };
 
-    const settings1 = getSettings(cubeId1);
-    const settings2 = getSettings(cubeId2);
+    const settings1 = cubeSettingsMap[cubeId1];
+    const settings2 = cubeSettingsMap[cubeId2];
 
     if (!settings1 || !settings2) return;
 
-    // Меняем направление ДВИЖЕНИЯ ПО ОРБИТЕ (не вращения куба!)
     settings1.setOrbitDirection(prev => -prev);
     settings2.setOrbitDirection(prev => -prev);
   }, [cube1Settings, cube2Settings, cube3Settings, cube4Settings, cube5Settings, cube6Settings]);
