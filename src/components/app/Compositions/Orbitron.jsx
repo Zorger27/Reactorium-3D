@@ -538,20 +538,17 @@ const CubeGroup = ({ groupSize, gap, rotationX, rotationY, rotationZ, isRotating
                      resetTrigger, flipTrigger, smallCubeScale, shuffleTrigger, setShuffleTrigger, positionsResetTrigger,
                      cubeLevel, cubeStyle, cubePosition = [0, 0, 0], groupRefProp, cubeId, onHover,
                      // Параметры для орбиты
-                     hasOrbit = false,
-                     orbitSemiMajorAxis = 0,
-                     orbitSemiMinorAxis = 0,
+                     hasOrbit = false, orbitSemiMajorAxis = 0, orbitSemiMinorAxis = 0,
                      orbitSpeed = 0,
                      orbitDirection = 1,   // Направление движения по орбите
                      orbitPlane = 'xy',     // 'xy' или 'xz'
                      // Параметры для масштабирования
-                     baseScale = 1,           // Базовый масштаб куба
+                     baseScale = 1,             // Базовый масштаб куба
                      scaleWithDistance = false, // Масштабировать ли в зависимости от расстояния
-                     minScale = 0.5,          // Минимальный масштаб (на дальней точке)
-                     maxScale = 1.0,           // Максимальный масштаб (на ближней точке)
-                     // Параметр для отображения каркаса
-                     showFrame = false,
-                     orbitStartAngle = 0 // Начальный угол позиции куба на орбите (0 = начальная точка, Math.PI = противоположная сторона)
+                     minScale = 0.5,            // Минимальный масштаб (на дальней точке)
+                     maxScale = 1.0,            // Максимальный масштаб (на ближней точке)
+                     showFrame = false,         // Параметр для отображения каркаса
+                     orbitStartAngle = 0        // Начальный угол позиции куба на орбите (0 = начальная точка, Math.PI = противоположная сторона)
                    }) => {
   const groupRef = useRef(null);
 
@@ -1657,23 +1654,6 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
     scene04: small2Cube24
   };
 
-  // // После создания всех settings
-  // useEffect(() => {
-  //   console.log('🔍 Текущие orbitDirection:', {
-  //     cube1: cube1Settings.orbitDirection,
-  //     cube3: cube3Settings.orbitDirection,
-  //     cube4: cube4Settings.orbitDirection,
-  //     cube5: cube5Settings.orbitDirection,
-  //     cube6: cube6Settings.orbitDirection
-  //   });
-  // }, [
-  //   cube1Settings.orbitDirection,
-  //   cube3Settings.orbitDirection,
-  //   cube4Settings.orbitDirection,
-  //   cube5Settings.orbitDirection,
-  //   cube6Settings.orbitDirection
-  // ]);
-
   // EFFECT 12: useEffect для закрытия при клике вне меню!!!!!
   useEffect(() => {
     if (!isShuffleMenuOpen && !isClearMenuOpen && !isSaveMenuOpen && !isCubeStyleMenuOpen && !isCanvasBackgroundMenuOpen) return;
@@ -1758,21 +1738,6 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
       if (!isRecording) setIsSaveMenuOpen(false);
     }
   }, [isCanvasBackgroundMenuOpen, isRecording]);
-
-  // Флаг инициализации
-  const [isInitialized, setIsInitialized] = useState(false);
-
-  // EFFECT 18: Для завершения инициализации (Отключить CollisionDetector на время инициализации)
-  useEffect(() => {
-    // Даём кубам время занять свои позиции
-    const timer = setTimeout(() => {
-      setIsInitialized(true);
-      console.log('✅ Инициализация завершена, CollisionDetector активирован');
-    }, 1000); // 1 секунда на инициализацию
-
-    return () => clearTimeout(timer);
-  }, []);
-
 
   // Функция для сброса всех состояний ВСЕХ кубов
   const resetAllCubes = () => {
@@ -2290,8 +2255,7 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
 
       <div ref={setRefs}>
         <Canvas shadows style={canvasStyle} gl={{ antialias: true, toneMapping: THREE.NoToneMapping, logarithmicDepthBuffer: true }}>
-          <perspectiveCamera makeDefault position={[0, 0, 12]} fov={75} near={0.1} far={1000}
-          />
+          <perspectiveCamera makeDefault position={[0, 0, 12]} fov={75} near={0.1} far={1000}/>
           <ambientLight intensity={0.6} />
 
           <SceneBackground imagePath={backgroundMap[canvasBackground]} canvasFullscreen={canvasFullscreen}/>
@@ -2467,18 +2431,10 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
                           targetAngle={targetCameraAngle} onAngleReached={() => setTargetCameraAngle(null)}
           />
 
-          <SceneRotation
-            rotating={sceneRotating} direction={sceneDirection} speed={sceneSpeed}
-            groupRef={sceneGroupRef} resetTrigger={sceneResetTrigger}
-          />
+          <SceneRotation rotating={sceneRotating} direction={sceneDirection} speed={sceneSpeed} groupRef={sceneGroupRef} resetTrigger={sceneResetTrigger}/>
 
           {/* Детектор столкновений */}
-          {isInitialized && (
-            <CollisionDetector
-              cubeRefs={[cube1Ref, cube2Ref, cube3Ref, cube4Ref, cube5Ref, cube6Ref]}
-              onCollision={handleCollision}
-            />
-          )}
+          <CollisionDetector cubeRefs={[cube1Ref, cube2Ref, cube3Ref, cube4Ref, cube5Ref, cube6Ref]} onCollision={handleCollision}/>
 
         </Canvas>
       </div>
