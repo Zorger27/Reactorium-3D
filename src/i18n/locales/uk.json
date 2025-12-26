@@ -138,6 +138,7 @@
   "control": {
     "level": "Рівень",
     "speed": "Швидкість",
+    "orbit": "Орбіта",
     "gap": "Зазор",
     "small-cube-size": "Розмір",
     "incline": "Нахил",

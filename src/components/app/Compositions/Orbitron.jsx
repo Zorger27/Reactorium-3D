@@ -1624,9 +1624,11 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
   const rotXHandlers = makeHandlers(settings.setRotationX, currentDefaults.rotationX, -180, 180);
   const rotYHandlers = makeHandlers(settings.setRotationY, currentDefaults.rotationY, -180, 180);
   const rotZHandlers = makeHandlers(settings.setRotationZ, currentDefaults.rotationZ, -180, 180);
+  const orbitSpeedHandlers = makeHandlers(settings.setOrbitSpeed, currentDefaults.orbitSpeed, 0, 1, 0.05);
 
   // Кнопки управления сцены
   const sceneSpeedHandlers = makeHandlers(setSceneSpeed, 1, 0, 10, 1);
+  const sceneRotationXHandlers = makeHandlers(setSceneRotationX, 0, -40, 40, 1);
 
   // Объект для маппинга режима на количество кубов:
   const cubeLevelMap = {
@@ -2082,57 +2084,50 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
           {/* Состояние: ничего не открыто → показываем ВСЕ блоки (закрытые) */}
           {openBlock === null && (
             <>
-              <ControlBlock label={t("control.level")} icon="fa-solid fa-cubes" isOpen={false} onToggle={() => setOpenBlock("cubeLevel")}
-                            gapConfig={{value: settings.cubeLevel, min: 1, max: 3, step: 1, onChange: settings.setCubeLevel, ...cubeLevelHandlers}}
+              <ControlBlock
+                label={t("control.level")} icon="fa-solid fa-cubes" isOpen={false} onToggle={() => setOpenBlock("cubeLevel")}
+                gapConfig={{value: settings.cubeLevel, min: 1, max: 3, step: 1, onChange: settings.setCubeLevel, ...cubeLevelHandlers}}
               />
 
-              <ControlBlock label={t("control.speed")} icon="fa-solid fa-gauge-simple-high" isOpen={false} onToggle={() => setOpenBlock("speed")}
-                            gapConfig={{value: settings.speed, min: 0, max: 10, step: 1, onChange: settings.setSpeed, ...speedHandlers,}}
+              <ControlBlock
+                label={t("control.speed")} icon="fa-solid fa-gauge-simple-high" isOpen={false} onToggle={() => setOpenBlock("speed")}
+                gapConfig={{value: settings.speed, min: 0, max: 10, step: 1, onChange: settings.setSpeed, ...speedHandlers,}}
               />
 
-              {/* Скорость орбиты - только для кубов на орбитах */}
-              {(selectedCube === 1 || selectedCube === 3 || selectedCube === 4 || selectedCube === 5 || selectedCube === 6) && (
+              {/* Скорость орбиты - показывать для всех кубов, кроме Куба 2 */}
+              {(selectedCube !== 2) && (
                 <ControlBlock
-                  label={t("control.orbit") || "Орбита"}
-                  icon="fa-solid fa-circle-notch"
-                  isOpen={false}
-                  onToggle={() => setOpenBlock("orbitSpeed")}
-                  gapConfig={{
-                    value: settings.orbitSpeed,
-                    min: 0,
-                    max: 1,
-                    step: 0.05,
-                    onChange: settings.setOrbitSpeed,
-                    reset: () => settings.resetOrbitSpeed(),
-                    increase: () => settings.setOrbitSpeed(prev => Math.min(1, +(prev + 0.05).toFixed(2))),
-                    decrease: () => settings.setOrbitSpeed(prev => Math.max(0, +(prev - 0.05).toFixed(2)))
-                  }}
+                  label={t("control.orbit")} icon="fa-solid fa-circle-notch" isOpen={false} onToggle={() => setOpenBlock("orbitSpeed")}
+                  gapConfig={{value: settings.orbitSpeed, min: 0, max: 1, step: 0.05, onChange: settings.setOrbitSpeed, ...orbitSpeedHandlers}}
                 />
               )}
 
-              <ControlBlock label={t("control.gap")} icon="fa-solid fa-arrows-left-right" isOpen={false} onToggle={() => setOpenBlock("gap")}
-                            gapConfig={{value: settings.gap, min: 0, max: 0.5, step: 0.01, onChange: settings.setGap, ...gapHandlers}}
+              <ControlBlock
+                label={t("control.gap")} icon="fa-solid fa-arrows-left-right" isOpen={false} onToggle={() => setOpenBlock("gap")}
+                gapConfig={{value: settings.gap, min: 0, max: 0.5, step: 0.01, onChange: settings.setGap, ...gapHandlers}}
               />
 
-              <ControlBlock label={t("control.small-cube-size")} icon="fa-solid fa-up-right-and-down-left-from-center" isOpen={false} onToggle={() => setOpenBlock("smallCubeSize")}
-                            gapConfig={{value: settings.smallCubeScale, min: 0.5, max: 1.0, step: 0.05, onChange: settings.setSmallCubeScale, ...smallCubeScaleHandlers,}}
+              <ControlBlock
+                label={t("control.small-cube-size")} icon="fa-solid fa-up-right-and-down-left-from-center" isOpen={false} onToggle={() => setOpenBlock("smallCubeSize")}
+                gapConfig={{value: settings.smallCubeScale, min: 0.5, max: 1.0, step: 0.05, onChange: settings.setSmallCubeScale, ...smallCubeScaleHandlers,}}
               />
 
-              <ControlBlock label={t("control.incline")} icon="fa-solid fa-compass" isOpen={false} onToggle={() => setOpenBlock("rotation")}
-                            sliders={[
-                              { label: t("control.x-axis"), value: settings.rotationX, min: -180, max: 180, handlers: { ...rotXHandlers, onChange: (v) => settings.setRotationX(v) } },
-                              { label: t("control.y-axis"), value: settings.rotationY, min: -180, max: 180, handlers: { ...rotYHandlers, onChange: (v) => settings.setRotationY(v) } },
-                              { label: t("control.z-axis"), value: settings.rotationZ, min: -180, max: 180, handlers: { ...rotZHandlers, onChange: (v) => settings.setRotationZ(v) } },
-                            ]}
+              <ControlBlock
+                label={t("control.incline")} icon="fa-solid fa-compass" isOpen={false} onToggle={() => setOpenBlock("rotation")}
+                sliders={[
+                  { label: t("control.x-axis"), value: settings.rotationX, min: -180, max: 180, handlers: { ...rotXHandlers, onChange: (v) => settings.setRotationX(v) } },
+                  { label: t("control.y-axis"), value: settings.rotationY, min: -180, max: 180, handlers: { ...rotYHandlers, onChange: (v) => settings.setRotationY(v) } },
+                  { label: t("control.z-axis"), value: settings.rotationZ, min: -180, max: 180, handlers: { ...rotZHandlers, onChange: (v) => settings.setRotationZ(v) } },
+                ]}
               />
             </>
           )}
 
           {/* Состояние: открыт cubeLevel → показываем только его */}
           {openBlock === "cubeLevel" && (
-            <ControlBlock label={t("control.level")} icon="fa-solid fa-cubes" isOpen={true} onToggle={() => setOpenBlock(null)}
-                          gapConfig={{value: settings.cubeLevel, min: 1, max: 3, step: 1, onChange: settings.setCubeLevel, ...cubeLevelHandlers
-                          }}
+            <ControlBlock
+              label={t("control.level")} icon="fa-solid fa-cubes" isOpen={true} onToggle={() => setOpenBlock(null)}
+              gapConfig={{value: settings.cubeLevel, min: 1, max: 3, step: 1, onChange: settings.setCubeLevel, ...cubeLevelHandlers}}
             />
           )}
 
@@ -2146,45 +2141,36 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
           {/* ОТКРЫТЫЙ БЛОК: Орбита */}
           {openBlock === "orbitSpeed" && (
             <ControlBlock
-              label={t("control.orbit") || "Орбита"}
-              icon="fa-solid fa-circle-notch"
-              isOpen={true}
-              onToggle={() => setOpenBlock(null)}
-              gapConfig={{
-                value: settings.orbitSpeed,
-                min: 0,
-                max: 1,
-                step: 0.05,
-                onChange: settings.setOrbitSpeed,
-                reset: () => settings.resetOrbitSpeed(),
-                increase: () => settings.setOrbitSpeed(prev => Math.min(1, +(prev + 0.05).toFixed(2))),
-                decrease: () => settings.setOrbitSpeed(prev => Math.max(0, +(prev - 0.05).toFixed(2)))
-              }}
+              label={t("control.orbit")} icon="fa-solid fa-circle-notch" isOpen={true} onToggle={() => setOpenBlock(null)}
+              gapConfig={{value: settings.orbitSpeed, min: 0, max: 1, step: 0.05, onChange: settings.setOrbitSpeed, ...orbitSpeedHandlers}}
             />
           )}
 
           {/* Состояние: открыт gap → показываем только его */}
           {openBlock === "gap" && (
-            <ControlBlock label={t("control.gap")} icon="fa-solid fa-arrows-left-right" isOpen={true} onToggle={() => setOpenBlock(null)}
-                          gapConfig={{value: settings.gap, min: 0, max: 0.5, step: 0.01, onChange: settings.setGap, ...gapHandlers}}
+            <ControlBlock
+              label={t("control.gap")} icon="fa-solid fa-arrows-left-right" isOpen={true} onToggle={() => setOpenBlock(null)}
+              gapConfig={{value: settings.gap, min: 0, max: 0.5, step: 0.01, onChange: settings.setGap, ...gapHandlers}}
             />
           )}
 
           {/* Состояние: открыт smallCubeSize → показываем только его */}
           {openBlock === "smallCubeSize" && (
-            <ControlBlock label={t("control.small-cube-size")} icon="fa-solid fa-up-right-and-down-left-from-center" isOpen={true} onToggle={() => setOpenBlock(null)}
-                          gapConfig={{value: settings.smallCubeScale, min: 0.5, max: 1.0, step: 0.05, onChange: settings.setSmallCubeScale, ...smallCubeScaleHandlers,}}
+            <ControlBlock
+              label={t("control.small-cube-size")} icon="fa-solid fa-up-right-and-down-left-from-center" isOpen={true} onToggle={() => setOpenBlock(null)}
+              gapConfig={{value: settings.smallCubeScale, min: 0.5, max: 1.0, step: 0.05, onChange: settings.setSmallCubeScale, ...smallCubeScaleHandlers,}}
             />
           )}
 
           {/* Состояние: открыт rotation → показываем только его */}
           {openBlock === "rotation" && (
-            <ControlBlock label={t("control.incline")} icon="fa-solid fa-compass" isOpen={true} onToggle={() => setOpenBlock(null)}
-                          sliders={[
-                            { label: t("control.x-axis"), value: settings.rotationX, min: -180, max: 180, handlers: { ...rotXHandlers, onChange: (v) => settings.setRotationX(v) } },
-                            { label: t("control.y-axis"), value: settings.rotationY, min: -180, max: 180, handlers: { ...rotYHandlers, onChange: (v) => settings.setRotationY(v) } },
-                            { label: t("control.z-axis"), value: settings.rotationZ, min: -180, max: 180, handlers: { ...rotZHandlers, onChange: (v) => settings.setRotationZ(v) } },
-                          ]}
+            <ControlBlock
+              label={t("control.incline")} icon="fa-solid fa-compass" isOpen={true} onToggle={() => setOpenBlock(null)}
+              sliders={[
+                { label: t("control.x-axis"), value: settings.rotationX, min: -180, max: 180, handlers: { ...rotXHandlers, onChange: (v) => settings.setRotationX(v) } },
+                { label: t("control.y-axis"), value: settings.rotationY, min: -180, max: 180, handlers: { ...rotYHandlers, onChange: (v) => settings.setRotationY(v) } },
+                { label: t("control.z-axis"), value: settings.rotationZ, min: -180, max: 180, handlers: { ...rotZHandlers, onChange: (v) => settings.setRotationZ(v) } },
+              ]}
             />
           )}
 
@@ -2198,40 +2184,34 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
           {openSceneBlock === null && (
             <>
               {/* Скорость сцены */}
-              <ControlBlock variant="scene" label={t("control.scene-speed")} icon="fa-solid fa-gauge-simple-high" isOpen={false}
-                            onToggle={() => setOpenSceneBlock("speed")}
-                            gapConfig={{value: sceneSpeed, min: 0, max: 10, step: 1, onChange: setSceneSpeed, ...sceneSpeedHandlers}}
+              <ControlBlock
+                variant="scene" label={t("control.scene-speed")} icon="fa-solid fa-gauge-simple-high" isOpen={false}
+                onToggle={() => setOpenSceneBlock("speed")}
+                gapConfig={{value: sceneSpeed, min: 0, max: 10, step: 1, onChange: setSceneSpeed, ...sceneSpeedHandlers}}
               />
 
               {/* Наклон сцены */}
-              <ControlBlock variant="scene" label={t("control.scene-tilt")} icon="fa-solid fa-angles-up" isOpen={false}
-                            onToggle={() => setOpenSceneBlock("tilt")}
-                            gapConfig={{
-                            value: sceneRotationX, min: -40, max: 40, step: 1,
-                            onChange: setSceneRotationX, reset: () => setSceneRotationX(0),
-                            increase: () => setSceneRotationX(prev => Math.min(40, +(prev + 1).toFixed(2))),
-                            decrease: () => setSceneRotationX(prev => Math.max(-40, +(prev - 1).toFixed(2)))
-                          }}
+              <ControlBlock
+                variant="scene" label={t("control.scene-tilt")} icon="fa-solid fa-angles-up" isOpen={false}
+                onToggle={() => setOpenSceneBlock("tilt")}
+                gapConfig={{value: sceneRotationX, min: -40, max: 40, step: 1, onChange: setSceneRotationX, ...sceneRotationXHandlers}}
               />
             </>
           )}
 
           {openSceneBlock === "speed" && (
-            <ControlBlock variant="scene"  label={t("control.scene-speed")} icon="fa-solid fa-gauge-simple-high" isOpen={true}
-                          onToggle={() => setOpenSceneBlock(null)}
-                          gapConfig={{value: sceneSpeed, min: 0, max: 10, step: 1, onChange: setSceneSpeed, ...sceneSpeedHandlers}}
+            <ControlBlock
+              variant="scene"  label={t("control.scene-speed")} icon="fa-solid fa-gauge-simple-high" isOpen={true}
+              onToggle={() => setOpenSceneBlock(null)}
+              gapConfig={{value: sceneSpeed, min: 0, max: 10, step: 1, onChange: setSceneSpeed, ...sceneSpeedHandlers}}
             />
           )}
 
           {openSceneBlock === "tilt" && (
-            <ControlBlock variant="scene" label={t("control.scene-tilt")} icon="fa-solid fa-angles-up" isOpen={true}
-                          onToggle={() => setOpenSceneBlock(null)}
-                          gapConfig={{
-                            value: sceneRotationX, min: -40, max: 40, step: 1,
-                            onChange: setSceneRotationX, reset: () => setSceneRotationX(0),
-                            increase: () => setSceneRotationX(prev => Math.min(40, +(prev + 1).toFixed(2))),
-                            decrease: () => setSceneRotationX(prev => Math.max(-40, +(prev - 1).toFixed(2)))
-                          }}
+            <ControlBlock
+              variant="scene" label={t("control.scene-tilt")} icon="fa-solid fa-angles-up" isOpen={true}
+              onToggle={() => setOpenSceneBlock(null)}
+              gapConfig={{value: sceneRotationX, min: -40, max: 40, step: 1, onChange: setSceneRotationX, ...sceneRotationXHandlers}}
             />
           )}
 
@@ -2240,15 +2220,17 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
 
       {/* === Панель кнопок управления вращением КУБА === */}
       {selectedCube && (
-        <RotationControlPanel isRotating={settings.isRotating} onClockwise={handleClockwise} onCounterClockwise={handleCounterClockwise}
-                              onPause={handlePause} onStop={handleStop} onFlip={handleFlip}
+        <RotationControlPanel
+          isRotating={settings.isRotating} onClockwise={handleClockwise} onCounterClockwise={handleCounterClockwise}
+          onPause={handlePause} onStop={handleStop} onFlip={handleFlip}
         />
       )}
 
       {/* === Панель кнопок управления вращением СЦЕНЫ === */}
       {!selectedCube && (
-        <RotationControlPanel isRotating={sceneRotating} onClockwise={handleSceneClockwise} onCounterClockwise={handleSceneCounterClockwise}
-                              onPause={handleScenePause} onStop={handleSceneStop} onFlip={handleSceneFlip} variant="scene"
+        <RotationControlPanel
+          isRotating={sceneRotating} onClockwise={handleSceneClockwise} onCounterClockwise={handleSceneCounterClockwise}
+          onPause={handleScenePause} onStop={handleSceneStop} onFlip={handleSceneFlip} variant="scene"
         />
       )}
 
@@ -2256,35 +2238,34 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
       <div className="special-buttons">
 
         {/* === Панель очистки localStorage === */}
-        <ClearStoragePanel isOpen={isClearMenuOpen} onToggle={setIsClearMenuOpen} storagePrefix="orbitron"
-                           onClearCurrent={resetAllCubes} onClearAll={resetAllCubes}
+        <ClearStoragePanel
+          isOpen={isClearMenuOpen} onToggle={setIsClearMenuOpen} storagePrefix="orbitron"
+          onClearCurrent={resetAllCubes} onClearAll={resetAllCubes}
         />
 
         {/* === Панель изменения стиля куба === */}
-        <CubeStylePanel isVisible={selectedCube} currentStyle={settings.cubeStyle} onStyleChange={settings.setCubeStyle}
-                        isOpen={isCubeStyleMenuOpen} onToggle={setIsCubeStyleMenuOpen}/>
+        <CubeStylePanel
+          isVisible={selectedCube} currentStyle={settings.cubeStyle} onStyleChange={settings.setCubeStyle}
+          isOpen={isCubeStyleMenuOpen} onToggle={setIsCubeStyleMenuOpen}/>
 
         {/* === Панель перемешивания кубов === */}
-        <ShufflePanel isVisible={selectedCube && settings.cubeLevel !== 1} isOpen={isShuffleMenuOpen} onToggle={setIsShuffleMenuOpen}
-                      onShuffle={() => settings.setShuffleTrigger(prev => prev + 1)}
-                      onReset={() => settings.setPositionsResetTrigger(prev => prev + 1)}
+        <ShufflePanel
+          isVisible={selectedCube && settings.cubeLevel !== 1} isOpen={isShuffleMenuOpen} onToggle={setIsShuffleMenuOpen}
+          onShuffle={() => settings.setShuffleTrigger(prev => prev + 1)}
+          onReset={() => settings.setPositionsResetTrigger(prev => prev + 1)}
         />
 
         {/* === Панель выбора фона канваса для просмотра куба === */}
-        <CanvasBackgroundPanel canvasRef={internalRef} currentBackground={canvasBackground} onBackgroundChange={setCanvasBackground}
-                               onActivate={(bg) => {
-                                 setCanvasBackground(bg);
-                                 // Fullscreen откроется автоматически внутри компоненты
-                               }}
-                               isOpen={isCanvasBackgroundMenuOpen}
-                               onToggle={setIsCanvasBackgroundMenuOpen}
+        <CanvasBackgroundPanel
+          canvasRef={internalRef} currentBackground={canvasBackground} onBackgroundChange={setCanvasBackground}
+          onActivate={(bg) => {setCanvasBackground(bg);}}
+          isOpen={isCanvasBackgroundMenuOpen} onToggle={setIsCanvasBackgroundMenuOpen}
         />
 
         {/* === Панель сохранения === */}
-        <SavePanel canvasRef={internalRef} isRecording={isRecording} onRecordingChange={setIsRecording} isOpen={isSaveMenuOpen} onToggle={setIsSaveMenuOpen}
-                   projectTitle={t('project5.prn-orbitron')}
-                   footerText={t('save.created')}
-                   siteUrl="https://reactorium-3d.vercel.app"
+        <SavePanel
+          canvasRef={internalRef} isRecording={isRecording} onRecordingChange={setIsRecording} isOpen={isSaveMenuOpen} onToggle={setIsSaveMenuOpen}
+          projectTitle={t('project5.prn-orbitron')} footerText={t('save.created')} siteUrl="https://reactorium-3d.vercel.app"
         />
 
       </div>

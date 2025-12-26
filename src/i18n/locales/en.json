@@ -138,6 +138,7 @@
   "control": {
     "level": "Level",
     "speed": "Speed",
+    "orbit": "Orbit",
     "gap": "Gap",
     "small-cube-size": "Size",
     "incline": "Incline",
