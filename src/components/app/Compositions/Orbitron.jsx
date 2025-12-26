@@ -253,40 +253,28 @@ const PHOTO_CONFIG_LEVEL_3 = [
 // Дефолтные значения для КУБОВ
 const DEFAULT_CUBE_CONFIGS = {
   1: {
-    gap: 0.25, smallCubeScale: 1,
-    rotationX: 90, rotationY: 20, rotationZ: 0,
-    speed: 5, direction: 1, isRotating: true,
-    cubeLevel: 1, cubeStyle: "texture", orbitDirection: -1
+    gap: 0.25, smallCubeScale: 1, rotationX: 90, rotationY: 20, rotationZ: 0, speed: 5, direction: 1, isRotating: true,
+    cubeLevel: 1, cubeStyle: "texture", orbitDirection: -1, orbitSpeed: 0.2
   },
   2: {
-    gap: 0.4, smallCubeScale: 0.8,
-    rotationX: 90, rotationY: 0, rotationZ: 0,
-    speed: 2, direction: -1, isRotating: true,
-    cubeLevel: 3, cubeStyle: "photo", orbitDirection: 1
+    gap: 0.4, smallCubeScale: 0.8, rotationX: 90, rotationY: 0, rotationZ: 0, speed: 2, direction: -1, isRotating: true,
+    cubeLevel: 3, cubeStyle: "photo", orbitDirection: 1, orbitSpeed: 0.3
   },
   3: {
-    gap: 0, smallCubeScale: 1,
-    rotationX: 100, rotationY: 120, rotationZ: 0,
-    speed: 8, direction: 1, isRotating: true,
-    cubeLevel: 3, cubeStyle: "color", orbitDirection: 1
+    gap: 0, smallCubeScale: 1, rotationX: 100, rotationY: 120, rotationZ: 0, speed: 8, direction: 1, isRotating: true,
+    cubeLevel: 3, cubeStyle: "color", orbitDirection: 1, orbitSpeed: 0.3
   },
   4: {
-    gap: 0.15, smallCubeScale: 0.9,
-    rotationX: 80, rotationY: 45, rotationZ: 0,
-    speed: 4, direction: 1, isRotating: true,
-    cubeLevel: 1, cubeStyle: "photo", orbitDirection: 1
+    gap: 0.15, smallCubeScale: 0.9, rotationX: 80, rotationY: 45, rotationZ: 0, speed: 4, direction: 1, isRotating: true,
+    cubeLevel: 1, cubeStyle: "photo", orbitDirection: 1, orbitSpeed: 0.3
   },
   5: {
-    gap: 0.2, smallCubeScale: 0.85,
-    rotationX: 110, rotationY: 90, rotationZ: 0,
-    speed: 5, direction: -1, isRotating: true,
-    cubeLevel: 2, cubeStyle: "texture", orbitDirection: -1
+    gap: 0.2, smallCubeScale: 0.85, rotationX: 110, rotationY: 90, rotationZ: 0, speed: 5, direction: -1, isRotating: true,
+    cubeLevel: 2, cubeStyle: "texture", orbitDirection: -1, orbitSpeed: 0.4
   },
   6: {
-    gap: 0.4, smallCubeScale: 1,
-    rotationX: 100, rotationY: 120, rotationZ: 0,
-    speed: 8, direction: 1, isRotating: true,
-    cubeLevel: 2, cubeStyle: "color", orbitDirection: 1
+    gap: 0.4, smallCubeScale: 1, rotationX: 100, rotationY: 120, rotationZ: 0, speed: 8, direction: 1, isRotating: true,
+    cubeLevel: 2, cubeStyle: "color", orbitDirection: 1, orbitSpeed: 0.3
   }
 };
 
@@ -1524,9 +1512,8 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
     const [isRotating, setIsRotating] = useLocalStorage(`orbitronIsRotating${suffix}`, defaults.isRotating, v => v === "true");
     const [cubeLevel, setCubeLevel] = useLocalStorage(`orbitronCubeLevel${suffix}`, defaults.cubeLevel, v => parseInt(v, 10));
     const [cubeStyle, setCubeStyle] = useLocalStorage(`orbitronCubeStyle${suffix}`, defaults.cubeStyle, v => v);
-
-    // Направление движения по орбите
     const [orbitDirection, setOrbitDirection] = useLocalStorage(`orbitronOrbitDirection${suffix}`, defaults.orbitDirection, v => parseInt(v, 10));
+    const [orbitSpeed, setOrbitSpeed] = useLocalStorage(`cuboVerse2OrbitSpeed${suffix}`, defaults.orbitSpeed, parseFloat);
 
     // 🎯 КАСТОМНЫЕ RESET-ФУНКЦИИ с правильными дефолтами
     const resetGap = () => setGap(defaults.gap);
@@ -1540,6 +1527,7 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
     const resetCubeLevel = () => setCubeLevel(defaults.cubeLevel);
     const resetCubeStyle = () => setCubeStyle(defaults.cubeStyle);
     const resetOrbitDirection = () => setOrbitDirection(defaults.orbitDirection);
+    const resetOrbitSpeed = () => setOrbitSpeed(defaults.orbitSpeed);
 
     const [shuffleTrigger, setShuffleTrigger] = useState(0);
     const [positionsResetTrigger, setPositionsResetTrigger] = useState(0);
@@ -1560,6 +1548,7 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
       cubeLevel, setCubeLevel, resetCubeLevel,
       cubeStyle, setCubeStyle, resetCubeStyle,
       orbitDirection, setOrbitDirection, resetOrbitDirection,
+      orbitSpeed, setOrbitSpeed, resetOrbitSpeed,
       shuffleTrigger, setShuffleTrigger,
       positionsResetTrigger, setPositionsResetTrigger,
       resetTrigger, setResetTrigger,
@@ -1750,6 +1739,7 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
     cube1Settings.resetSpeed();
     cube1Settings.resetDirection();
     cube1Settings.resetOrbitDirection();
+    cube1Settings.resetOrbitSpeed();
     cube1Settings.resetIsRotating();
     cube1Settings.resetCubeLevel();
     cube1Settings.resetCubeStyle();
@@ -1765,6 +1755,7 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
     cube2Settings.resetSpeed();
     cube2Settings.resetDirection();
     cube2Settings.resetOrbitDirection();
+    cube2Settings.resetOrbitSpeed();
     cube2Settings.resetIsRotating();
     cube2Settings.resetCubeLevel();
     cube2Settings.resetCubeStyle();
@@ -1780,6 +1771,7 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
     cube3Settings.resetSpeed();
     cube3Settings.resetDirection();
     cube3Settings.resetOrbitDirection();
+    cube3Settings.resetOrbitSpeed();
     cube3Settings.resetIsRotating();
     cube3Settings.resetCubeLevel();
     cube3Settings.resetCubeStyle();
@@ -1795,6 +1787,7 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
     cube4Settings.resetSpeed();
     cube4Settings.resetDirection();
     cube4Settings.resetOrbitDirection();
+    cube4Settings.resetOrbitSpeed();
     cube4Settings.resetIsRotating();
     cube4Settings.resetCubeLevel();
     cube4Settings.resetCubeStyle();
@@ -1810,6 +1803,7 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
     cube5Settings.resetSpeed();
     cube5Settings.resetDirection();
     cube5Settings.resetOrbitDirection();
+    cube5Settings.resetOrbitSpeed();
     cube5Settings.resetIsRotating();
     cube5Settings.resetCubeLevel();
     cube5Settings.resetCubeStyle();
@@ -1825,6 +1819,7 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
     cube6Settings.resetSpeed();
     cube6Settings.resetDirection();
     cube6Settings.resetOrbitDirection();
+    cube6Settings.resetOrbitSpeed();
     cube6Settings.resetIsRotating();
     cube6Settings.resetCubeLevel();
     cube6Settings.resetCubeStyle();
@@ -2094,6 +2089,27 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
               <ControlBlock label={t("control.speed")} icon="fa-solid fa-gauge-simple-high" isOpen={false} onToggle={() => setOpenBlock("speed")}
                             gapConfig={{value: settings.speed, min: 0, max: 10, step: 1, onChange: settings.setSpeed, ...speedHandlers,}}
               />
+
+              {/* Скорость орбиты - только для кубов на орбитах */}
+              {(selectedCube === 1 || selectedCube === 3 || selectedCube === 4 || selectedCube === 5 || selectedCube === 6) && (
+                <ControlBlock
+                  label={t("control.orbit") || "Орбита"}
+                  icon="fa-solid fa-circle-notch"
+                  isOpen={false}
+                  onToggle={() => setOpenBlock("orbitSpeed")}
+                  gapConfig={{
+                    value: settings.orbitSpeed,
+                    min: 0,
+                    max: 1,
+                    step: 0.05,
+                    onChange: settings.setOrbitSpeed,
+                    reset: () => settings.resetOrbitSpeed(),
+                    increase: () => settings.setOrbitSpeed(prev => Math.min(1, +(prev + 0.05).toFixed(2))),
+                    decrease: () => settings.setOrbitSpeed(prev => Math.max(0, +(prev - 0.05).toFixed(2)))
+                  }}
+                />
+              )}
+
               <ControlBlock label={t("control.gap")} icon="fa-solid fa-arrows-left-right" isOpen={false} onToggle={() => setOpenBlock("gap")}
                             gapConfig={{value: settings.gap, min: 0, max: 0.5, step: 0.01, onChange: settings.setGap, ...gapHandlers}}
               />
@@ -2124,6 +2140,26 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
           {openBlock === "speed" && (
             <ControlBlock label={t("control.speed")} icon="fa-solid fa-gauge-simple-high" isOpen={true} onToggle={() => setOpenBlock(null)}
                           gapConfig={{value: settings.speed, min: 0, max: 10, step: 1, onChange: settings.setSpeed, ...speedHandlers,}}
+            />
+          )}
+
+          {/* ОТКРЫТЫЙ БЛОК: Орбита */}
+          {openBlock === "orbitSpeed" && (
+            <ControlBlock
+              label={t("control.orbit") || "Орбита"}
+              icon="fa-solid fa-circle-notch"
+              isOpen={true}
+              onToggle={() => setOpenBlock(null)}
+              gapConfig={{
+                value: settings.orbitSpeed,
+                min: 0,
+                max: 1,
+                step: 0.05,
+                onChange: settings.setOrbitSpeed,
+                reset: () => settings.resetOrbitSpeed(),
+                increase: () => settings.setOrbitSpeed(prev => Math.min(1, +(prev + 0.05).toFixed(2))),
+                decrease: () => settings.setOrbitSpeed(prev => Math.max(0, +(prev - 0.05).toFixed(2)))
+              }}
             />
           )}
 
@@ -2282,7 +2318,7 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
               shuffleTrigger={cube1Settings.shuffleTrigger} setShuffleTrigger={cube1Settings.setShuffleTrigger} positionsResetTrigger={cube1Settings.positionsResetTrigger}
               cubeLevel={cubeLevelMap[cube1Settings.cubeLevel]} cubeStyle={cube1Settings.cubeStyle}
               cubePosition={cubePositions[0]}
-              hasOrbit={true} orbitSemiMajorAxis={3.5} orbitSemiMinorAxis={2.5} orbitSpeed={0.2} orbitPlane="xz"
+              hasOrbit={true} orbitSemiMajorAxis={3.5} orbitSemiMinorAxis={2.5} orbitSpeed={cube1Settings.orbitSpeed} orbitPlane="xz"
               orbitStartAngle={Math.PI / 4}
               baseScale={0.45} scaleWithDistance={true} minScale={0.40} maxScale={0.50}
               showFrame={selectedCube === 1}
@@ -2321,7 +2357,7 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
               shuffleTrigger={cube3Settings.shuffleTrigger} setShuffleTrigger={cube3Settings.setShuffleTrigger} positionsResetTrigger={cube3Settings.positionsResetTrigger}
               cubeLevel={cubeLevelMap[cube3Settings.cubeLevel]} cubeStyle={cube3Settings.cubeStyle}
               cubePosition={cubePositions[2]}
-              hasOrbit={true} orbitSemiMajorAxis={2.5} orbitSemiMinorAxis={2} orbitSpeed={0.3} orbitPlane="xy"
+              hasOrbit={true} orbitSemiMajorAxis={2.5} orbitSemiMinorAxis={2} orbitSpeed={cube3Settings.orbitSpeed} orbitPlane="xy"
               orbitStartAngle={0}
               baseScale={0.35} scaleWithDistance={true} minScale={0.40} maxScale={0.50}
               showFrame={selectedCube === 3}
@@ -2342,7 +2378,7 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
               cubeLevel={cubeLevelMap[cube4Settings.cubeLevel]} cubeStyle={cube4Settings.cubeStyle}
               cubePosition={cubePositions[3]}
               orbitStartAngle={Math.PI / 2}
-              hasOrbit={true} orbitSemiMajorAxis={3.5} orbitSemiMinorAxis={2.5} orbitSpeed={0.3} orbitPlane="xz45"
+              hasOrbit={true} orbitSemiMajorAxis={3.5} orbitSemiMinorAxis={2.5} orbitSpeed={cube4Settings.orbitSpeed} orbitPlane="xz45"
               baseScale={0.45} scaleWithDistance={true} minScale={0.40} maxScale={0.50}
               showFrame={selectedCube === 4}
             />
@@ -2362,7 +2398,7 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
               cubeLevel={cubeLevelMap[cube5Settings.cubeLevel]} cubeStyle={cube5Settings.cubeStyle}
               cubePosition={cubePositions[4]}
               orbitStartAngle={Math.PI * 1.5}
-              hasOrbit={true} orbitSemiMajorAxis={3.5} orbitSemiMinorAxis={2.5} orbitSpeed={0.4} orbitPlane="xz135"
+              hasOrbit={true} orbitSemiMajorAxis={3.5} orbitSemiMinorAxis={2.5} orbitSpeed={cube5Settings.orbitSpeed} orbitPlane="xz135"
               baseScale={0.45} scaleWithDistance={true} minScale={0.40} maxScale={0.50}
               showFrame={selectedCube === 5}
             />
@@ -2381,7 +2417,7 @@ const Orbitron = forwardRef(({ groupSize = 2.5, canvasFullscreen = false }, ref)
               positionsResetTrigger={cube6Settings.positionsResetTrigger}
               cubeLevel={cubeLevelMap[cube6Settings.cubeLevel]} cubeStyle={cube6Settings.cubeStyle}
               cubePosition={cubePositions[5]}
-              hasOrbit={true} orbitSemiMajorAxis={2.5} orbitSemiMinorAxis={2} orbitSpeed={0.3} orbitPlane="xy"
+              hasOrbit={true} orbitSemiMajorAxis={2.5} orbitSemiMinorAxis={2} orbitSpeed={cube6Settings.orbitSpeed} orbitPlane="xy"
               orbitStartAngle={Math.PI}  // Начинаем с противоположной точки
               baseScale={0.4} scaleWithDistance={true} minScale={0.25} maxScale={0.45}
               showFrame={selectedCube === 6}
