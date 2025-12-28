@@ -9,7 +9,7 @@
 🧪 Each application here is a small experiment in a three-dimensional environment, ranging from abstract scenes and dynamic objects to interactive tools and games. 
 
 🛠️ <ins>Technologies:</ins><br>
-🔹 React 19.1 ⚛️ — modern UI development.<br>
+🔹 React ⚛️ — modern UI development.<br>
 🔹 Three.js 🌌 — 3D graphics and visualization in the browser.<br>
 🔹 React Three Fiber 🖼️ — React renderer for Three.js.<br>
 🔹 Redux Toolkit 🎯 — efficient and scalable state management.<br>
